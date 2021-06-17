@@ -18,7 +18,7 @@
     "komodo"
   ],
   "author": "Komodo Platform (https://komodoplatform.com)",
-  "license": "(MIT OR Apache-2.0)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pbca26/komodo-tokens-wallet/issues"
   },
