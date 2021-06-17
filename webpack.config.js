@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpack = require('webpack')
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -33,8 +33,8 @@ module.exports = {
       test:/\.(s*)css$/,
       use: [
         MiniCssExtractPlugin.loader,
-         'css-loader',
-         'sass-loader',
+        'css-loader',
+        'sass-loader',
       ]
    },
     {
@@ -56,8 +56,7 @@ module.exports = {
         outputPath: 'assets/',
         name: '[name].[hash:8].[ext]'
       }
-    }
-    ]
+    }]
   },
   plugins: [
     new CopyWebpackPlugin(['index.html']),
