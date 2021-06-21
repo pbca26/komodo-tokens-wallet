@@ -1,5 +1,5 @@
 import React from 'react';
-import TokensLib from './tokens-lib.js';
+import TokensLib from './tokenslib.js';
 
 class Login extends React.Component {
   state = this.initialState;
@@ -32,8 +32,8 @@ class Login extends React.Component {
 
   render() {
     return(
-      <div>
-        <div>
+      <div className="main">
+        <div className="content login-form">
           <h4>Login</h4>
           <p>Enter your seed phrase or WIF key in the form below</p>
           <div className="input-form">
