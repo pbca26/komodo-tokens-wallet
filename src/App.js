@@ -1,5 +1,7 @@
 import React from 'react';
 import {hot} from 'react-hot-loader';
+import Login from './Login';
+import './app.scss';
 
 class App extends React.Component {
   state = this.initialState;
@@ -10,6 +12,7 @@ class App extends React.Component {
   render() {
     return(
       <React.Fragment>
+        <Login />
       </React.Fragment>
     );
   }
