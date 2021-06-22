@@ -7,12 +7,42 @@ class App extends React.Component {
   state = this.initialState;
 
   get initialState() {
+    this.setKey = this.setKey.bind(this);
+    this.resetApp = this.resetApp.bind(this);
+
+    return {
+      wif: '',
+      address: {
+        normal: '',
+        cc: '',
+      },
+    };
+  }
+
+  resetApp() {
+    this.setState(this.initialState);
+  }
+
+  setKey({wif, address}) {
+    this.setState({
+      wif,
+      address,
+    });
+
+    setTimeout(() => {
+      console.warn('app this.state', this.state);
+    }, 100);
   }
 
   render() {
     return(
       <React.Fragment>
-        <Login />
+        {!this.state.wif &&
+          <Login setKey={this.setKey} />
+        }
+        {this.state.wif &&
+          <React.Fragment>Dashboard stub</React.Fragment>
+        }
       </React.Fragment>
     );
   }
