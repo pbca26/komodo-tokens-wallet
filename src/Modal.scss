@@ -1,0 +1,9 @@
+@import './bulma-custom.scss';
+
+.Modal .card {
+  border-radius: $radius-small;
+
+  .content {
+    padding-top: 0;
+  }
+}
