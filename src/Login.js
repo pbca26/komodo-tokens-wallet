@@ -28,6 +28,11 @@ class Login extends React.Component {
     const wif = TokensLib.keyToWif(this.state.privKeyInput);
     const address = TokensLib.keyToCCAddress(wif, 'wif');
     console.warn(address);
+
+    this.props.setKey({
+      wif,
+      address,
+    });
   }
 
   render() {
