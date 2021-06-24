@@ -1,6 +1,7 @@
 import React from 'react';
 import {hot} from 'react-hot-loader';
 import Login from './Login';
+import Dashboard from './Dashboard';
 import './app.scss';
 
 class App extends React.Component {
@@ -8,7 +9,6 @@ class App extends React.Component {
 
   get initialState() {
     this.setKey = this.setKey.bind(this);
-    this.resetApp = this.resetApp.bind(this);
 
     return {
       wif: '',
@@ -17,10 +17,6 @@ class App extends React.Component {
         cc: '',
       },
     };
-  }
-
-  resetApp() {
-    this.setState(this.initialState);
   }
 
   setKey({wif, address}) {
@@ -41,7 +37,8 @@ class App extends React.Component {
           <Login setKey={this.setKey} />
         }
         {this.state.wif &&
-          <React.Fragment>Dashboard stub</React.Fragment>
+          <Dashboard
+            {...this.state} />
         }
       </React.Fragment>
     );
