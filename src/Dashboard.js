@@ -1,6 +1,7 @@
 import React from 'react';
 import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
+import CreateTokenModal from './CreateTokenModal';
 import {coin, explorerApiUrl, explorerUrl} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
@@ -93,6 +94,10 @@ class Dashboard extends React.Component {
                 <strong>Normal balance:</strong> {this.getNormalBalance().value} {coin}
               </React.Fragment>
             }
+            <CreateTokenModal
+              {...this.props}
+              normalUtxos={this.state.normalUtxos}
+              syncData={this.syncData} />
             {!this.state.normalUtxos.length &&
               <div style={{'paddingTop': '20px'}}>Please make a deposit to your normal address in order to create new token</div>
             }

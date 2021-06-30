@@ -2,3 +2,27 @@
   max-width: 400px;
   margin: 50px auto;
 }
+
+.Modal-create-token {
+  input,
+  textarea {
+    display: block;
+    margin-bottom: 10px;
+    padding: 5px;
+  }
+
+  .success,
+  .error {
+    margin-top: 15px;
+    border: dashed 1px;
+    padding: 10px;
+  }
+}
+
+.create-token-btn {
+  padding: 5px;
+  margin-top: 15px;
+  border: solid 1px;
+  display: table;
+  cursor: pointer;
+}
