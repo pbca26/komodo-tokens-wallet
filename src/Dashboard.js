@@ -87,6 +87,9 @@ class Dashboard extends React.Component {
                   target="_blank">Check balances</a>
               </div>
             </div>
+            <div style={{'paddingBottom': '10px'}}>
+              <strong>My pubkey:</strong> {this.props.address.pubkey}
+            </div>
           </div>
           <div>
             {this.state.normalUtxos.length > 0  &&
