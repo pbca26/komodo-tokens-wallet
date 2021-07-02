@@ -3,9 +3,11 @@
   margin: 50px auto;
 }
 
-.Modal-create-token {
+.Modal-create-token,
+.Modal-send-token {
   input,
-  textarea {
+  textarea,
+  .dropdown {
     display: block;
     margin-bottom: 10px;
     padding: 5px;
@@ -19,10 +21,63 @@
   }
 }
 
-.create-token-btn {
+.create-token-btn,
+.send-token-btn {
   padding: 5px;
   margin-top: 15px;
   border: solid 1px;
   display: table;
   cursor: pointer;
+}
+
+.Modal-send-token {
+  .pubkey-field {
+    width: 100%;
+  }
+}
+
+.dropdown-trigger button,
+.dropdown-trigger button:active,
+.dropdown-trigger button:focus {
+  outline: none;
+  width: 100%;
+  border-radius: 0;
+}
+
+.dropdown {
+  width: 50%;
+
+  .dropdown-menu {
+    height: 120px;
+    overflow-y: auto;
+    border: solid 1px #ccc;
+  }
+  .dropdown-trigger {
+    margin: 0 !important;
+    min-width: 300px;
+  
+    button {
+      justify-content: left;
+      text-transform: none;
+  
+      .icon {
+        font-size: 1rem;
+        position: absolute;
+        right: 18px;
+      }
+    }
+  }
+  .dropdown-content {
+    min-width: 300px;
+    text-align: left;
+    outline: none;
+    width: 100%;
+    padding: 0;
+  }
+  .dropdown-item {
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  }
 }
