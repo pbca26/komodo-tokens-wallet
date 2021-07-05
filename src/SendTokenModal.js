@@ -16,7 +16,7 @@ class SendTokenModal extends React.Component {
     return {
       isClosed: true,
       token: null,
-      pubkey: '03d51b278235d642823b0897726d0d06277cb4d02c166332bb636096191425e6ae',
+      pubkey: '',
       amount: 0,
       success: null,
       error: null,

@@ -13,9 +13,9 @@ class CreateTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      name: 'jsTOKEN1',
-      description: 'Testing JS tokens lib',
-      supply: 10,
+      name: '',
+      description: '',
+      supply: 1,
       success: null,
       error: null,
     };
