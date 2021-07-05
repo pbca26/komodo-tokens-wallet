@@ -8,7 +8,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: './bootstrap.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'bootstrap.js',
   },
   mode: 'development',
@@ -69,6 +69,6 @@ module.exports = {
     host: '0.0.0.0',
     inline: true,
     disableHostCheck: true,
-    contentBase: './dist',
+    contentBase: './build',
   }
 };
