@@ -1,0 +1,14 @@
+{
+  "name": "minimal-web-server",
+  "description": "Minimal NodeJS server to run Tokens Web Wallet over http/https",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
