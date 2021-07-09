@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
-import {coin, explorerApiUrl, explorerUrl} from './constants';
+import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
@@ -60,11 +60,19 @@ class CreateTokenModal extends React.Component {
       });
     } else {
       try {
-        rawtx = await TokensLib.createTokenTx({
-          name: this.state.name, 
-          description: this.state.description,
-          supply: Number(this.state.supply),
-        }, this.props.wif);
+        const inputsData = txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+        
+        console.warn('create tx modal inputsData', inputsData);
+
+        rawtx = await TokensLib.createTokenTx(
+          inputsData,
+          {
+            name: this.state.name, 
+            description: this.state.description,
+            supply: Number(this.state.supply),
+          },
+          this.props.wif
+        );
       } catch (e) {
         this.setState({
           success: null,

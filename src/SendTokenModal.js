@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
-import {coin, explorerApiUrl, explorerUrl} from './constants';
+import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
 
 class SendTokenModal extends React.Component {
   state = this.initialState;
@@ -59,8 +59,6 @@ class SendTokenModal extends React.Component {
   }
 
   sendToken = async () => {
-    let inputsData, rawtx;
-
     if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
       this.setState({
         success: null,
@@ -68,9 +66,15 @@ class SendTokenModal extends React.Component {
       });
     } else {
       try {
-        inputsData = await TokensLib.AddTokensInputsRemote(
-          this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)
-        );
+        let inputsData = {
+          ccUtxos: txBuilderApi === 'default' ? await TokensLib.AddTokensInputsRemote(
+            this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)
+          ) : await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
+          normalUtxos: txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(10000, this.props.address.pubkey) : await Blockchain.createCCTx(10000, this.props.address.pubkey),
+        },
+        rawtx;
+
+        console.warn('send tx modal inputsData', inputsData);
 
         try {
           rawtx = await TokensLib.transferTokenTx(
