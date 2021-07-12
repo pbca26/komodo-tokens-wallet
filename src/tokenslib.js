@@ -36810,51 +36810,33 @@ async function makeTokensTransferTx(wif, tokenid, destpk, ccamount, inputsData)
   return txbuilder.build();
 }
 
-function createTokenTx (inputs, tokenData, wif, connectOptions) {
-  return new Promise((resolve, reject) => {
-    peers = new NspvPeerGroup(connectOptions ? connectOptions.params : params, connectOptions ? connectOptions.opts : opts);
-    peers.on('peer', (peer) => {
-      console.log('in event: connected to peer', peer.socket.remoteAddress)
-    });
-    // create connections to peers
-    peers.connect(async () => {
-      try {
-        // make cc token create tx
-        const txhex = await cctokens_create(inputs, wif, tokenData.name, tokenData.description ? tokenData.description : '', tokenData.supply, tokenData.nft ? tokenData.nft : null);
-        console.log('txhex=', txhex);
-        resolve(txhex);
-        peers.close();
-      }
-      catch(err) {
-        console.log('caught err=', err, 'code=', err.code, 'message=', err.message);
-        reject(err);
-        peers.close();
-      }
-    });
+function createTokenTx (inputs, tokenData, wif) {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // make cc token create tx
+      const txhex = await cctokens_create(inputs, wif, tokenData.name, tokenData.description ? tokenData.description : '', tokenData.supply, tokenData.nft ? tokenData.nft : null);
+      console.log('txhex=', txhex);
+      resolve(txhex);
+    }
+    catch(err) {
+      console.log('caught err=', err, 'code=', err.code, 'message=', err.message);
+      reject(err);
+    }
   });
 };
 
-function transferTokenTx (mytokenid, mydestpubkey, amount, wif, inputsData, connectOptions) {
-  return new Promise((resolve, reject) => {
-    peers = new NspvPeerGroup(connectOptions ? connectOptions.params : params, connectOptions ? connectOptions.opts : opts);
-    peers.on('peer', (peer) => {
-      console.log('in event: connected to peer', peer.socket.remoteAddress)
-    });
-    // create connections to peers
-    peers.connect(async () => {
-      try {
-        // make cc token transfer tx
-        const txhex = await cctokens_transfer(wif, mytokenid, mydestpubkey, amount, inputsData);
-        console.log('transfer txhex=', txhex);
-        resolve(txhex);
-        peers.close();
-      }
-      catch(err) {
-        console.log('caught err=', err, 'code=', err.code, 'message=', err.message);
-        reject(err);
-        peers.close();
-      }
-    });
+function transferTokenTx (mytokenid, mydestpubkey, amount, wif, inputsData) {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // make cc token transfer tx
+      const txhex = await cctokens_transfer(wif, mytokenid, mydestpubkey, amount, inputsData);
+      console.log('transfer txhex=', txhex);
+      resolve(txhex);
+    }
+    catch(err) {
+      console.log('caught err=', err, 'code=', err.code, 'message=', err.message);
+      reject(err);
+    }
   });
 };
 
