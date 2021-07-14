@@ -38,6 +38,11 @@ class Login extends React.Component {
   render() {
     return(
       <div className="main">
+        <div className="app-logo">
+          <div className="box"></div>
+          <div className="circle"></div>
+          <img src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"></img>
+        </div>
         <div className="content login-form">
           <h4>Login</h4>
           <p>Enter your seed phrase or WIF key in the form below</p>
