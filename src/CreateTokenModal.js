@@ -15,6 +15,7 @@ class CreateTokenModal extends React.Component {
       isClosed: true,
       name: '',
       description: '',
+      nft: '',
       supply: 1,
       success: null,
       error: null,
@@ -66,7 +67,12 @@ class CreateTokenModal extends React.Component {
 
         rawtx = await TokensLib.createTokenTx(
           inputsData,
-          {
+          this.state.nft.length > 0 ? {
+            name: this.state.name, 
+            description: this.state.description,
+            supply: Number(this.state.supply),
+            nft: Buffer.from(this.state.nft).toString('hex'),
+          } : {
             name: this.state.name, 
             description: this.state.description,
             supply: Number(this.state.supply),
@@ -163,6 +169,14 @@ class CreateTokenModal extends React.Component {
                 placeholder="Token supply"
                 value={this.state.supply}
                 onChange={this.updateInput} / >
+              <textarea
+                rows="5"
+                cols="33"
+                name="nft"
+                placeholder="Token NFT data (optional)"
+                value={this.state.nft}
+                onChange={this.updateInput}>
+              </textarea>
               <button
                 type="button"
                 onClick={this.createNewToken}
