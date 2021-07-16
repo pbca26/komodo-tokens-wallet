@@ -251,3 +251,59 @@ strong {
     }
   }
 }
+
+.token-balance-block {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: left;
+  user-select: none;
+  
+  .token-tile {
+    float: left;
+    background: #fff;
+    border-radius: 5px;
+    color: #1f2640;
+    padding: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    width: 100px;
+    text-align: center;
+
+    .jdenticon {
+      padding-bottom: 5px;
+    }
+
+    &.active {
+      background: #37e39f;
+     
+      .jdenticon svg {
+        background: #fff;
+      }
+    }
+
+    &:hover {
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    img {
+      height: 35px;
+      width: 35px;
+      position: relative;
+      top: 6px;
+      left: 5px;
+    }
+
+    strong {
+      color: #1f2640;
+      padding-bottom: 3px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 80px;
+      display: block;
+    }
+  }
+}
