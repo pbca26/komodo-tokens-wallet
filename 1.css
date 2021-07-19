@@ -16111,9 +16111,318 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   .Modal .card .content {
     padding-top: 0; }
 
+body {
+  background: radial-gradient(farthest-side ellipse at 10% 0, #333867 20%, #17193b);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  min-height: 100vh;
+  padding: 50px 0 !important; }
+
 .main {
-  max-width: 400px;
-  margin: 50px auto; }
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  transform: translateY(25%);
+  background-color: rgba(18, 20, 43, 0.42);
+  box-shadow: 0 25px 20px -100px black, 0 0 15px black;
+  border: 0px solid transparent;
+  border-radius: 0.25rem;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem; }
+  .main.dashboard {
+    width: 80%;
+    height: 100%;
+    transform: none;
+    padding-bottom: 10px;
+    max-width: 1000px; }
+    .main.dashboard .content {
+      padding-left: 20px;
+      text-align: center; }
+    .main.dashboard strong {
+      color: #fff; }
+  .main .content {
+    padding-top: 40px; }
+    .main .content h4 {
+      color: #fff;
+      font-size: 2.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-weight: 700;
+      line-height: 3rem; }
+    .main .content.login-form {
+      text-align: center; }
+      .main .content.login-form .input-form {
+        padding-top: 30px; }
+        .main .content.login-form .input-form button {
+          margin-top: 30px; }
+
+.app-logo {
+  padding-top: 20px; }
+  .app-logo .box,
+  .app-logo .circle {
+    background: #fff;
+    width: 50px;
+    height: 50px;
+    position: absolute; }
+  .app-logo .circle {
+    border-radius: 50%;
+    margin-left: 25px; }
+  .app-logo img {
+    z-index: 10;
+    position: absolute;
+    height: 40px;
+    margin-left: 20px;
+    margin-top: 5px; }
+
+input[type="text"],
+input[type="password"],
+textarea,
+.dropdown-trigger button,
+.dropdown-trigger button:active,
+.dropdown-trigger button:focus {
+  border-style: solid;
+  border-width: 1px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  outline: none;
+  transition-duration: 0.15s;
+  transition-property: border, background-color, color, box-shadow;
+  transition-timing-function: ease-in;
+  width: 100%;
+  background-color: #1f2640;
+  border-color: #101426;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.4375rem 1.125rem;
+  letter-spacing: 1px; }
+  input[type="text"]:hover,
+  input[type="password"]:hover,
+  textarea:hover,
+  .dropdown-trigger button:hover,
+  .dropdown-trigger button:active:hover,
+  .dropdown-trigger button:focus:hover {
+    background-color: #151a30;
+    border-color: #101426; }
+
+.dropdown .dropdown-trigger {
+  margin: 0 !important;
+  min-width: 300px; }
+  .dropdown .dropdown-trigger.highlight button {
+    color: #fff; }
+  .dropdown .dropdown-trigger button {
+    justify-content: left;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.45); }
+    .dropdown .dropdown-trigger button:hover {
+      background-color: #151a30;
+      border-color: #101426;
+      color: #fff; }
+    .dropdown .dropdown-trigger button .icon {
+      font-size: 1rem;
+      position: absolute;
+      right: 18px; }
+
+.dropdown .dropdown-content {
+  min-width: 300px;
+  text-align: left;
+  border-style: solid;
+  border-width: 1px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  outline: none;
+  transition-duration: 0.15s;
+  transition-property: border, background-color, color, box-shadow;
+  transition-timing-function: ease-in;
+  width: 100%;
+  background-color: #1f2640;
+  border-color: #101426;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  letter-spacing: 1px;
+  padding: 0; }
+
+.dropdown .dropdown-item {
+  color: #fff; }
+  .dropdown .dropdown-item.disabled {
+    opacity: 0.6;
+    pointer-events: none; }
+
+textarea {
+  padding: 0.4375rem 1.125rem !important; }
+
+.input-form {
+  padding: 20px; }
+
+button {
+  letter-spacing: 0.4px;
+  transition: none 0s ease 0s;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  border-radius: 0.75rem;
+  width: 100%;
+  border-style: solid;
+  border-width: 0.0625rem;
+  text-transform: uppercase;
+  padding: 0.6875rem 1.125rem;
+  background-color: #00d68f;
+  border-color: #00d68f;
+  color: white; }
+
+strong {
+  color: #fff; }
+
+.address-block {
+  padding-top: 20px;
+  text-align: left; }
+
+.tokens-block {
+  padding-top: 40px;
+  text-align: left; }
+  .tokens-block h4 {
+    font-size: 1.5em !important;
+    line-height: 1rem !important;
+    margin-bottom: 5px;
+    margin-top: 50px; }
+
+.token-balance-block {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: left;
+  user-select: none; }
+  .token-balance-block .token-tile {
+    float: left;
+    background: #fff;
+    border-radius: 5px;
+    color: #1f2640;
+    padding: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    width: 100px;
+    text-align: center; }
+    .token-balance-block .token-tile .jdenticon {
+      padding-bottom: 5px; }
+    .token-balance-block .token-tile.active {
+      background: #37e39f; }
+      .token-balance-block .token-tile.active .jdenticon svg {
+        background: #fff; }
+    .token-balance-block .token-tile:hover {
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); }
+    .token-balance-block .token-tile img {
+      height: 35px;
+      width: 35px;
+      position: relative;
+      top: 6px;
+      left: 5px; }
+    .token-balance-block .token-tile strong {
+      color: #1f2640;
+      padding-bottom: 3px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 80px;
+      display: block; }
+
+.token-transactions-block {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 30px 20px 20px 0;
+  color: #14172c; }
+  .token-transactions-block .token-transaction-item {
+    border-bottom: solid 2px rgba(165, 167, 192, 0.1);
+    padding: 30px 10px 18px 10px; }
+    .token-transactions-block .token-transaction-item:last-child {
+      border-bottom: none; }
+    .token-transactions-block .token-transaction-item .transaction-left {
+      margin-left: 30px;
+      position: relative;
+      top: -6px; }
+      .token-transactions-block .token-transaction-item .transaction-left i {
+        position: absolute;
+        margin-left: -35px;
+        margin-top: 16px;
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 1.1rem; }
+        .token-transactions-block .token-transaction-item .transaction-left i.color-green {
+          color: #0cb975; }
+      .token-transactions-block .token-transaction-item .transaction-left .token-name {
+        position: absolute;
+        margin-top: -50px;
+        font-weight: 500;
+        margin-left: 62px; }
+      .token-transactions-block .token-transaction-item .transaction-left .transaction-time {
+        color: #7e7e80;
+        font-size: 0.9em;
+        margin-top: -28px;
+        margin-left: 62px; }
+    .token-transactions-block .token-transaction-item .transaction-right {
+      float: right;
+      height: 64px;
+      margin-top: -64px;
+      width: 300px; }
+      .token-transactions-block .token-transaction-item .transaction-right .transaction-address {
+        color: #7e7e80;
+        font-size: 0.92em;
+        top: 20px; }
+      .token-transactions-block .token-transaction-item .transaction-right .transaction-value {
+        font-size: 1.2rem;
+        font-weight: 500;
+        top: 10px; }
+      .token-transactions-block .token-transaction-item .transaction-right .transaction-address,
+      .token-transactions-block .token-transaction-item .transaction-right .transaction-value {
+        position: relative;
+        left: -40px; }
+      .token-transactions-block .token-transaction-item .transaction-right i {
+        float: right;
+        margin-top: -8px; }
+
+.create-new-trigger.disabled {
+  cursor: default;
+  opacity: 0.6; }
+
+.create-new-trigger i {
+  display: block;
+  margin-top: 33px; }
+
+.send-token-trigger {
+  background: #fff;
+  width: 100px;
+  border-radius: 5px;
+  padding: 7px 7px 9px 5px;
+  float: right;
+  margin-right: 40px;
+  margin-top: -50px;
+  text-align: center;
+  cursor: pointer;
+  color: #14172c; }
+  .send-token-trigger i {
+    font-size: 0.8rem;
+    margin-right: 10px; }
 
 .Modal-create-token input,
 .Modal-create-token textarea,
@@ -16121,59 +16430,73 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 .Modal-send-token input,
 .Modal-send-token textarea,
 .Modal-send-token .dropdown {
-  display: block;
-  margin-bottom: 10px;
-  padding: 5px; }
+  margin-bottom: 10px; }
+
+.Modal-create-token button,
+.Modal-send-token button {
+  margin-top: 20px; }
 
 .Modal-create-token .success,
-.Modal-create-token .error,
-.Modal-send-token .success,
-.Modal-send-token .error {
-  margin-top: 15px;
-  border: dashed 1px;
-  padding: 10px; }
-
-.create-token-btn,
-.send-token-btn {
-  padding: 5px;
-  margin-top: 15px;
-  border: solid 1px;
-  display: table;
-  cursor: pointer; }
-
-.Modal-send-token .pubkey-field {
-  width: 100%; }
-
-.dropdown-trigger button,
-.dropdown-trigger button:active,
-.dropdown-trigger button:focus {
-  outline: none;
-  width: 100%;
-  border-radius: 0; }
-
-.dropdown {
-  width: 50%; }
-  .dropdown .dropdown-menu {
-    height: 120px;
-    overflow-y: auto;
-    border: solid 1px #ccc; }
-  .dropdown .dropdown-trigger {
-    margin: 0 !important;
-    min-width: 300px; }
-    .dropdown .dropdown-trigger button {
-      justify-content: left;
-      text-transform: none; }
-      .dropdown .dropdown-trigger button .icon {
-        font-size: 1rem;
-        position: absolute;
-        right: 18px; }
-  .dropdown .dropdown-content {
-    min-width: 300px;
+.Modal-send-token .success {
+  margin-top: 30px; }
+  .Modal-create-token .success div,
+  .Modal-send-token .success div {
+    margin-bottom: 5px;
+    text-align: center; }
+  .Modal-create-token .success a,
+  .Modal-create-token .success a:hover,
+  .Modal-send-token .success a,
+  .Modal-send-token .success a:hover {
+    color: #37e39f; }
+  .Modal-create-token .success strong,
+  .Modal-send-token .success strong {
+    display: block;
+    padding-bottom: 2px; }
+  .Modal-create-token .success .txid-label,
+  .Modal-send-token .success .txid-label {
     text-align: left;
-    outline: none;
-    width: 100%;
-    padding: 0; }
-  .dropdown .dropdown-item.disabled {
-    opacity: 0.6;
-    pointer-events: none; }
+    margin-bottom: 5px; }
+
+.Modal-create-token .error,
+.Modal-send-token .error {
+  margin-top: 30px; }
+  .Modal-create-token .error > div,
+  .Modal-send-token .error > div {
+    background: #f46283;
+    padding: 10px; }
+  .Modal-create-token .error strong,
+  .Modal-send-token .error strong {
+    display: block;
+    padding-bottom: 5px; }
+
+.Modal-send-token .dropdown {
+  width: 100%; }
+  .Modal-send-token .dropdown .dropdown-content {
+    max-height: 175px;
+    overflow-y: auto; }
+  .Modal-send-token .dropdown .dropdown-balance {
+    float: right; }
+  .Modal-send-token .dropdown .dropdown-trigger .dropdown-balance {
+    margin-left: 20px; }
+
+.modal-content .card {
+  background: radial-gradient(farthest-side ellipse at 10% 0, #333867 20%, #17193b);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: 0 25px 20px -100px black, 0 0 15px black;
+  border: 0px solid transparent;
+  border-radius: 0.25rem;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem; }
+
+.logout-btn {
+  background: #fff;
+  padding: 10px 15px;
+  color: #14172c;
+  float: right;
+  cursor: pointer; }
 
