@@ -4,6 +4,7 @@ import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
 import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
 
+
 class SendTokenModal extends React.Component {
   state = this.initialState;
   
@@ -59,6 +60,8 @@ class SendTokenModal extends React.Component {
   }
 
   sendToken = async () => {
+    let inputsData, rawtx;
+
     if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
       this.setState({
         success: null,
@@ -156,7 +159,7 @@ class SendTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'send-token-btn') {
+        srcElement.className !== 'token-tile send-token-trigger') {
       this.setState({
         tokenDropdownOpen: false,
       });
@@ -173,11 +176,9 @@ class SendTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className="send-token-btn"
+          className="token-tile send-token-trigger"
           onClick={() => this.open()}>
-          <i
-            style={{'paddingRight': '5px'}} 
-            className="fa fa-paper-plane"></i>
+          <i className="fa fa-paper-plane"></i>
           Send
         </div>
         <Modal
@@ -185,7 +186,7 @@ class SendTokenModal extends React.Component {
           handleClose={() => this.close()}
           isCloseable={true}
           className="Modal-send-token">
-          <div>
+          <div className="create-token-form">
             <h4>Send token</h4>
             <p>Fill out the form below</p>
             <div className="input-form">
@@ -229,7 +230,7 @@ class SendTokenModal extends React.Component {
                 placeholder="Destination pubkey"
                 value={this.state.pubkey}
                 onChange={this.updateInput}
-                className="form-input pubkey-field" / >
+                className="form-input" / >
               <input
                 type="text"
                 name="amount"

@@ -15,8 +15,8 @@ class CreateTokenModal extends React.Component {
       isClosed: true,
       name: '',
       description: '',
+      supply: null,
       nft: '',
-      supply: 1,
       success: null,
       error: null,
     };
@@ -133,11 +133,9 @@ class CreateTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className="create-token-btn"
+          className={`token-tile create-new-trigger${!this.props.normalUtxos.length ? ' disabled' : ''}`}
           onClick={() => this.open()}>
-          <i
-            style={{'paddingRight': '5px'}}
-            className="fa fa-plus"></i>
+          <i className="fa fa-plus"></i>
           Create
         </div>
         <Modal
@@ -145,7 +143,7 @@ class CreateTokenModal extends React.Component {
           handleClose={() => this.close()}
           isCloseable={true}
           className="Modal-create-token">
-          <div>
+          <div className="create-token-form">
             <h4>New token</h4>
             <p>Provide token details in the form below</p>
             <div className="input-form">
@@ -154,7 +152,13 @@ class CreateTokenModal extends React.Component {
                 name="name"
                 placeholder="Token name"
                 value={this.state.name}
-                onChange={this.updateInput} / >
+                onChange={this.updateInput} />
+              <input
+                type="text"
+                name="supply"
+                placeholder="Token supply"
+                value={this.state.supply}
+                onChange={this.updateInput} />
               <textarea
                 rows="5"
                 cols="33"
@@ -163,12 +167,6 @@ class CreateTokenModal extends React.Component {
                 value={this.state.description}
                 onChange={this.updateInput}>
               </textarea>
-              <input
-                type="text"
-                name="supply"
-                placeholder="Token supply"
-                value={this.state.supply}
-                onChange={this.updateInput} / >
               <textarea
                 rows="5"
                 cols="33"

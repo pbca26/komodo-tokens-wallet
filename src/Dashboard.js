@@ -247,7 +247,7 @@ class Dashboard extends React.Component {
             <div style={{'paddingTop': '20px'}}>
               <strong>My CC address:</strong> {this.props.address.cc}
             </div>
-            <div style={{'paddingBottom': '10px'}}>
+            <div style={{'paddingTop': '20px'}}>
               <strong>My pubkey:</strong> {this.props.address.pubkey}
             </div>
           </div>
