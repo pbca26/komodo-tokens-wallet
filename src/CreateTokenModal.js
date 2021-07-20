@@ -71,7 +71,7 @@ class CreateTokenModal extends React.Component {
             name: this.state.name, 
             description: this.state.description,
             supply: Number(this.state.supply),
-            nft: Buffer.from(this.state.nft).toString('hex'),
+            nft: '00' + Buffer.from(this.state.nft).toString('hex'),
           } : {
             name: this.state.name, 
             description: this.state.description,
