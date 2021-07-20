@@ -16,12 +16,10 @@ class Dashboard extends React.Component {
 
   get initialState() {
     this.updateInput = this.updateInput.bind(this);
-    this.getWifKey = this.getWifKey.bind(this);
     this.setActiveToken = this.setActiveToken.bind(this);
     this.logout = this.logout.bind(this);
 
     return {
-      privKeyInput: 'lime lime',
       tokenList: [],
       tokenBalance: [],
       tokenTransactions: [],
@@ -51,18 +49,6 @@ class Dashboard extends React.Component {
     setTimeout(() => {
       console.warn('dashboard this.state', this.state);
     }, 100);
-  }
-
-  getWifKey() {
-    console.warn('getWifKey clicked');
-    const wif = TokensLib.keyToWif(this.state.privKeyInput);
-    const address = TokensLib.keyToCCAddress(wif, 'wif');
-    console.warn(address);
-
-    this.props.setKey({
-      wif,
-      address,
-    });
   }
 
   syncData = async () => {

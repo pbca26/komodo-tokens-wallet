@@ -1,5 +1,6 @@
 import React from 'react';
-import {hot} from 'react-hot-loader';
+import {hot} from 'react-hot-loader'
+import {version} from '../package.json';;
 import Login from './Login';
 import Dashboard from './Dashboard';
 import './app.scss'
@@ -18,6 +19,10 @@ class App extends React.Component {
         cc: '',
       },
     };
+  }
+
+  componentWillMount() {
+    document.title = `Komodo Tokens Wallet (v${version})`;
   }
 
   resetApp() {
