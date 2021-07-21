@@ -35,9 +35,11 @@ class App extends React.Component {
       address,
     });
 
-    setTimeout(() => {
-      console.warn('app this.state', this.state);
-    }, 100);
+    if (DEBUG) {
+      setTimeout(() => {
+        console.warn('app this.state', this.state);
+      }, 100);
+    }
   }
 
   render() {

@@ -34,9 +34,11 @@ class SendTokenModal extends React.Component {
       [e.target.name]: e.target.value,
     });
 
-    setTimeout(() => {
-      console.warn('login this.state', this.state);
-    }, 100);
+    if (DEBUG) {
+      setTimeout(() => {
+        console.warn('login this.state', this.state);
+      }, 100);
+    }
   }
 
   close() {
@@ -77,7 +79,9 @@ class SendTokenModal extends React.Component {
         },
         rawtx;
 
-        console.warn('send tx modal inputsData', inputsData);
+        if (DEBUG) {
+          console.warn('send tx modal inputsData', inputsData);
+        }
 
         try {
           rawtx = await TokensLib.transferTokenTx(
@@ -90,7 +94,9 @@ class SendTokenModal extends React.Component {
           });
         }
     
-        console.warn('send token rawtx', rawtx);
+        if (DEBUG) {
+          console.warn('send token rawtx', rawtx);
+        }
     
         if (rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
@@ -170,7 +176,6 @@ class SendTokenModal extends React.Component {
     const getTokenData = (tokenid) => {
       const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
       return tokenInfo;
-      console.warn(tokenInfo);
     }
 
     return (

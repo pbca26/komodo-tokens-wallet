@@ -31,9 +31,11 @@ class CreateTokenModal extends React.Component {
       [e.target.name]: e.target.value,
     });
 
-    setTimeout(() => {
-      console.warn('login this.state', this.state);
-    }, 100);
+    if (DEBUG) {
+      setTimeout(() => {
+        console.warn('login this.state', this.state);
+      }, 100);
+    }
   }
 
   close() {
@@ -63,7 +65,9 @@ class CreateTokenModal extends React.Component {
       try {
         const inputsData = txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
         
-        console.warn('create tx modal inputsData', inputsData);
+        if (DEBUG) {
+          console.warn('create tx modal inputsData', inputsData);
+        }
 
         rawtx = await TokensLib.createTokenTx(
           inputsData,
@@ -86,7 +90,9 @@ class CreateTokenModal extends React.Component {
         });
       }
 
-      console.warn('createNewToken rawtx', rawtx);
+      if (DEBUG) {
+        console.warn('createNewToken rawtx', rawtx);
+      }
 
       if (rawtx.substr(0, 2) === '04') {
         const {txid} = await Blockchain.broadcast(rawtx);
