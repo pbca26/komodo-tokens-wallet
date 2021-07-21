@@ -25,6 +25,7 @@ class Dashboard extends React.Component {
       tokenTransactions: [],
       normalUtxos: [],
       activeToken: null,
+      pristine: true,
     };
   }
 
@@ -66,6 +67,7 @@ class Dashboard extends React.Component {
       tokenBalance: tokenBalance.balance,
       tokenTransactions: tokenTransactions.txs,
       normalUtxos,
+      pristine: false,
     });
 
     if (window.DEBUG) {
@@ -146,6 +148,17 @@ class Dashboard extends React.Component {
       </React.Fragment>
     );
   }
+
+  getMaxSpendNormalUtxos() {
+    const normalUtxos = this.state.normalUtxos;
+    let maxSpend = -20000;
+
+    for (let i = 0; i < normalUtxos.length; i++) {
+      maxSpend += normalUtxos[i].satoshis;
+    }
+
+    return maxSpend < 0 ? 0 : maxSpend;
+  };
 
   renderTransactions() {
     let transactions = this.state.tokenTransactions;
@@ -252,8 +265,11 @@ class Dashboard extends React.Component {
               </React.Fragment>
             }
             {this.renderTokens()}
-            {!this.state.normalUtxos.length &&
-              <div>Please make a deposit to your normal address in order to create new token</div>
+            {this.getMaxSpendNormalUtxos() === 0 &&
+             !this.state.pristine &&
+              <div>
+                <strong>Please make a deposit (min of 0.00002 {coin}) to your normal address in order to create or send tokens</strong>
+              </div>
             }
             {this.renderTransactions()}
           </div>
