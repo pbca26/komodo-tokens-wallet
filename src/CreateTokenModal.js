@@ -171,7 +171,7 @@ class CreateTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className={`token-tile create-new-trigger${!this.props.normalUtxos.length ? ' disabled' : ''}`}
+          className={`token-tile create-new-trigger${this.getMaxSupply() === -9 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-plus"></i>
           Create

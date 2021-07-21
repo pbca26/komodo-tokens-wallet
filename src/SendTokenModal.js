@@ -172,6 +172,19 @@ class SendTokenModal extends React.Component {
     }
   }
 
+  getMaxSpendNormalUtxos() {
+    const normalUtxos = this.props.normalUtxos;
+    let maxSpend = -10000;
+
+    for (let i = 0; i < normalUtxos.length; i++) {
+      maxSpend += normalUtxos[i].satoshis;
+    }
+
+    console.warn('maxSpend', maxSpend);
+
+    return maxSpend < 0 ? 0 : maxSpend;
+  };
+
   render() {
     const getTokenData = (tokenid) => {
       const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
@@ -182,7 +195,8 @@ class SendTokenModal extends React.Component {
       <React.Fragment>
         <div
           className="token-tile send-token-trigger"
-          onClick={() => this.open()}>
+          onClick={() => this.open()}
+          disabled={this.getMaxSpendNormalUtxos() === 0}>
           <i className="fa fa-paper-plane"></i>
           Send
         </div>
@@ -246,7 +260,12 @@ class SendTokenModal extends React.Component {
               <button
                 type="button"
                 onClick={this.sendToken}
-                disabled={!this.state.token || !this.state.pubkey || !this.state.amount}
+                disabled={
+                  !this.state.token ||
+                  !this.state.pubkey ||
+                  !this.state.amount ||
+                  this.getMaxSpendNormalUtxos() === 0
+                }
                 className="form-input">Send</button>
               {this.state.success &&
                 <div className="success">
