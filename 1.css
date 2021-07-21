@@ -16293,8 +16293,8 @@ button {
     opacity: 0.6;
     pointer-events: none; }
 
-.send-token-trigger,
-.create-new-trigger {
+.send-token-trigger.disabled,
+.create-new-trigger.disabled {
   opacity: 0.6;
   pointer-events: none; }
 
