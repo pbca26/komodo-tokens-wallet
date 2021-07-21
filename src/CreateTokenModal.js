@@ -23,12 +23,44 @@ class CreateTokenModal extends React.Component {
   }
 
   updateInput(e) {
+    const regexUnicodeCheckPattern = new RegExp(/^[ -~]+$/);
+    let error;
+
     if (e.target.name === 'supply') {
       e.target.value = Number(e.target.value.replace(/[^0-9.]/g, ''));
     }
 
+    if (
+      e.target.name === 'name' &&
+      !regexUnicodeCheckPattern.test(e.target.value)
+    ) {
+      error: 'Non-unicode characters are not allowed in name';
+    } else if (
+      e.target.name === 'description' &&
+      !regexUnicodeCheckPattern.test(e.target.value)) {
+      error: 'Non-unicode characters are not allowed in description';
+    } else if (
+      e.target.name === 'nft' &&
+      !regexUnicodeCheckPattern.test(e.target.value)
+    ) {
+      error: 'Non-unicode characters are not allowed in NFT data';
+    } else if (
+      e.target.name === 'name' &&
+      e.target.value.length > 256) {
+      error = 'Name can\'t exceed 256 characters in length';
+    } else if (
+      e.target.name === 'description' &&
+      e.target.value.length > 512) {
+      error = 'Description can\'t exceed 512 characters in length';
+    } else if (
+      e.target.name === 'nft' &&
+      e.target.value.length > 1024) {
+      error = 'NFT data can\'t exceed 1024 characters in length';
+    }
+
     this.setState({
       [e.target.name]: e.target.value,
+      error,
     });
 
     if (DEBUG) {
@@ -54,33 +86,9 @@ class CreateTokenModal extends React.Component {
   }
 
   createNewToken = async () => {
-    const regexUnicodeCheckPattern = new RegExp(/^[ -~]+$/);
     let rawtx;
 
-    if (
-      this.state.name &&
-      !regexUnicodeCheckPattern.test(this.state.name)
-    ) {
-      this.setState({
-        success: null,
-        error: 'Non-unicode characters are not allowed in name',
-      });
-    } else if (
-      this.state.description &&
-      !regexUnicodeCheckPattern.test(this.state.description)) {
-      this.setState({
-        success: null,
-        error: 'Non-unicode characters are not allowed in description',
-      });
-    } else if (
-      this.state.nft &&
-      !regexUnicodeCheckPattern.test(this.state.nft)
-    ) {
-      this.setState({
-        success: null,
-        error: 'Non-unicode characters are not allowed in NFT data',
-      });
-    } else if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
+    if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
       this.setState({
         success: null,
         error: 'Supply must be between 1 and ' + this.getMaxSupply(),
