@@ -63,7 +63,7 @@ class CreateTokenModal extends React.Component {
       error,
     });
 
-    if (DEBUG) {
+    if (window.DEBUG) {
       setTimeout(() => {
         console.warn('login this.state', this.state);
       }, 100);
@@ -97,7 +97,7 @@ class CreateTokenModal extends React.Component {
       try {
         const inputsData = txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
         
-        if (DEBUG) {
+        if (window.DEBUG) {
           console.warn('create tx modal inputsData', inputsData);
         }
 
@@ -122,7 +122,7 @@ class CreateTokenModal extends React.Component {
         });
       }
 
-      if (DEBUG) {
+      if (window.DEBUG) {
         console.warn('createNewToken rawtx', rawtx);
       }
 
@@ -171,7 +171,7 @@ class CreateTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className={`token-tile create-new-trigger${this.getMaxSupply() === -9 ? ' disabled' : ''}`}
+          className={`token-tile create-new-trigger${this.getMaxSupply() === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-plus"></i>
           Create
@@ -216,7 +216,11 @@ class CreateTokenModal extends React.Component {
               <button
                 type="button"
                 onClick={this.createNewToken}
-                disabled={!this.state.name || !this.state.supply}>Create</button>
+                disabled={
+                  !this.state.name ||
+                  !this.state.supply ||
+                  this.getMaxSupply() === 0
+                }>Create</button>
               {this.state.success &&
                 <div className="success">
                   Token created!

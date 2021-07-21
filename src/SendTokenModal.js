@@ -34,7 +34,7 @@ class SendTokenModal extends React.Component {
       [e.target.name]: e.target.value,
     });
 
-    if (DEBUG) {
+    if (window.DEBUG) {
       setTimeout(() => {
         console.warn('login this.state', this.state);
       }, 100);
@@ -79,7 +79,7 @@ class SendTokenModal extends React.Component {
         },
         rawtx;
 
-        if (DEBUG) {
+        if (window.DEBUG) {
           console.warn('send tx modal inputsData', inputsData);
         }
 
@@ -94,7 +94,7 @@ class SendTokenModal extends React.Component {
           });
         }
     
-        if (DEBUG) {
+        if (window.DEBUG) {
           console.warn('send token rawtx', rawtx);
         }
     

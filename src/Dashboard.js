@@ -46,7 +46,7 @@ class Dashboard extends React.Component {
       [e.target.name]: e.target.value,
     });
 
-    if (DEBUG) {
+    if (window.DEBUG) {
       setTimeout(() => {
         console.warn('dashboard this.state', this.state);
       }, 100);
@@ -68,7 +68,7 @@ class Dashboard extends React.Component {
       normalUtxos,
     });
 
-    if (DEBUG) {
+    if (window.DEBUG) {
       setTimeout(() => {
         console.warn('data synced', this.state);
       }, 100);

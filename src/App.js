@@ -5,6 +5,14 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import './app.scss'
 
+window.DEBUG = false;
+
+try {
+  if (DEBUG) {
+    window.DEBUG = true;
+  }
+} catch (e) {}
+
 class App extends React.Component {
   state = this.initialState;
 
@@ -35,7 +43,7 @@ class App extends React.Component {
       address,
     });
 
-    if (DEBUG) {
+    if (window.DEBUG) {
       setTimeout(() => {
         console.warn('app this.state', this.state);
       }, 100);
