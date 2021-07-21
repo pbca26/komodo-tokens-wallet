@@ -160,7 +160,10 @@ class Dashboard extends React.Component {
     for (let i = 0; i < transactions.length; i++) {
       for (let j = 0; j < transactions[i].txs.length; j++) {
         if (!this.state.activeToken || (this.state.activeToken && this.state.activeToken === transactions[i].tokenId)) {
-          if (transactions[i].txs[j].height === -1) transactions[i].txs[j].height = 0;
+          if (transactions[i].txs[j].height === -1 || transactions[i].txs[j].height === 0) {
+            transactions[i].txs[j].height = 0;
+            transactions[i].txs[j].time = Math.floor(Date.now() / 1000);
+          }
 
           transactionsMerge.push({
             ...transactions[i].txs[j],
