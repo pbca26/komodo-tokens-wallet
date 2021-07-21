@@ -180,8 +180,6 @@ class SendTokenModal extends React.Component {
       maxSpend += normalUtxos[i].satoshis;
     }
 
-    console.warn('maxSpend', maxSpend);
-
     return maxSpend < 0 ? 0 : maxSpend;
   };
 
@@ -194,9 +192,8 @@ class SendTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className="token-tile send-token-trigger"
-          onClick={() => this.open()}
-          disabled={this.getMaxSpendNormalUtxos() === 0}>
+          className={`token-tile send-token-trigger${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          onClick={() => this.open()}>
           <i className="fa fa-paper-plane"></i>
           Send
         </div>

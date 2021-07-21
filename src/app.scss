@@ -225,8 +225,10 @@ button {
 
 .send-token-trigger,
 .create-new-trigger {
-  opacity: 0.6;
-  pointer-events: none;
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
 }
 
 strong {
