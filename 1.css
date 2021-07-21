@@ -16289,6 +16289,14 @@ button {
   background-color: #00d68f;
   border-color: #00d68f;
   color: white; }
+  button.disabled, button:disabled {
+    opacity: 0.6;
+    pointer-events: none; }
+
+.send-token-trigger,
+.create-new-trigger {
+  opacity: 0.6;
+  pointer-events: none; }
 
 strong {
   color: #fff; }
