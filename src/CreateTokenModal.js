@@ -127,7 +127,7 @@ class CreateTokenModal extends React.Component {
       }
 
       if (rawtx.substr(0, 2) === '04') {
-        //const {txid} = await Blockchain.broadcast(rawtx);
+        const {txid} = await Blockchain.broadcast(rawtx);
 
         if (!txid || txid.length !== 64) {
           this.setState({
