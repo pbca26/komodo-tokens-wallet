@@ -15,7 +15,7 @@ class CreateTokenModal extends React.Component {
       isClosed: true,
       name: '',
       description: '',
-      supply: null,
+      supply: '',
       nft: '',
       success: null,
       error: null,
@@ -27,7 +27,7 @@ class CreateTokenModal extends React.Component {
     let error;
 
     if (e.target.name === 'supply') {
-      e.target.value = Number(e.target.value.replace(/[^0-9.]/g, ''));
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
     }
 
     if (

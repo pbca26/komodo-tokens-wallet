@@ -18,7 +18,7 @@ class SendTokenModal extends React.Component {
       isClosed: true,
       token: null,
       pubkey: '',
-      amount: 0,
+      amount: '',
       success: null,
       error: null,
       tokenDropdownOpen: false,
@@ -27,7 +27,7 @@ class SendTokenModal extends React.Component {
 
   updateInput(e) {
     if (e.target.name === 'amount') {
-      e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
     }
 
     this.setState({
