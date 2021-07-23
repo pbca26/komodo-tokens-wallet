@@ -16257,7 +16257,16 @@ textarea,
   color: #fff; }
   .dropdown .dropdown-item.disabled {
     opacity: 0.6;
-    pointer-events: none; }
+    cursor: default; }
+    .dropdown .dropdown-item.disabled:hover {
+      background-color: #1f2640;
+      border-color: #101426;
+      color: white; }
+  .dropdown .dropdown-item i {
+    float: right;
+    font-size: 14px;
+    position: relative;
+    top: 3px; }
 
 textarea {
   padding: 0.4375rem 1.125rem !important; }
