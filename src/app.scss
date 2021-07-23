@@ -178,7 +178,20 @@ textarea,
 
     &.disabled {
       opacity: 0.6;
-      pointer-events: none;
+      cursor: default;
+
+      &:hover {
+        background-color: #1f2640;
+        border-color: rgb(16, 20, 38);
+        color: rgb(255, 255, 255);
+      }
+    }
+
+    i {
+      float: right;
+      font-size: 14px;
+      position: relative;
+      top: 3px;
     }
   }
 }

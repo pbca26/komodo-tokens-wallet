@@ -1,6 +1,6 @@
 {
   "name": "komodo-tokens-wallet",
-  "version": "0.1.3a",
+  "version": "0.1.4",
   "description": "Komodo Tokens Web Wallet (CryptoConditions)",
   "main": "index.js",
   "scripts": {

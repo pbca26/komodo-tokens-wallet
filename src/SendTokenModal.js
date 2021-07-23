@@ -229,12 +229,19 @@ class SendTokenModal extends React.Component {
                       <a
                         key={`send-token-${tokenBalanceItem.tokenId}`}
                         className={`dropdown-item${getTokenData(tokenBalanceItem.tokenId).height === -1 ? ' disabled' : ''}`}
-                        onClick={() => this.setToken({
+                        title={getTokenData(tokenBalanceItem.tokenId).height === -1 ? `Pending confirmation` : ''}
+                        onClick={getTokenData(tokenBalanceItem.tokenId).height === -1 ? null : () => this.setToken({
                           balance: tokenBalanceItem.balance,
                           tokenId: tokenBalanceItem.tokenId,
                           name: getTokenData(tokenBalanceItem.tokenId).name
                         })}>
-                        {getTokenData(tokenBalanceItem.tokenId).name} <span className="dropdown-balance">{tokenBalanceItem.balance}</span>
+                        {getTokenData(tokenBalanceItem.tokenId).name}
+                        {getTokenData(tokenBalanceItem.tokenId).height > 0 &&
+                          <span className="dropdown-balance">{tokenBalanceItem.balance}</span>
+                        }
+                        {getTokenData(tokenBalanceItem.tokenId).height === -1 &&
+                          <i className="fa fa-spinner"></i>
+                        }
                       </a>
                     ))}
                   </div>
