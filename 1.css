@@ -16517,3 +16517,10 @@ strong {
   float: right;
   cursor: pointer; }
 
+.faucet-btn {
+  background: #fff;
+  padding: 3px 5px;
+  color: #14172c;
+  cursor: pointer;
+  margin-left: 10px; }
+
