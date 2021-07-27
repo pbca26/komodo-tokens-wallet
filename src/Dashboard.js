@@ -6,7 +6,7 @@ import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import CreateTokenModal from './CreateTokenModal';
 import SendTokenModal from './SendTokenModal';
-import {coin, explorerApiUrl} from './constants';
+import {coin, explorerApiUrl, faucetURL} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
 let syncTimeoutRef;
@@ -249,6 +249,10 @@ class Dashboard extends React.Component {
           <div className="address-block">
             <div>
               <strong>My Normal address:</strong> {this.props.address.normal}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${faucetURL}${this.props.address.normal}`}><i className="fa fa-faucet faucet-btn"></i></a>
             </div>
             <div style={{'paddingTop': '20px'}}>
               <strong>My CC address:</strong> {this.props.address.cc}
