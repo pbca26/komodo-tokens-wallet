@@ -1,11 +1,11 @@
 {
   "name": "komodo-tokens-wallet",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Komodo Tokens Web Wallet (CryptoConditions)",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server --define DEBUG",
+    "build": "webpack --config webpack.config.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },

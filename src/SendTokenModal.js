@@ -98,7 +98,7 @@ class SendTokenModal extends React.Component {
           console.warn('send token rawtx', rawtx);
         }
     
-        if (rawtx.substr(0, 2) === '04') {
+        if (rawtx && rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
     
           if (!txid || txid.length !== 64) {
