@@ -16457,6 +16457,10 @@ strong {
 .Modal-send-token button {
   margin-top: 20px; }
 
+.Modal-create-token textarea,
+.Modal-send-token textarea {
+  resize: none; }
+
 .Modal-create-token .success,
 .Modal-send-token .success {
   margin-top: 30px; }
