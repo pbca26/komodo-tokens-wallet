@@ -517,3 +517,10 @@ strong {
   cursor: pointer;
   margin-left: 10px;
 }
+
+.app-version {
+  position: absolute;
+  top: 0;
+  opacity: 0.6;
+  font-size: 0.9em;
+}

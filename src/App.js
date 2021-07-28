@@ -26,11 +26,15 @@ class App extends React.Component {
         normal: '',
         cc: '',
       },
+      appVersion: null,
     };
   }
 
   componentWillMount() {
     document.title = `Komodo Tokens Wallet (v${version})`;
+    this.setState({
+      appVersion: version,
+    });
   }
 
   resetApp() {
@@ -53,6 +57,9 @@ class App extends React.Component {
   render() {
     return(
       <React.Fragment>
+        {this.state.appVersion &&
+          <div className="app-version">v{this.state.appVersion}</div>
+        }
         {!this.state.wif &&
           <Login setKey={this.setKey} />
         }
