@@ -16387,6 +16387,10 @@ strong {
         font-size: 1.1rem; }
         .token-transactions-block .token-transaction-item .transaction-left i.color-green {
           color: #0cb975; }
+      .token-transactions-block .token-transaction-item .transaction-left .transaction-unconfirmed {
+        margin-top: 0;
+        margin-left: 12px;
+        font-size: 1em; }
       .token-transactions-block .token-transaction-item .transaction-left .token-name {
         position: absolute;
         margin-top: -50px;
