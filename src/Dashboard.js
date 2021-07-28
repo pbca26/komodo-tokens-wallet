@@ -208,6 +208,11 @@ class Dashboard extends React.Component {
             </div>
             <div className="token-name">
               {getTokenData(transactions[i].tokenid).name}
+              {transactions[i].height < 1 &&
+                <i
+                  className="fa fa-spinner transaction-unconfirmed"
+                  title="Transaction is pending confirmation"></i>
+              }
             </div>
             <div className="transaction-time">
               {secondsToString(transactions[i].time)}

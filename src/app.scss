@@ -352,6 +352,11 @@ strong {
           color: #0cb975;
         }
       }
+      .transaction-unconfirmed {
+        margin-top: 0;
+        margin-left: 12px;
+        font-size: 1em;
+      }
       .token-name {
         position: absolute;
         margin-top: -50px;
