@@ -62,8 +62,6 @@ class SendTokenModal extends React.Component {
   }
 
   sendToken = async () => {
-    let inputsData, rawtx;
-
     if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
       this.setState({
         success: null,
