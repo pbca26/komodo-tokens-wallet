@@ -109,6 +109,7 @@ class SendTokenModal extends React.Component {
               success: txid,
               error: null,
               pubkey: '',
+              token: null,
               amount: 0,
               tokenDropdownOpen: false,
             });
