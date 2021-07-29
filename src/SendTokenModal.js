@@ -20,6 +20,7 @@ class SendTokenModal extends React.Component {
       pubkey: '',
       amount: '',
       success: null,
+      txid: null,
       error: null,
       tokenDropdownOpen: false,
     };
@@ -65,6 +66,7 @@ class SendTokenModal extends React.Component {
     if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
       this.setState({
         success: null,
+        txid: null,
         error: 'Amount must be between 1 and ' + this.state.token.balance,
       });
     } else {
@@ -88,6 +90,7 @@ class SendTokenModal extends React.Component {
         } catch (e) {
           this.setState({
             success: null,
+            txid: null,
             error: e.message,
           });
         }
@@ -102,15 +105,17 @@ class SendTokenModal extends React.Component {
           if (!txid || txid.length !== 64) {
             this.setState({
               success: null,
+              txid: null,
               error: 'Unable to broadcast transaction!',
             });
           } else {
             this.setState({
-              success: txid,
+              success: `${explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${coin}`,
+              txid,
               error: null,
               pubkey: '',
               token: null,
-              amount: 0,
+              amount: '',
               tokenDropdownOpen: false,
             });
             setTimeout(() => {
@@ -120,12 +125,14 @@ class SendTokenModal extends React.Component {
         } else {
           this.setState({
             success: null,
+            txid: null,
             error: 'Unable to build transaction!',
           });
         }
       } catch (e) {
         this.setState({
           success: null,
+          txid: null,
           error: e.message,
         });
       }
@@ -274,10 +281,10 @@ class SendTokenModal extends React.Component {
                 <div className="success">
                   Token sent!
                   <div className="txid-label">
-                    <strong>Transaction ID:</strong> {this.state.success}
+                    <strong>Transaction ID:</strong> {this.state.txid}
                   </div>
                   <a
-                    href={`${explorerUrl}/${this.state.token.tokenId}/transactions/${this.state.success}/${coin}`}
+                    href={this.state.success}
                     target="_blank">Open on explorer</a>
                 </div>
               }

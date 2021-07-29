@@ -140,7 +140,7 @@ class CreateTokenModal extends React.Component {
             error: null,
             name: '',
             description: '',
-            supply: 0,
+            supply: '',
           });
 
           setTimeout(() => {
