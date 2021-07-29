@@ -35,18 +35,18 @@ class CreateTokenModal extends React.Component {
       e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)
     ) {
-      error = 'Non-unicode characters are not allowed in name';
+      error = 'Non-unicode characters are not allowed in token name';
     } else if (
       e.target.name === 'description' &&
       e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)) {
-      error = 'Non-unicode characters are not allowed in description';
+      error = 'Non-unicode characters are not allowed in token description';
     } else if (
       e.target.name === 'nft' &&
       e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)
     ) {
-      error = 'Non-unicode characters are not allowed in NFT data';
+      error = 'Non-unicode characters are not allowed in token NFT data';
     } else if (
       e.target.name === 'name' &&
       e.target.value.length &&
@@ -56,12 +56,12 @@ class CreateTokenModal extends React.Component {
       e.target.name === 'description' &&
       e.target.value.length &&
       e.target.value.length > 512) {
-      error = 'Description can\'t exceed 512 characters in length';
+      error = 'Token description can\'t exceed 512 characters in length';
     } else if (
       e.target.name === 'nft' &&
       e.target.value.length &&
       e.target.value.length > 1024) {
-      error = 'NFT data can\'t exceed 1024 characters in length';
+      error = 'Token NFT data can\'t exceed 1024 characters in length';
     }
 
     this.setState({
@@ -98,7 +98,7 @@ class CreateTokenModal extends React.Component {
     if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
       this.setState({
         success: null,
-        error: 'Supply must be between 1 and ' + this.getMaxSupply(),
+        error: 'Token supply must be between 1 and ' + this.getMaxSupply(),
       });
     } else {
       try {
