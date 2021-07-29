@@ -12,10 +12,12 @@ const Modal = ({
   <div className={`Modal modal ${show ? 'is-active' : ''}${className ? ' ' + className : ''}`}>
     <div onClick={() => isCloseable && handleClose && handleClose()}>
       <div className="modal-background"></div>
-      <button className={`modal-close is-large ${!isCloseable ? 'is-invisible' : ''}`}></button>
     </div>
     <div className="modal-content">
       <div className="card">
+        <button
+          onClick={() => isCloseable && handleClose && handleClose()}
+          className={`modal-close is-large ${!isCloseable ? 'is-invisible' : ''}`}></button>
         <div className="card-content">
           <div className="content">
             {children}
