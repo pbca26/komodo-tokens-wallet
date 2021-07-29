@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
-import {coin, explorerApiUrl, explorerUrl} from './constants';
+import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
@@ -13,26 +13,68 @@ class CreateTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      name: 'jsTOKEN1',
-      description: 'Testing JS tokens lib',
-      supply: 10,
+      name: '',
+      description: '',
+      supply: '',
+      nft: '',
       success: null,
       error: null,
     };
   }
 
   updateInput(e) {
+    const regexUnicodeCheckPattern = new RegExp(/^[ -~]+$/);
+    let error;
+
     if (e.target.name === 'supply') {
-      e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    }
+
+    if (
+      e.target.name === 'name' &&
+      e.target.value.length &&
+      !regexUnicodeCheckPattern.test(e.target.value)
+    ) {
+      error = 'Non-unicode characters are not allowed in token name';
+    } else if (
+      e.target.name === 'description' &&
+      e.target.value.length &&
+      !regexUnicodeCheckPattern.test(e.target.value)) {
+      error = 'Non-unicode characters are not allowed in token description';
+    } else if (
+      e.target.name === 'nft' &&
+      e.target.value.length &&
+      !regexUnicodeCheckPattern.test(e.target.value)
+    ) {
+      error = 'Non-unicode characters are not allowed in token NFT data';
+    } else if (
+      e.target.name === 'name' &&
+      e.target.value.length &&
+      e.target.value.length > 256) {
+      error = 'Name can\'t exceed 256 characters in length';
+    } else if (
+      e.target.name === 'description' &&
+      e.target.value.length &&
+      e.target.value.length > 512) {
+      error = 'Token description can\'t exceed 512 characters in length';
+    } else if (
+      e.target.name === 'nft' &&
+      e.target.value.length &&
+      e.target.value.length > 1024) {
+      error = 'Token NFT data can\'t exceed 1024 characters in length';
     }
 
     this.setState({
       [e.target.name]: e.target.value,
+      error,
+      success: null,
     });
 
-    setTimeout(() => {
-      console.warn('login this.state', this.state);
-    }, 100);
+    if (window.DEBUG) {
+      setTimeout(() => {
+        console.warn('login this.state', this.state);
+      }, 100);
+    }
   }
 
   close() {
@@ -56,15 +98,30 @@ class CreateTokenModal extends React.Component {
     if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
       this.setState({
         success: null,
-        error: 'Supply must be between 1 and ' + this.getMaxSupply(),
+        error: 'Token supply must be between 1 and ' + this.getMaxSupply(),
       });
     } else {
       try {
-        rawtx = await TokensLib.createTokenTx({
-          name: this.state.name, 
-          description: this.state.description,
-          supply: Number(this.state.supply),
-        }, this.props.wif);
+        const inputsData = txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+        
+        if (window.DEBUG) {
+          console.warn('create tx modal inputsData', inputsData);
+        }
+
+        rawtx = await TokensLib.createTokenTx(
+          inputsData,
+          this.state.nft.length > 0 ? {
+            name: this.state.name, 
+            description: this.state.description,
+            supply: Number(this.state.supply),
+            nft: '00' + Buffer.from(this.state.nft).toString('hex'),
+          } : {
+            name: this.state.name, 
+            description: this.state.description,
+            supply: Number(this.state.supply),
+          },
+          this.props.wif
+        );
       } catch (e) {
         this.setState({
           success: null,
@@ -72,9 +129,11 @@ class CreateTokenModal extends React.Component {
         });
       }
 
-      console.warn('createNewToken rawtx', rawtx);
+      if (window.DEBUG) {
+        console.warn('createNewToken rawtx', rawtx);
+      }
 
-      if (rawtx.substr(0, 2) === '04') {
+      if (rawtx && rawtx.substr(0, 2) === '04') {
         const {txid} = await Blockchain.broadcast(rawtx);
 
         if (!txid || txid.length !== 64) {
@@ -88,7 +147,7 @@ class CreateTokenModal extends React.Component {
             error: null,
             name: '',
             description: '',
-            supply: 0,
+            supply: '',
           });
 
           setTimeout(() => {
@@ -119,11 +178,9 @@ class CreateTokenModal extends React.Component {
     return (
       <React.Fragment>
         <div
-          className="create-token-btn"
+          className={`token-tile create-new-trigger${this.getMaxSupply() === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
-          <i
-            style={{'paddingRight': '5px'}}
-            className="fa fa-plus"></i>
+          <i className="fa fa-plus"></i>
           Create
         </div>
         <Modal
@@ -131,7 +188,7 @@ class CreateTokenModal extends React.Component {
           handleClose={() => this.close()}
           isCloseable={true}
           className="Modal-create-token">
-          <div>
+          <div className="create-token-form">
             <h4>New token</h4>
             <p>Provide token details in the form below</p>
             <div className="input-form">
@@ -140,7 +197,13 @@ class CreateTokenModal extends React.Component {
                 name="name"
                 placeholder="Token name"
                 value={this.state.name}
-                onChange={this.updateInput} / >
+                onChange={this.updateInput} />
+              <input
+                type="text"
+                name="supply"
+                placeholder="Token supply"
+                value={this.state.supply}
+                onChange={this.updateInput} />
               <textarea
                 rows="5"
                 cols="33"
@@ -149,16 +212,22 @@ class CreateTokenModal extends React.Component {
                 value={this.state.description}
                 onChange={this.updateInput}>
               </textarea>
-              <input
-                type="text"
-                name="supply"
-                placeholder="Token supply"
-                value={this.state.supply}
-                onChange={this.updateInput} / >
+              <textarea
+                rows="5"
+                cols="33"
+                name="nft"
+                placeholder="Token NFT data (optional)"
+                value={this.state.nft}
+                onChange={this.updateInput}>
+              </textarea>
               <button
                 type="button"
                 onClick={this.createNewToken}
-                disabled={!this.state.name || !this.state.supply}>Create</button>
+                disabled={
+                  !this.state.name ||
+                  !this.state.supply ||
+                  this.getMaxSupply() === 0
+                }>Create</button>
               {this.state.success &&
                 <div className="success">
                   Token created!

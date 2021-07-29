@@ -1,28 +1,535 @@
+body {
+  background: radial-gradient(farthest-side ellipse at 10% 0,#333867 20%,#17193b);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: rgb(255, 255, 255);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  min-height: 100vh;
+  padding: 50px 0 !important;
+}
+
 .main {
-  max-width: 400px;
-  margin: 50px auto;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  transform: translateY(25%);
+  background-color: rgba(18,20,43,.42);
+  box-shadow: 0 25px 20px -100px rgba(0, 0, 0, 10%), 0 0 15px rgba(0, 0, 0, 6%);
+  border: 0px solid transparent;
+  border-radius: 0.25rem;
+  color: rgb(255, 255, 255);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+
+  &.dashboard {
+    width: 80%;
+    height: 100%;
+    transform: none;
+    padding-bottom: 10px;
+    max-width: 1000px;
+
+    .content {
+      padding-left: 20px;
+      text-align: center;
+    }
+    strong {
+      color: #fff;
+    }
+  }
+  
+  .content {
+    padding-top: 40px;
+
+    h4 {
+      color: #fff;
+      font-size: 2.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-weight: 700;
+      line-height: 3rem;
+    }
+
+    &.login-form {
+      text-align: center;
+
+      .input-form {
+        padding-top: 30px;
+
+        button {
+          margin-top: 30px;
+        }
+      }
+    }
+  }
 }
 
-.Modal-create-token {
-  input,
-  textarea {
-    display: block;
-    margin-bottom: 10px;
-    padding: 5px;
+.app-logo {
+  padding-top: 20px;
+
+  .box,
+  .circle {
+    background: #fff;
+    width: 50px;
+    height: 50px;
+    position: absolute;
   }
 
-  .success,
-  .error {
-    margin-top: 15px;
-    border: dashed 1px;
-    padding: 10px;
+  .circle {
+    border-radius: 50%;
+    margin-left: 25px;
+  }
+
+  img {
+    z-index: 10;
+    position: absolute;
+    height: 40px;
+    margin-left: 20px;
+    margin-top: 5px;
   }
 }
 
-.create-token-btn {
-  padding: 5px;
-  margin-top: 15px;
-  border: solid 1px;
-  display: table;
+input[type="text"],
+input[type="password"],
+textarea,
+.dropdown-trigger button,
+.dropdown-trigger button:active,
+.dropdown-trigger button:focus {
+  border-style: solid;
+  border-width: 1px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  outline: none;
+  transition-duration: 0.15s;
+  transition-property: border, background-color, color, box-shadow;
+  transition-timing-function: ease-in;
+  width: 100%;
+  background-color: #1f2640;
+  border-color: rgb(16, 20, 38);
+  color: rgb(255, 255, 255);
+  border-radius: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.4375rem 1.125rem;
+  letter-spacing: 1px;
+
+  &:hover {
+    background-color: rgb(21, 26, 48);
+    border-color: rgb(16, 20, 38);
+  }
+}
+
+.dropdown {
+  .dropdown-trigger {
+    margin: 0 !important;
+    min-width: 300px;
+
+    &.highlight {
+      button {
+        color: #fff;
+      }
+    }
+  
+    button {
+      justify-content: left;
+      text-transform: none;
+      color: rgba(255, 255, 255, 0.45);
+  
+      &:hover {
+        background-color: rgb(21, 26, 48);
+        border-color: rgb(16, 20, 38);
+        color: #fff;
+      }
+  
+      .icon {
+        font-size: 1rem;
+        position: absolute;
+        right: 18px;
+      }
+    }
+  }
+  .dropdown-content {
+    min-width: 300px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    outline: none;
+    transition-duration: 0.15s;
+    transition-property: border, background-color, color, box-shadow;
+    transition-timing-function: ease-in;
+    width: 100%;
+    background-color: #1f2640;
+    border-color: rgb(16, 20, 38);
+    color: rgb(255, 255, 255);
+    border-radius: 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    letter-spacing: 1px;
+    padding: 0;
+  }
+  .dropdown-item {
+    color: #fff;
+
+    &.disabled {
+      opacity: 0.6;
+      cursor: default;
+
+      &:hover {
+        background-color: #1f2640;
+        border-color: rgb(16, 20, 38);
+        color: rgb(255, 255, 255);
+      }
+    }
+
+    i {
+      float: right;
+      font-size: 14px;
+      position: relative;
+      top: 3px;
+    }
+  }
+}
+
+textarea {
+  padding: 0.4375rem 1.125rem !important;
+}
+
+.input-form {
+  padding: 20px;
+}
+
+button {
+  letter-spacing: 0.4px;
+  transition: none 0s ease 0s;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
   cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  border-radius: 0.75rem;
+  width: 100%;
+  border-style: solid;
+  border-width: 0.0625rem;
+  text-transform: uppercase;
+  padding: 0.6875rem 1.125rem;
+  background-color: rgb(0, 214, 143);
+  border-color: rgb(0, 214, 143);
+  color: rgb(255, 255, 255);
+
+  &.disabled,
+  &:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.send-token-trigger,
+.create-new-trigger {
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+strong {
+  color: #fff;
+}
+
+.address-block {
+  padding-top: 20px;
+  text-align: left;
+}
+
+.tokens-block {
+  padding-top: 40px;
+  text-align: left;
+
+  h4 {
+    font-size: 1.5em !important;
+    line-height: 1rem !important;
+    margin-bottom: 5px;
+    margin-top: 50px;
+  }
+}
+
+.token-balance-block {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: left;
+  user-select: none;
+  
+  .token-tile {
+    float: left;
+    background: #fff;
+    border-radius: 5px;
+    color: #1f2640;
+    padding: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    width: 100px;
+    text-align: center;
+
+    .jdenticon {
+      padding-bottom: 5px;
+    }
+
+    &.active {
+      background: #37e39f;
+     
+      .jdenticon svg {
+        background: #fff;
+      }
+    }
+
+    &:hover {
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    img {
+      height: 35px;
+      width: 35px;
+      position: relative;
+      top: 6px;
+      left: 5px;
+    }
+
+    strong {
+      color: #1f2640;
+      padding-bottom: 3px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 80px;
+      display: block;
+    }
+  }
+}
+
+.token-transactions-block {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 30px 20px 20px 0;
+  color: #14172c;
+
+  .token-transaction-item {
+    border-bottom: solid 2px rgba(165, 167, 192, 0.1);
+    padding: 30px 10px 18px 10px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .transaction-left {
+      margin-left: 30px;
+      position: relative;
+      top: -6px;
+
+      i {
+        position: absolute;
+        margin-left: -35px;
+        margin-top: 16px;
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 1.1rem;
+
+        &.color-green {
+          color: #0cb975;
+        }
+      }
+      .transaction-unconfirmed {
+        margin-top: 0;
+        margin-left: 12px;
+        font-size: 1em;
+      }
+      .token-name {
+        position: absolute;
+        margin-top: -50px;
+        font-weight: 500;
+        margin-left: 62px;
+      }
+      .transaction-time {
+        color: #7e7e80;
+        font-size: 0.9em;
+        margin-top: -28px;
+        margin-left: 62px;
+      }
+    }
+    .transaction-right {
+      float: right;
+      height: 64px;
+      margin-top: -64px;
+      width: 300px;
+
+      .transaction-address {
+        color: #7e7e80;
+        font-size: 0.92em;
+        top: 20px;
+      }
+      .transaction-value {
+        font-size: 1.2rem;
+        font-weight: 500;
+        top: 10px;
+      }
+      .transaction-address,
+      .transaction-value {
+        position: relative;
+        left: -40px;
+      }
+      i {
+        float: right;
+        margin-top: -8px;
+      }
+    }
+  }
+}
+
+.create-new-trigger {
+  &.disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  i {
+    display: block;
+    margin-top: 33px;
+  }
+}
+
+.send-token-trigger {
+  background: #fff;
+  width: 100px;
+  border-radius: 5px;
+  padding: 7px 7px 9px 5px;
+  float: right;
+  margin-right: 40px;
+  margin-top: -50px;
+  text-align: center;
+  cursor: pointer;
+  color: #14172c;
+
+  i {
+    font-size: 0.8rem;
+    margin-right: 10px;
+  }
+}
+
+.Modal-create-token,
+.Modal-send-token {
+  input,
+  textarea,
+  .dropdown {
+    margin-bottom: 10px;
+  }
+  button {
+    margin-top: 20px;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  .success {
+    margin-top: 30px;
+
+    div {
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    a,
+    a:hover {
+      color: #37e39f;
+    }
+    strong {
+      display: block;
+      padding-bottom: 2px;
+    }
+    .txid-label {
+      text-align: left;
+      margin-bottom: 5px;
+    }
+  }
+  .error {
+    margin-top: 30px;
+    
+    > div {
+      background: #f46283;
+      padding: 10px;
+    }
+    strong {
+      display: block;
+      padding-bottom: 5px;
+    }
+  }
+}
+
+.Modal-send-token {
+  .dropdown {
+    width: 100%;
+
+    .dropdown-content {
+      max-height: 175px;
+      overflow-y: auto;
+    }
+    .dropdown-balance {
+      float: right;
+    }
+    .dropdown-trigger {
+      .dropdown-balance {
+        margin-left: 20px;
+      }
+    }
+  }
+}
+
+.modal-content .card {
+  background: radial-gradient(farthest-side ellipse at 10% 0, #333867 20%, #17193b);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: 0 25px 20px -100px rgba(0, 0, 0, 10%), 0 0 15px rgba(0, 0, 0, 6%);
+  border: 0px solid transparent;
+  border-radius: 0.25rem;
+  color: rgb(255, 255, 255);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+}
+
+.logout-btn {
+  background: #fff;
+  padding: 10px 15px;
+  color: #14172c;
+  float: right;
+  cursor: pointer;
+}
+
+.faucet-btn {
+  background: #fff;
+  padding: 3px 5px;
+  color: #14172c;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.app-version {
+  position: absolute;
+  top: 0;
+  opacity: 0.6;
+  font-size: 0.9em;
 }

@@ -3,6 +3,11 @@
 .Modal .card {
   border-radius: $radius-small;
 
+  .modal-close {
+    position: absolute;
+    top: -12px;
+    right: 8px;
+  }
   .content {
     padding-top: 0;
   }
