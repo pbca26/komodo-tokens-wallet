@@ -61,6 +61,7 @@ class CreateTokenModal extends React.Component {
     this.setState({
       [e.target.name]: e.target.value,
       error,
+      success: null,
     });
 
     if (window.DEBUG) {

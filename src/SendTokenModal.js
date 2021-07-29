@@ -4,7 +4,6 @@ import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
 import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
 
-
 class SendTokenModal extends React.Component {
   state = this.initialState;
   
@@ -33,6 +32,9 @@ class SendTokenModal extends React.Component {
 
     this.setState({
       [e.target.name]: e.target.value,
+      error: null,
+      success: null,
+      txid: null,
     });
 
     if (window.DEBUG) {
