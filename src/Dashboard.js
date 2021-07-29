@@ -88,8 +88,8 @@ class Dashboard extends React.Component {
   getNormalBalance() {
     if (this.state.normalUtxos.length) {
       return {
-        value: this.state.normalUtxos.length === 1 ? Number(this.state.normalUtxos[0].amount || 0) : this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator.amount || 0) + Number(item.amount)),
-        satoshi: this.state.normalUtxos.length === 1 ? this.state.normalUtxos[0].satoshi || 0 : this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator.satoshi || 0) + Number(item.satoshi)),
+        value: this.state.normalUtxos.length === 1 ? Number(this.state.normalUtxos[0].amount || 0) : Number(this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.amount), 0).toFixed(8)),
+        satoshi: this.state.normalUtxos.length === 1 ? this.state.normalUtxos[0].satoshi || 0 : this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.satoshi), 0),
       };
     } else {
       return {
