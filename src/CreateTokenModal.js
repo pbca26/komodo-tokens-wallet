@@ -32,28 +32,34 @@ class CreateTokenModal extends React.Component {
 
     if (
       e.target.name === 'name' &&
+      e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)
     ) {
-      error: 'Non-unicode characters are not allowed in name';
+      error = 'Non-unicode characters are not allowed in name';
     } else if (
       e.target.name === 'description' &&
+      e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)) {
-      error: 'Non-unicode characters are not allowed in description';
+      error = 'Non-unicode characters are not allowed in description';
     } else if (
       e.target.name === 'nft' &&
+      e.target.value.length &&
       !regexUnicodeCheckPattern.test(e.target.value)
     ) {
-      error: 'Non-unicode characters are not allowed in NFT data';
+      error = 'Non-unicode characters are not allowed in NFT data';
     } else if (
       e.target.name === 'name' &&
+      e.target.value.length &&
       e.target.value.length > 256) {
       error = 'Name can\'t exceed 256 characters in length';
     } else if (
       e.target.name === 'description' &&
+      e.target.value.length &&
       e.target.value.length > 512) {
       error = 'Description can\'t exceed 512 characters in length';
     } else if (
       e.target.name === 'nft' &&
+      e.target.value.length &&
       e.target.value.length > 1024) {
       error = 'NFT data can\'t exceed 1024 characters in length';
     }
