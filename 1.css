@@ -16108,6 +16108,10 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 
 .Modal .card {
   border-radius: 2px; }
+  .Modal .card .modal-close {
+    position: absolute;
+    top: -12px;
+    right: 8px; }
   .Modal .card .content {
     padding-top: 0; }
 
