@@ -1,13 +1,15 @@
 {
   "name": "komodo-tokens-wallet",
-  "version": "0.1.9a",
+  "version": "0.2.0",
   "description": "Komodo Tokens Web Wallet (CryptoConditions)",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --define DEBUG",
     "build": "webpack --config webpack.config.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "build-cclib": "./build-cryptoconditions-lib.sh",
+    "build-bitgo-lib": "./build-bitgo-lib.sh"
   },
   "repository": {
     "type": "git",
@@ -26,7 +28,7 @@
   },
   "homepage": "https://pbca26.github.io/komodo-tokens-wallet",
   "engines": {
-    "node" : ">=12.18.3"
+    "node": ">=12.18.3"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
@@ -41,7 +43,6 @@
     "babel-preset-stage-1": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "bulma": "^0.9.2",
-    "caniuse-lite": "^1.0.30000815",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
