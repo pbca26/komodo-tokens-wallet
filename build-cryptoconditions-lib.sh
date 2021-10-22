@@ -1,4 +1,5 @@
 echo "building cryptoconditions-js"
+rm -rf cryptoconditions-js
 git clone https://github.com/dimxy/cryptoconditions-js
 cd cryptoconditions-js
 echo "wasm-pack build cryptoconditions-js"
