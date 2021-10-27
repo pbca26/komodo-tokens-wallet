@@ -26,6 +26,7 @@ class App extends React.Component {
         normal: '',
         cc: '',
       },
+      chain: null,
       appVersion: null,
     };
   }
@@ -41,10 +42,11 @@ class App extends React.Component {
     this.setState(this.initialState);
   }
 
-  setKey({wif, address}) {
+  setKey({wif, address, chain}) {
     this.setState({
       wif,
       address,
+      chain,
     });
 
     if (window.DEBUG) {
