@@ -43,6 +43,8 @@ class Login extends React.Component {
       this.handleClickOutside,
       false
     );
+
+    this.setChain('TKLTEST');
   }
 
   componentWillUnmount() {
