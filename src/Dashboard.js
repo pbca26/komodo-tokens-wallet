@@ -1,12 +1,11 @@
 import React from 'react';
-import TokensLib from './tokenslib.js';
 import Blockchain from './blockchain';
 import {secondsToString} from './time';
 import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import CreateTokenModal from './CreateTokenModal';
 import SendTokenModal from './SendTokenModal';
-import {coin, explorerApiUrl, faucetURL} from './constants';
+import {chains} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
 let syncTimeoutRef;
@@ -29,9 +28,15 @@ class Dashboard extends React.Component {
     };
   }
 
+  getTokenData = (tokenid) => {
+    const tokenInfo = this.state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo;
+  }
+
   logout() {
     clearInterval(syncTimeoutRef);
     syncTimeoutRef = null;
+    Blockchain.setExplorerUrl();
     this.setState(this.initialState);
     this.props.resetApp();
   }
@@ -54,9 +59,7 @@ class Dashboard extends React.Component {
     }
   }
 
-  syncData = async () => {
-    Blockchain.setExplorerUrl(explorerApiUrl);
-    
+  syncData = async () => {    
     const tokenList = await Blockchain.tokenList();
     const tokenBalance = await Blockchain.tokenBalance(this.props.address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(this.props.address.cc);
@@ -103,11 +106,6 @@ class Dashboard extends React.Component {
     const balances = this.state.tokenBalance;
     let items = [];
 
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
-
     for (let i = 0; i < balances.length; i++) {
       items.push(
         <div
@@ -117,9 +115,9 @@ class Dashboard extends React.Component {
           <div className="jdenticon">
             <Jdenticon
               size="48"
-              value={getTokenData(balances[i].tokenId).name} />
+              value={this.getTokenData(balances[i].tokenId).name} />
           </div>
-          <strong>{getTokenData(balances[i].tokenId) && getTokenData(balances[i].tokenId).name ? getTokenData(balances[i].tokenId).name : balances[i].tokenId}</strong>
+          <strong>{this.getTokenData(balances[i].tokenId) && this.getTokenData(balances[i].tokenId).name ? this.getTokenData(balances[i].tokenId).name : balances[i].tokenId}</strong>
           <br />
           {balances[i].balance}
         </div>
@@ -164,11 +162,6 @@ class Dashboard extends React.Component {
     let transactions = this.state.tokenTransactions;
     let items = [];
 
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
-
     let transactionsMerge = [];
     for (let i = 0; i < transactions.length; i++) {
       for (let j = 0; j < transactions[i].txs.length; j++) {
@@ -181,7 +174,7 @@ class Dashboard extends React.Component {
           transactionsMerge.push({
             ...transactions[i].txs[j],
             tokenid: transactions[i].tokenId,
-            tokenName: getTokenData(transactions[i].tokenId).name,
+            tokenName: this.getTokenData(transactions[i].tokenId).name,
           });
         }
       }
@@ -195,6 +188,8 @@ class Dashboard extends React.Component {
 
       if (transactions[i].to === transactions[i].from) directionClass = 'circle';
 
+      if (transactions[i].type === 'coinbase') directionClass = 'gavel';
+
       items.push(
         <div
           key={`token-tile-${transactions[i].txid}`}
@@ -204,10 +199,10 @@ class Dashboard extends React.Component {
             <div className="jdenticon">
               <Jdenticon
                 size="48"
-                value={getTokenData(transactions[i].tokenid).name} />
+                value={this.getTokenData(transactions[i].tokenid).name} />
             </div>
             <div className="token-name">
-              {getTokenData(transactions[i].tokenid).name}
+              {this.getTokenData(transactions[i].tokenid).name}
               {transactions[i].height < 1 &&
                 <i
                   className="fa fa-spinner transaction-unconfirmed"
@@ -219,7 +214,7 @@ class Dashboard extends React.Component {
             </div>
           </div>
           <div className="transaction-right">
-            <div className="transaction-value">{transactions[i].value} {getTokenData(transactions[i].tokenid).name}</div>
+            <div className="transaction-value">{transactions[i].value} {this.getTokenData(transactions[i].tokenid).name}</div>
             <div className="transaction-address">{transactions[i].to}</div>
             <i className="fa fa-chevron-right"></i>
           </div>
@@ -257,7 +252,7 @@ class Dashboard extends React.Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`${faucetURL}${this.props.address.normal}`}><i className="fa fa-faucet faucet-btn"></i></a>
+                href={`${chains[this.props.chain].faucetURL}${this.props.address.normal}`}><i className="fa fa-faucet faucet-btn"></i></a>
             </div>
             <div style={{'paddingTop': '20px'}}>
               <strong>My CC address:</strong> {this.props.address.cc}
@@ -270,14 +265,14 @@ class Dashboard extends React.Component {
           <div className="tokens-block">
             {this.state.normalUtxos.length > 0  &&
               <React.Fragment>
-                <strong>Normal balance:</strong> {this.getNormalBalance().value} {coin}
+                <strong>Normal balance:</strong> {this.getNormalBalance().value} {this.props.chain}
               </React.Fragment>
             }
             {this.renderTokens()}
             {this.getMaxSpendNormalUtxos() === 0 &&
              !this.state.pristine &&
               <div>
-                <strong>Please make a deposit (min of 0.00002 {coin}) to your normal address in order to create or send tokens</strong>
+                <strong>Please make a deposit (min of 0.00002 {this.props.chain}) to your normal address in order to create or send tokens</strong>
               </div>
             }
             {this.renderTransactions()}
