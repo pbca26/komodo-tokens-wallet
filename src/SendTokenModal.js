@@ -56,6 +56,23 @@ class SendTokenModal extends React.Component {
       ...this.initialState,
       isClosed: false
     });
+
+    const getTokenData = (tokenid) => {
+      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+      return tokenInfo;
+    }
+
+    if (this.props.tokenBalance &&
+        this.props.tokenBalance.length &&
+        this.props.tokenBalance.length === 1 &&
+        getTokenData(this.props.tokenBalance[0].tokenId).height !== -1 &&
+        !this.state.token) {
+      this.setToken({
+        balance: this.props.tokenBalance[0].balance,
+        tokenId: this.props.tokenBalance[0].tokenId,
+        name: getTokenData(this.props.tokenBalance[0].tokenId).name
+      });
+    }
   }
 
   setToken(token) {
