@@ -24,6 +24,7 @@ class CreateTokenModal extends React.Component {
 
   updateInput(e) {
     const regexUnicodeCheckPattern = new RegExp(/^[ -~]+$/);
+    const regexUnicodeCheckPatternMultiline = new RegExp(/^[ -~]+$/m);
     let error;
 
     if (e.target.name === 'supply') {
@@ -39,12 +40,12 @@ class CreateTokenModal extends React.Component {
     } else if (
       e.target.name === 'description' &&
       e.target.value.length &&
-      !regexUnicodeCheckPattern.test(e.target.value)) {
+      !regexUnicodeCheckPatternMultiline.test(e.target.value)) {
       error = 'Non-unicode characters are not allowed in token description';
     } else if (
       e.target.name === 'nft' &&
       e.target.value.length &&
-      !regexUnicodeCheckPattern.test(e.target.value)
+      !regexUnicodeCheckPatternMultiline.test(e.target.value)
     ) {
       error = 'Non-unicode characters are not allowed in token NFT data';
     } else if (
@@ -94,11 +95,28 @@ class CreateTokenModal extends React.Component {
 
   createNewToken = async () => {
     let rawtx;
+    const testJSON = (data) => {
+      try {
+        JSON.parse(data);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    };
 
     if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
       this.setState({
         success: null,
         error: 'Token supply must be between 1 and ' + this.getMaxSupply(),
+      });
+    } else if (
+      this.state.nft &&
+      this.state.nft.length &&
+      this.state.nft.indexOf('{') > -1 &&
+      !testJSON(this.state.nft)) {
+      this.setState({
+        error: 'Token NFT data is not correct JSON format (single line)',
+        success: null,
       });
     } else {
       try {
