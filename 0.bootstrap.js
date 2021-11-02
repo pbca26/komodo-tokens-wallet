@@ -24,6 +24,50 @@ eval("/* WEBPACK VAR INJECTION */(function(global) {/*!\n * The buffer module fr
 
 /***/ }),
 
+/***/ "./node_modules/coinselect/accumulative.js":
+/*!*************************************************!*\
+  !*** ./node_modules/coinselect/accumulative.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var utils = __webpack_require__(/*! ./utils */ \"./node_modules/coinselect/utils.js\")\n\n// add inputs until we reach or surpass the target value (or deplete)\n// worst-case: O(n)\nmodule.exports = function accumulative (utxos, outputs, feeRate) {\n  if (!isFinite(utils.uintOrNaN(feeRate))) return {}\n  var bytesAccum = utils.transactionBytes([], outputs)\n\n  var inAccum = 0\n  var inputs = []\n  var outAccum = utils.sumOrNaN(outputs)\n\n  for (var i = 0; i < utxos.length; ++i) {\n    var utxo = utxos[i]\n    var utxoBytes = utils.inputBytes(utxo)\n    var utxoFee = feeRate * utxoBytes\n    var utxoValue = utils.uintOrNaN(utxo.value)\n\n    // skip detrimental input\n    if (utxoFee > utxo.value) {\n      if (i === utxos.length - 1) return { fee: feeRate * (bytesAccum + utxoBytes) }\n      continue\n    }\n\n    bytesAccum += utxoBytes\n    inAccum += utxoValue\n    inputs.push(utxo)\n\n    var fee = feeRate * bytesAccum\n\n    // go again?\n    if (inAccum < outAccum + fee) continue\n\n    return utils.finalize(inputs, outputs, feeRate)\n  }\n\n  return { fee: feeRate * bytesAccum }\n}\n\n\n//# sourceURL=webpack:///./node_modules/coinselect/accumulative.js?");
+
+/***/ }),
+
+/***/ "./node_modules/coinselect/blackjack.js":
+/*!**********************************************!*\
+  !*** ./node_modules/coinselect/blackjack.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var utils = __webpack_require__(/*! ./utils */ \"./node_modules/coinselect/utils.js\")\n\n// only add inputs if they don't bust the target value (aka, exact match)\n// worst-case: O(n)\nmodule.exports = function blackjack (utxos, outputs, feeRate) {\n  if (!isFinite(utils.uintOrNaN(feeRate))) return {}\n\n  var bytesAccum = utils.transactionBytes([], outputs)\n\n  var inAccum = 0\n  var inputs = []\n  var outAccum = utils.sumOrNaN(outputs)\n  var threshold = utils.dustThreshold({}, feeRate)\n\n  for (var i = 0; i < utxos.length; ++i) {\n    var input = utxos[i]\n    var inputBytes = utils.inputBytes(input)\n    var fee = feeRate * (bytesAccum + inputBytes)\n    var inputValue = utils.uintOrNaN(input.value)\n\n    // would it waste value?\n    if ((inAccum + inputValue) > (outAccum + fee + threshold)) continue\n\n    bytesAccum += inputBytes\n    inAccum += inputValue\n    inputs.push(input)\n\n    // go again?\n    if (inAccum < outAccum + fee) continue\n\n    return utils.finalize(inputs, outputs, feeRate)\n  }\n\n  return { fee: feeRate * bytesAccum }\n}\n\n\n//# sourceURL=webpack:///./node_modules/coinselect/blackjack.js?");
+
+/***/ }),
+
+/***/ "./node_modules/coinselect/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/coinselect/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var accumulative = __webpack_require__(/*! ./accumulative */ \"./node_modules/coinselect/accumulative.js\")\nvar blackjack = __webpack_require__(/*! ./blackjack */ \"./node_modules/coinselect/blackjack.js\")\nvar utils = __webpack_require__(/*! ./utils */ \"./node_modules/coinselect/utils.js\")\n\n// order by descending value, minus the inputs approximate fee\nfunction utxoScore (x, feeRate) {\n  return x.value - (feeRate * utils.inputBytes(x))\n}\n\nmodule.exports = function coinSelect (utxos, outputs, feeRate) {\n  utxos = utxos.concat().sort(function (a, b) {\n    return utxoScore(b, feeRate) - utxoScore(a, feeRate)\n  })\n\n  // attempt to use the blackjack strategy first (no change output)\n  var base = blackjack(utxos, outputs, feeRate)\n  if (base.inputs) return base\n\n  // else, try the accumulative strategy\n  return accumulative(utxos, outputs, feeRate)\n}\n\n\n//# sourceURL=webpack:///./node_modules/coinselect/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/coinselect/utils.js":
+/*!******************************************!*\
+  !*** ./node_modules/coinselect/utils.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("// baseline estimates, used to improve performance\nvar TX_EMPTY_SIZE = 4 + 1 + 1 + 4\nvar TX_INPUT_BASE = 32 + 4 + 1 + 4\nvar TX_INPUT_PUBKEYHASH = 107\nvar TX_OUTPUT_BASE = 8 + 1\nvar TX_OUTPUT_PUBKEYHASH = 25\n\nfunction inputBytes (input) {\n  return TX_INPUT_BASE + (input.script ? input.script.length : TX_INPUT_PUBKEYHASH)\n}\n\nfunction outputBytes (output) {\n  return TX_OUTPUT_BASE + (output.script ? output.script.length : TX_OUTPUT_PUBKEYHASH)\n}\n\nfunction dustThreshold (output, feeRate) {\n  /* ... classify the output for input estimate  */\n  return inputBytes({}) * feeRate\n}\n\nfunction transactionBytes (inputs, outputs) {\n  return TX_EMPTY_SIZE +\n    inputs.reduce(function (a, x) { return a + inputBytes(x) }, 0) +\n    outputs.reduce(function (a, x) { return a + outputBytes(x) }, 0)\n}\n\nfunction uintOrNaN (v) {\n  if (typeof v !== 'number') return NaN\n  if (!isFinite(v)) return NaN\n  if (Math.floor(v) !== v) return NaN\n  if (v < 0) return NaN\n  return v\n}\n\nfunction sumForgiving (range) {\n  return range.reduce(function (a, x) { return a + (isFinite(x.value) ? x.value : 0) }, 0)\n}\n\nfunction sumOrNaN (range) {\n  return range.reduce(function (a, x) { return a + uintOrNaN(x.value) }, 0)\n}\n\nvar BLANK_OUTPUT = outputBytes({})\n\nfunction finalize (inputs, outputs, feeRate) {\n  var bytesAccum = transactionBytes(inputs, outputs)\n  var feeAfterExtraOutput = feeRate * (bytesAccum + BLANK_OUTPUT)\n  var remainderAfterExtraOutput = sumOrNaN(inputs) - (sumOrNaN(outputs) + feeAfterExtraOutput)\n\n  // is it worth a change output?\n  if (remainderAfterExtraOutput > dustThreshold({}, feeRate)) {\n    outputs = outputs.concat({ value: remainderAfterExtraOutput })\n  }\n\n  var fee = sumOrNaN(inputs) - sumOrNaN(outputs)\n  if (!isFinite(fee)) return { fee: feeRate * bytesAccum }\n\n  return {\n    inputs: inputs,\n    outputs: outputs,\n    fee: fee\n  }\n}\n\nmodule.exports = {\n  dustThreshold: dustThreshold,\n  finalize: finalize,\n  inputBytes: inputBytes,\n  outputBytes: outputBytes,\n  sumOrNaN: sumOrNaN,\n  sumForgiving: sumForgiving,\n  transactionBytes: transactionBytes,\n  uintOrNaN: uintOrNaN\n}\n\n\n//# sourceURL=webpack:///./node_modules/coinselect/utils.js?");
+
+/***/ }),
+
 /***/ "./node_modules/fast-levenshtein/levenshtein.js":
 /*!******************************************************!*\
   !*** ./node_modules/fast-levenshtein/levenshtein.js ***!

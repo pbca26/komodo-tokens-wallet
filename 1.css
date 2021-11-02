@@ -16165,8 +16165,10 @@ body {
       text-align: center; }
       .main .content.login-form .input-form {
         padding-top: 30px; }
-        .main .content.login-form .input-form button {
+        .main .content.login-form .input-form > button {
           margin-top: 30px; }
+        .main .content.login-form .input-form .dropdown {
+          margin-bottom: 20px; }
 
 .app-logo {
   padding-top: 20px; }
