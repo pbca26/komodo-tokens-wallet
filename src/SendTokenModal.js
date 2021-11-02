@@ -1,8 +1,9 @@
 import React from 'react';
 import Modal from './Modal';
-import TokensLib from './tokenslib.js';
+import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
-import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
+import {chains} from './constants';
+import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 
 class SendTokenModal extends React.Component {
   state = this.initialState;
@@ -90,20 +91,30 @@ class SendTokenModal extends React.Component {
       });
     } else {
       try {
-        let inputsData = {
-          ccUtxos: txBuilderApi === 'default' ? await TokensLib.AddTokensInputsRemote(
-            this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)
-          ) : await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
-          normalUtxos: txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(10000, this.props.address.pubkey) : await Blockchain.createCCTx(10000, this.props.address.pubkey),
-        },
-        rawtx;
+        let inputsData, rawtx;
+          
+        console.warn('create token modal txBuilderApi', chains[this.props.chain].txBuilderApi);
+        
+        if (chains[this.props.chain].txBuilderApi === 'utxoSelect') {
+          inputsData = {
+            ccUtxos: await utxoSelectCC(this.props.address.cc, this.state.token.tokenId, true, chains[this.props.chain].ccLibVersion),
+            normalUtxos: await utxoSelectNormal(this.props.address.normal, 10000, true, chains[this.props.chain].ccLibVersion),
+          };
+        } else {
+          inputsData = {
+            ccUtxos: chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].AddTokensInputsRemote(
+              this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)
+            ) : await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
+            normalUtxos: chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(10000, this.props.address.pubkey) : await Blockchain.createCCTx(10000, this.props.address.pubkey),
+          };
+        }
 
         if (window.DEBUG) {
           console.warn('send tx modal inputsData', inputsData);
         }
 
         try {
-          rawtx = await TokensLib.transferTokenTx(
+          rawtx = await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].transferTokenTx(
             this.state.token.tokenId, this.state.pubkey, Number(this.state.amount), this.props.wif, inputsData
           );
         } catch (e) {
@@ -129,7 +140,7 @@ class SendTokenModal extends React.Component {
             });
           } else {
             this.setState({
-              success: `${explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${coin}`,
+              success: `${chains[this.props.chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${this.props.chain}`,
               txid,
               error: null,
               pubkey: '',
