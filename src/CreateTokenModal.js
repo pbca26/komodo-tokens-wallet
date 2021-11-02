@@ -1,8 +1,9 @@
 import React from 'react';
 import Modal from './Modal';
-import TokensLib from './tokenslib.js';
+import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
-import {coin, explorerApiUrl, explorerUrl, txBuilderApi} from './constants';
+import {chains} from './constants';
+import {utxoSelectNormal} from './utxo-select';
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
@@ -15,7 +16,7 @@ class CreateTokenModal extends React.Component {
       isClosed: true,
       name: '',
       description: '',
-      supply: '',
+      supply: 1,
       nft: '',
       success: null,
       error: null,
@@ -95,6 +96,7 @@ class CreateTokenModal extends React.Component {
 
   createNewToken = async () => {
     let rawtx;
+
     const testJSON = (data) => {
       try {
         JSON.parse(data);
@@ -120,24 +122,36 @@ class CreateTokenModal extends React.Component {
       });
     } else {
       try {
-        const inputsData = txBuilderApi === 'default' ? await TokensLib.createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+        let inputsData;
+
+        console.warn('create token modal txBuilderApi', chains[this.props.chain].txBuilderApi);
+        
+        if (chains[this.props.chain].txBuilderApi === 'utxoSelect') {
+          inputsData = await utxoSelectNormal(this.props.address.normal, Number(this.state.supply) + 20000, true, chains[this.props.chain].ccLibVersion);
+        } else {
+          inputsData = chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+        }
         
         if (window.DEBUG) {
           console.warn('create tx modal inputsData', inputsData);
         }
 
-        rawtx = await TokensLib.createTokenTx(
+        const createTxFunc = chains[this.props.chain].ccLibVersion === 1 ? TokensLib.V1.createTokenTx : this.state.nft.indexOf('{') > -1 ? TokensLib.V2.createTokenTxTokel : TokensLib.V2.createTokenTx;
+        console.warn('createTxFunc', createTxFunc)
+        const createTxPayload = this.state.nft.length > 0 ? {
+          name: this.state.name, 
+          description: this.state.description,
+          supply: Number(this.state.supply),
+          nft: chains[this.props.chain].ccLibVersion === 1 ? (this.state.nft.indexOf('{') > -1 ? 'f7' : '00') : this.state.nft.indexOf('{') > -1 ? JSON.parse(this.state.nft) : '00' + Buffer.from(this.state.nft).toString('hex'),
+        } : {
+          name: this.state.name, 
+          description: this.state.description,
+          supply: Number(this.state.supply),
+        };
+        console.warn('createTxPayload', createTxPayload);
+        rawtx = await createTxFunc(
           inputsData,
-          this.state.nft.length > 0 ? {
-            name: this.state.name, 
-            description: this.state.description,
-            supply: Number(this.state.supply),
-            nft: '00' + Buffer.from(this.state.nft).toString('hex'),
-          } : {
-            name: this.state.name, 
-            description: this.state.description,
-            supply: Number(this.state.supply),
-          },
+          createTxPayload,
           this.props.wif
         );
       } catch (e) {
@@ -253,7 +267,7 @@ class CreateTokenModal extends React.Component {
                     <strong>Transaction ID:</strong> {this.state.success}
                   </div>
                   <a
-                    href={`${explorerUrl}/${this.state.success}/transactions/${coin}`}
+                    href={`${chains[this.props.chain].explorerUrl}/${this.state.success}/transactions/${this.props.chain}`}
                     target="_blank">Open on explorer</a>
                 </div>
               }
