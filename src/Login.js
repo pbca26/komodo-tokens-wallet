@@ -75,7 +75,7 @@ class Login extends React.Component {
 
   getWifKey() {
     const wif = TokensLib[chains[this.state.chain].ccLibVersion === 1 ? 'V1' : 'V2'].keyToWif(this.state.privKeyInput);
-    const address = TokensLib[chains[this.state.chain].ccLibVersion === 1 ? 'V1' : 'V2'].keyToCCAddress(wif, 'wif');
+    const address = TokensLib[chains[this.state.chain].ccLibVersion === 1 ? 'V1' : 'V2'].keyToCCAddress(wif, 'wif', chains[this.state.chain].ccIndex);
 
     this.props.setKey({
       wif,
