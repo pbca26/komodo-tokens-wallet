@@ -1,0 +1,49 @@
+.Modal-transaction-details {
+  .table {
+    text-align: left;
+    color: #fff;
+    background: transparent !important;
+
+    tr td:last-child {
+      text-align: right;
+    }
+
+    td.no-border {
+      border: none;
+      padding: 0.5em 0.75em 0em 0.75em;      
+    }
+  }
+
+  .fa-external-link-alt {
+    margin-left: 7px;
+  }
+
+  .button {
+    font-size: 0.95em;
+    width: 220px;
+  }
+
+  .token-info-link {
+    i {
+      font-size: 0.9em;
+      margin-left: 3px;
+      position: relative;
+      top: -2px;
+    }
+  }
+
+  a {
+    color: #fff;
+  }
+
+  .modal-content {
+    .modal-close {
+      top: 0;
+      right: 2px;
+    }
+
+    .card-content {
+      padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    }
+  }
+}

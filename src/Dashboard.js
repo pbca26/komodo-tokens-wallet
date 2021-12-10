@@ -5,6 +5,7 @@ import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import CreateTokenModal from './CreateTokenModal';
 import SendTokenModal from './SendTokenModal';
+import TransactionDetailsModal from './TransactionDetailsModal';
 import {chains} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
@@ -119,7 +120,7 @@ class Dashboard extends React.Component {
           </div>
           <strong>{this.getTokenData(balances[i].tokenId) && this.getTokenData(balances[i].tokenId).name ? this.getTokenData(balances[i].tokenId).name : balances[i].tokenId}</strong>
           <br />
-          {balances[i].balance}
+          <span>{balances[i].balance}</span>
         </div>
       );
     }
@@ -191,34 +192,42 @@ class Dashboard extends React.Component {
       if (transactions[i].type === 'coinbase') directionClass = 'gavel';
 
       items.push(
-        <div
-          key={`token-tile-${transactions[i].txid}`}
-          className="token-transaction-item">
-          <div className="transaction-left">
-            <i className={`fa fa-${directionClass}`}></i>
-            <div className="jdenticon">
-              <Jdenticon
-                size="48"
-                value={this.getTokenData(transactions[i].tokenid).name} />
+        <TransactionDetailsModal
+          transaction={transactions[i]}
+          directionClass={directionClass}
+          tokenInfo={this.getTokenData(transactions[i].tokenid)}
+          chainInfo={chains[this.props.chain]}
+          chain={this.props.chain}
+          key={`token-tile-${transactions[i].txid}-wrapper`}>
+          <div
+            key={`token-tile-${transactions[i].txid}`}
+            className="token-transaction-item">
+            <div className="transaction-left">
+              <i className={`fa fa-${directionClass}`}></i>
+              <div className="jdenticon">
+                <Jdenticon
+                  size="48"
+                  value={this.getTokenData(transactions[i].tokenid).name} />
+              </div>
+              <div className="token-name">
+                {this.getTokenData(transactions[i].tokenid).name}
+                {transactions[i].height < 1 &&
+                  <i
+                    className="fa fa-spinner transaction-unconfirmed"
+                    title="Transaction is pending confirmation"></i>
+                }
+              </div>
+              <div className="transaction-time">
+                {secondsToString(transactions[i].time)}
+              </div>
             </div>
-            <div className="token-name">
-              {this.getTokenData(transactions[i].tokenid).name}
-              {transactions[i].height < 1 &&
-                <i
-                  className="fa fa-spinner transaction-unconfirmed"
-                  title="Transaction is pending confirmation"></i>
-              }
-            </div>
-            <div className="transaction-time">
-              {secondsToString(transactions[i].time)}
+            <div className="transaction-right">
+              <div className="transaction-value">{transactions[i].value} {this.getTokenData(transactions[i].tokenid).name}</div>
+              <div className="transaction-address">{transactions[i].to}</div>
+              <i className="fa fa-chevron-right"></i>
             </div>
           </div>
-          <div className="transaction-right">
-            <div className="transaction-value">{transactions[i].value} {this.getTokenData(transactions[i].tokenid).name}</div>
-            <div className="transaction-address">{transactions[i].to}</div>
-            <i className="fa fa-chevron-right"></i>
-          </div>
-        </div>
+        </TransactionDetailsModal>
       );
     }
 
