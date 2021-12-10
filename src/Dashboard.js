@@ -89,6 +89,10 @@ class Dashboard extends React.Component {
     this.syncData();
   }
 
+  componentWillUnmount() {
+    clearInterval(syncTimeoutRef);
+  }
+
   getNormalBalance() {
     if (this.state.normalUtxos.length) {
       return {
