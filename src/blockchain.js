@@ -53,7 +53,7 @@ const getTipTime = async () => {
 
 const broadcast = transaction => get('tx/send', {rawtx: transaction});
 
-export const getInfo = async (explorerUrl) => {
+export const getInfo = async () => {
   try {
     const response = await fetch(`${explorerUrl}/status?q=getInfo`);
     const isJson = response.headers.get('Content-Type').includes('application/json');
@@ -73,9 +73,11 @@ export const getInfo = async (explorerUrl) => {
 const tokenBalance = address => get(`tokens/balance?address=${address}`);
 const tokenTransactions = address => get(`tokens/transactions?address=${address}`);
 const tokenList = () => get('tokens');
+const tokenOrderbook = () => get('tokens/orderbook');
 const addCCInputs = (tokenid, pubkey, amount) => get(`tokens/addccinputs?pubkey=${pubkey}&tokenid=${tokenid}&amount=${amount}`);
 const createCCTx = (amount, pubkey) => get(`tokens/createtx?pubkey=${pubkey}&amount=${amount}`);
 const tokenUtxos = (address, tokenid, raw = false) => get(`tokens/utxo?address=${address}&cctxid=${tokenid}&raw=${raw}`)
+const tokenTransactionsMany = (txid1, txid2) => get(`tokens/transactionsmany?txid1=${txid1}&txid2=${txid2}`);
 
 const blockchain = {
   get,
@@ -97,6 +99,8 @@ const blockchain = {
   addCCInputs,
   createCCTx,
   tokenUtxos,
+  tokenTransactionsMany,
+  tokenOrderbook,
 };
 
 export default blockchain;
