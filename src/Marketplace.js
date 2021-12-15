@@ -22,6 +22,7 @@ class Marketplace extends React.Component {
       tokenBalance: [],
       tokenTransactions: [],
       normalUtxos: [],
+      tokenOrders: [],
       activeToken: null,
       activeOrderIndex: null,
       tokenOrders: [],
@@ -120,6 +121,56 @@ class Marketplace extends React.Component {
 
     return maxSpend < 0 ? 0 : maxSpend;
   };
+
+  renderOrders() {
+    const orders = this.state.tokenOrders;
+    //console.warn(orders)
+    let items = [];
+
+    for (let i = 0; i < orders.length; i++) {
+      items.push(
+        <div
+          key={`token-tile-${orders[i].tokenid}`}
+          className={`token-tile${orders[i].tokenid === this.state.activeToken ? ' active' : ''}`}
+          onClick={() => this.setActiveToken(orders[i].tokenid, i)}>
+          <div className="jdenticon">
+            <Jdenticon
+              size="48"
+              value={this.getTokenData(orders[i].tokenid).name} />
+          </div>
+          <strong>{this.getTokenData(orders[i].tokenid) && this.getTokenData(orders[i].tokenid).name ? this.getTokenData(orders[i].tokenid).name : orders[i].tokenid}</strong>
+          <br />
+          <span>
+            {(orders[i].funcid === 's' || orders[i].funcid === 'S') &&
+              <React.Fragment>
+                <strong>Sell price:</strong> {orders[i].price} {this.props.chain}
+                <div style={{'paddingTop': '10px'}}>
+                  <strong>Tokens:</strong> {orders[i].askamount}
+                </div>
+              </React.Fragment>
+            }
+            {(orders[i].funcid === 'b' || orders[i].funcid === 'B') &&
+              <React.Fragment>
+                <strong>Buy price:</strong> {orders[i].price} {this.props.chain}
+                <div style={{'paddingTop': '10px'}}>
+                  <strong>Tokens:</strong> {orders[i].totalrequired}
+                </div>
+              </React.Fragment>
+            }
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <h4>Orderbook</h4>
+        <div className="token-balance-block">
+          {items.length ? items : 'No orders'}
+        </div>
+      </React.Fragment>
+    );
+  }
 
   renderTransactions() {
     let transactions = this.state.tokenTransactions;
