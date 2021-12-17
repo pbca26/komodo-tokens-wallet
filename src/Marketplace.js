@@ -4,6 +4,8 @@ import {secondsToString} from './time';
 import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import TransactionDetailsModal from './TransactionDetailsModal';
+import SellTokenModal from './SellTokenModal';
+import BuyTokenModal from './BuyTokenModal';
 import {chains} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
@@ -165,6 +167,23 @@ class Marketplace extends React.Component {
     return (
       <React.Fragment>
         <h4>Orderbook</h4>
+        {this.state.tokenBalance.length > 0 &&
+         this.state.normalUtxos.length > 0 &&
+          <React.Fragment>
+            <SellTokenModal
+              tokenList={this.state.tokenList}
+              tokenBalance={this.state.tokenBalance}
+              normalUtxos={this.state.normalUtxos}
+              syncData={this.syncData}
+              {...this.props} />
+            <BuyTokenModal
+              tokenList={this.state.tokenList}
+              tokenBalance={this.state.tokenBalance}
+              normalUtxos={this.state.normalUtxos}
+              syncData={this.syncData}
+            {...this.props} />
+          </React.Fragment>
+        }
         <div className="token-balance-block">
           {items.length ? items : 'No orders'}
         </div>
