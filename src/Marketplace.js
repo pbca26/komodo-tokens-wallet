@@ -5,6 +5,8 @@ import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import SellTokenModal from './SellTokenModal';
 import BuyTokenModal from './BuyTokenModal';
+import CancelAskTokenModal from './CancelAskTokenModal';
+import CancelBidTokenModal from './CancelBidTokenModal';
 import TransactionDetailsModal from './TransactionDetailsModal';
 import {chains} from './constants';
 
@@ -122,6 +124,32 @@ class Marketplace extends React.Component {
           key={`token-tile-${orders[i].tokenid}`}
           className={`token-tile${orders[i].tokenid === this.state.activeToken ? ' active' : ''}`}
           onClick={() => this.setActiveToken(orders[i].tokenid, i)}>
+          {orders[i].origtokenaddress === this.props.address.cc &&
+           (orders[i].funcid === 's' || orders[i].funcid === 'S') &&
+            <CancelAskTokenModal
+              tokenList={this.state.tokenList}
+              tokenBalance={this.state.tokenBalance}
+              normalUtxos={this.state.normalUtxos}
+              order={orders[i]}
+              setActiveToken={this.setActiveToken}
+              syncData={this.syncData}
+              {...this.props}>
+              <i className="fa fa-trash order-cancel-trigger"></i>
+            </CancelAskTokenModal>
+          }
+          {orders[i].origtokenaddress === this.props.address.cc &&
+           (orders[i].funcid === 'b' || orders[i].funcid === 'B') &&
+            <CancelBidTokenModal
+              tokenList={this.state.tokenList}
+              tokenBalance={this.state.tokenBalance}
+              normalUtxos={this.state.normalUtxos}
+              order={orders[i]}
+              setActiveToken={this.setActiveToken}
+              syncData={this.syncData}
+              {...this.props}>
+              <i className="fa fa-trash order-cancel-trigger"></i>
+            </CancelBidTokenModal>
+          }
           <div className="jdenticon">
             <Jdenticon
               size="48"
