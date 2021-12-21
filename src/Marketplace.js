@@ -3,9 +3,9 @@ import Blockchain from './blockchain';
 import {secondsToString} from './time';
 import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
-import TransactionDetailsModal from './TransactionDetailsModal';
 import SellTokenModal from './SellTokenModal';
 import BuyTokenModal from './BuyTokenModal';
+import TransactionDetailsModal from './TransactionDetailsModal';
 import {chains} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
@@ -24,7 +24,6 @@ class Marketplace extends React.Component {
       tokenBalance: [],
       tokenTransactions: [],
       normalUtxos: [],
-      tokenOrders: [],
       activeToken: null,
       activeOrderIndex: null,
       tokenOrders: [],
@@ -113,20 +112,8 @@ class Marketplace extends React.Component {
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.state.normalUtxos;
-    let maxSpend = -20000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
-
   renderOrders() {
     const orders = this.state.tokenOrders;
-    //console.warn(orders)
     let items = [];
 
     for (let i = 0; i < orders.length; i++) {
@@ -191,6 +178,17 @@ class Marketplace extends React.Component {
     );
   }
 
+  getMaxSpendNormalUtxos() {
+    const normalUtxos = this.state.normalUtxos;
+    let maxSpend = -20000;
+
+    for (let i = 0; i < normalUtxos.length; i++) {
+      maxSpend += normalUtxos[i].satoshis;
+    }
+
+    return maxSpend < 0 ? 0 : maxSpend;
+  };
+
   renderTransactions() {
     let transactions = this.state.tokenTransactions;
     let items = [];
@@ -202,6 +200,14 @@ class Marketplace extends React.Component {
           if (transactions[i].txs[j].height === -1 || transactions[i].txs[j].height === 0) {
             transactions[i].txs[j].height = 0;
             transactions[i].txs[j].time = Math.floor(Date.now() / 1000);
+          }
+
+          if (transactions[i].txs[j].type === 'ask' || transactions[i].txs[j].type === 'bid' || transactions[i].txs[j].type.indexOf('fill') > -1 || transactions[i].txs[j].type.indexOf('cancel') > -1) {
+            transactionsMerge.push({
+              ...transactions[i].txs[j],
+              tokenid: transactions[i].tokenId,
+              tokenName: this.getTokenData(transactions[i].tokenId).name,
+            });
           }
         }
       }
@@ -265,6 +271,10 @@ class Marketplace extends React.Component {
         </div>
       </React.Fragment>
     );
+  }
+
+  renderTokenInfo() {
+
   }
 
   render() {
