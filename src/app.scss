@@ -41,6 +41,9 @@ body {
     strong {
       color: #fff;
     }
+    .content > h4 > a {
+      color: #485fc7;
+    }
   }
   
   .content {
@@ -325,6 +328,28 @@ strong {
   }
 }
 
+.order-info-block {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 30px 20px 20px 0;
+  color: #14172c;
+
+  .table {
+    word-break: break-all;
+
+    td:first-child {
+      width: 30%;
+    }
+    strong {
+      color: #14172c; 
+    }
+    pre {
+      white-space: break-spaces;
+    }
+  }
+}
+
 .token-transactions-block {
   background: #fff;
   border-radius: 5px;
@@ -335,6 +360,7 @@ strong {
   .token-transaction-item {
     border-bottom: solid 2px rgba(165, 167, 192, 0.1);
     padding: 30px 10px 18px 10px;
+    cursor: pointer;
 
     &:last-child {
       border-bottom: none;
@@ -430,6 +456,14 @@ strong {
     font-size: 0.8rem;
     margin-right: 10px;
   }
+
+  &.sell-token-trigger {
+    width: 100px !important;
+  }
+  &.buy-token-trigger {
+    width: 100px !important;
+    margin-right: 160px;
+  }
 }
 
 .Modal-create-token,
@@ -475,6 +509,7 @@ strong {
       padding: 10px;
     }
     strong {
+      color: #fff;
       display: block;
       padding-bottom: 5px;
     }
@@ -536,4 +571,19 @@ strong {
   top: 0;
   opacity: 0.6;
   font-size: 0.9em;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.ucfirst {
+  text-transform: capitalize;
+}
+
+.order-cancel-trigger {
+  position: absolute;
+  margin-left: 60px;
+  margin-top: -4px;
+  font-size: 1.2em;
 }

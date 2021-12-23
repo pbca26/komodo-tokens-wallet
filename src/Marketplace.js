@@ -301,8 +301,75 @@ class Marketplace extends React.Component {
     );
   }
 
-  renderTokenInfo() {
+  renderOrderInfo() {
+    if (this.state.activeToken) {
+      const tokenInfo = this.getTokenData(this.state.activeToken);
+      console.warn(this.state.activeOrderIndex)
+      const orderInfo = this.state.tokenOrders[this.state.activeOrderIndex];
 
+      console.warn('tokenInfo', tokenInfo);
+      console.warn('orderInfo', orderInfo);
+
+      return (
+        <React.Fragment>
+          <div className="order-info-block">
+            <table className="table">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Direction</strong>
+                  </td>
+                  <td>{orderInfo.funcid === 's' || orderInfo.funcid === 'S' ? 'Sell' : 'Buy'}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Owner address</strong>
+                  </td>
+                  <td>{orderInfo.origtokenaddress || ''}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Price per token</strong>
+                  </td>
+                  <td>{orderInfo.price || ''} {this.props.chain}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Order size</strong>
+                  </td>
+                  <td>{orderInfo.totalrequired || ''} {orderInfo.funcid !== 's' && orderInfo.funcid !== 'S' ? tokenInfo.name : this.props.chain}</td>
+                </tr>
+                <tr>
+                  <td
+                    className="text-left no-border">
+                    <strong>Order transaction ID</strong>
+                  </td>
+                  <td className="token-info-link">
+                    <a
+                      target="_blank"
+                      href={`${chains[this.props.chain].explorerUrl}/${tokenInfo.tokenid}/transactions/${orderInfo.txid}/${this.props.chain}`}>
+                      {orderInfo.txid} <i className="fa fa-external-link-alt"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Token name</strong>
+                  </td>
+                  <td className="token-info-link">
+                    <a
+                      target="_blank"
+                      href={`${chains[this.props.chain].explorerUrl}/${tokenInfo.tokenid}/transactions/${this.props.chain}`}>
+                      {tokenInfo.name} <i className="fa fa-external-link-alt"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </React.Fragment>
+      );
+    }
   }
 
   render() {
@@ -348,7 +415,7 @@ class Marketplace extends React.Component {
                 <strong>Please make a deposit (min of 0.00002 {this.props.chain}) to your normal address in order to create or send tokens</strong>
               </div>
             }
-            {this.renderTokenInfo()}
+            {this.renderOrderInfo()}
             {this.renderTransactions()}
           </div>
         </div>
