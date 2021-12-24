@@ -312,6 +312,31 @@ class Marketplace extends React.Component {
 
       return (
         <React.Fragment>
+          <h4>
+            <React.Fragment>
+              Order info
+              {(orderInfo.funcid === 'b' || orderInfo.funcid === 'B') &&
+                <FillBidTokenModal
+                  tokenList={this.state.tokenList}
+                  tokenBalance={this.state.tokenBalance}
+                  normalUtxos={this.state.normalUtxos}
+                  order={orderInfo}
+                  setActiveToken={this.setActiveToken}
+                  syncData={this.syncData}
+                  {...this.props} />
+              }
+              {(orderInfo.funcid === 's' || orderInfo.funcid === 'S') &&
+                <FillAskTokenModal
+                  tokenList={this.state.tokenList}
+                  tokenBalance={this.state.tokenBalance}
+                  normalUtxos={this.state.normalUtxos}
+                  order={orderInfo}
+                  setActiveToken={this.setActiveToken}
+                  syncData={this.syncData}
+                  {...this.props} />
+              }
+            </React.Fragment>
+          </h4>
           <div className="order-info-block">
             <table className="table">
               <tbody>
