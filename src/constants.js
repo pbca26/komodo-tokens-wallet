@@ -16,6 +16,28 @@ const chains = {
   },
 };
 
+const orderType = [{
+  value: 'all',
+  title: 'All orders',
+}, {
+  value: 'my',
+  title: 'My orders',
+}];
+
+const orderDirection = [{
+  value: 'all',
+  title: 'All directions',
+}, {
+  value: 'sell',
+  title: 'Sell orders',
+}, {
+  value: 'buy',
+  title: 'Buy orders',
+}];
+
 module.exports = {
   chains,
+  nftDataTypes,
+  orderType,
+  orderDirection,
 };

@@ -1,8 +1,9 @@
 import React from 'react';
-import {hot} from 'react-hot-loader'
-import {version} from '../package.json';;
+import {hot} from 'react-hot-loader';
+import {version} from '../package.json';
 import Login from './Login';
 import Dashboard from './Dashboard';
+import Marketplace from './Marketplace';
 import './app.scss'
 
 window.DEBUG = false;
@@ -19,6 +20,7 @@ class App extends React.Component {
   get initialState() {
     this.setKey = this.setKey.bind(this);
     this.resetApp = this.resetApp.bind(this);
+    this.setActiveView = this.setActiveView.bind(this);
 
     return {
       wif: '',
@@ -28,6 +30,7 @@ class App extends React.Component {
       },
       chain: null,
       appVersion: null,
+      walletView: false,
     };
   }
 
@@ -56,6 +59,12 @@ class App extends React.Component {
     }
   }
 
+  setActiveView() {
+    this.setState({
+      walletView: !this.state.walletView,
+    });
+  }
+
   render() {
     return(
       <React.Fragment>
@@ -66,9 +75,20 @@ class App extends React.Component {
           <Login setKey={this.setKey} />
         }
         {this.state.wif &&
-          <Dashboard
-            resetApp={this.resetApp}
-            {...this.state} />
+          <React.Fragment>
+            {this.state.walletView &&
+              <Dashboard
+                resetApp={this.resetApp}
+                setActiveView={this.setActiveView}
+                {...this.state} />
+            }
+            {!this.state.walletView &&
+              <Marketplace
+                resetApp={this.resetApp}
+                setActiveView={this.setActiveView}
+                {...this.state} />
+            }
+          </React.Fragment>
         }
       </React.Fragment>
     );

@@ -8,7 +8,8 @@ import BuyTokenModal from './BuyTokenModal';
 import CancelAskTokenModal from './CancelAskTokenModal';
 import CancelBidTokenModal from './CancelBidTokenModal';
 import TransactionDetailsModal from './TransactionDetailsModal';
-import {chains} from './constants';
+import OrderFiltersModal from './OrderFiltersModal';
+import {chains, orderType, orderDirection} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
 let syncTimeoutRef;
@@ -182,6 +183,11 @@ class Marketplace extends React.Component {
     return (
       <React.Fragment>
         <h4>Orderbook</h4>
+        <OrderFiltersModal
+          {...this.state}
+          setFilter={this.setFilter}>
+          <a className="filters-trigger">Filters</a>
+        </OrderFiltersModal>
         {this.state.tokenBalance.length > 0 &&
          this.state.normalUtxos.length > 0 &&
           <React.Fragment>

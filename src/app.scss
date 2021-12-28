@@ -581,9 +581,71 @@ strong {
   text-transform: capitalize;
 }
 
+.marketplace {
+  .token-tile {
+    width: 170px;
+
+    strong {
+      margin: 0 auto;
+    }
+  }
+  .fill-buy-order-trigger,
+  .fill-ask-order-trigger {
+    background: #fff;
+    width: 100px;
+    border-radius: 5px;
+    padding: 7px 7px 9px 5px;
+    float: right;
+    margin-right: 20px;
+    margin-top: -5px;
+    text-align: center;
+    cursor: pointer;
+    color: #14172c;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+
+    i {
+      font-size: 0.8rem;
+      margin-right: 10px;
+    }
+  }
+}
+
 .order-cancel-trigger {
   position: absolute;
   margin-left: 60px;
   margin-top: -4px;
   font-size: 1.2em;
+}
+
+.Order-filters-modal {
+  .card-content {
+    height: 280px;
+  }
+  .card .modal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  h4 {
+    margin-bottom: 20px;
+    margin-top: 25px;
+  }
+
+  .content > .dropdown {
+    margin-top: 20px;
+  }
+}
+
+.filters-trigger,
+.filters-trigger:hover {
+  position: absolute;
+  margin-top: -22px;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-left: 150px;
+  color: #fff;
+  text-decoration: underline;
 }
