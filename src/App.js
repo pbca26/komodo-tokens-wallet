@@ -4,15 +4,8 @@ import {version} from '../package.json';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Marketplace from './Marketplace';
+import './debug-util';
 import './app.scss'
-
-window.DEBUG = false;
-
-try {
-  if (DEBUG) {
-    window.DEBUG = true;
-  }
-} catch (e) {}
 
 class App extends React.Component {
   state = this.initialState;
