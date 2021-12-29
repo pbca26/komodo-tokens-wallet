@@ -257,7 +257,7 @@ class Dashboard extends React.Component {
           <img src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"></img>
         </div>
         <div className="content">
-          <h4>Dashboard</h4>
+          <h4>Wallet | <a onClick={this.props.setActiveView}>Marketplace</a></h4>
 
           <div className="address-block">
             <div>

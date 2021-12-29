@@ -33,6 +33,19 @@ class TransactionDetailsModal extends React.Component {
     } else if (directionClass.indexOf('circle-up') > -1) {
       direction = 'sent';
     }
+    
+    // assets
+    if (transaction.type === 'fill') {
+      direction = 'trade completed';
+    } else if (transaction.type === 'ask') {
+      direction = 'sell order placed';
+    } else if (transaction.type === 'bid') {
+      direction = 'buy order placed';
+    } else if (transaction.type === 'cancel') {
+      direction = 'order cancelled';
+    }
+    
+    //console.warn(this.props);
 
     return (
       <React.Fragment>

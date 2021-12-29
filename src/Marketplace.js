@@ -3,11 +3,14 @@ import Blockchain from './blockchain';
 import {secondsToString} from './time';
 import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
+import CreateTokenModal from './CreateTokenModal';
 import SellTokenModal from './SellTokenModal';
 import BuyTokenModal from './BuyTokenModal';
+import TransactionDetailsModal from './TransactionDetailsModal';
+import FillBidTokenModal from './FillBidTokenModal';
+import FillAskTokenModal from './FillAskTokenModal';
 import CancelAskTokenModal from './CancelAskTokenModal';
 import CancelBidTokenModal from './CancelBidTokenModal';
-import TransactionDetailsModal from './TransactionDetailsModal';
 import OrderFiltersModal from './OrderFiltersModal';
 import {chains, orderType, orderDirection} from './constants';
 
@@ -21,6 +24,7 @@ class Marketplace extends React.Component {
     this.updateInput = this.updateInput.bind(this);
     this.setActiveToken = this.setActiveToken.bind(this);
     this.logout = this.logout.bind(this);
+    this.setFilter = this.setFilter.bind(this);
 
     return {
       tokenList: [],
@@ -31,7 +35,15 @@ class Marketplace extends React.Component {
       activeOrderIndex: null,
       tokenOrders: [],
       pristine: true,
+      filtersType: 'all',
+      filtersDirection: 'all',
     };
+  }
+
+  setFilter(name, value) {
+    this.setState({
+      [name]: value,
+    });
   }
 
   getTokenData = (tokenid) => {
@@ -116,8 +128,19 @@ class Marketplace extends React.Component {
   }
 
   renderOrders() {
-    const orders = this.state.tokenOrders;
+    let orders = this.state.tokenOrders;
+    //console.warn(orders)
     let items = [];
+
+    if (this.state.filtersType === 'my') {
+      orders = orders.filter(x => x.origtokenaddress === this.props.address.cc);
+    }
+
+    if (this.state.filtersDirection === 'sell') {
+      orders = orders.filter(x => x.funcid === 's' || x.funcid === 'S');
+    } else if (this.state.filtersDirection === 'buy') {
+      orders = orders.filter(x => x.funcid === 'b' || x.funcid === 'B');
+    }
 
     for (let i = 0; i < orders.length; i++) {
       items.push(
@@ -310,38 +333,36 @@ class Marketplace extends React.Component {
   renderOrderInfo() {
     if (this.state.activeToken) {
       const tokenInfo = this.getTokenData(this.state.activeToken);
-      console.warn(this.state.activeOrderIndex)
+      //console.warn(this.state.activeOrderIndex)
       const orderInfo = this.state.tokenOrders[this.state.activeOrderIndex];
 
-      console.warn('tokenInfo', tokenInfo);
-      console.warn('orderInfo', orderInfo);
+      //console.warn('tokenInfo', tokenInfo);
+      //console.warn('orderInfo', orderInfo);
 
       return (
         <React.Fragment>
           <h4>
-            <React.Fragment>
-              Order info
-              {(orderInfo.funcid === 'b' || orderInfo.funcid === 'B') &&
-                <FillBidTokenModal
-                  tokenList={this.state.tokenList}
-                  tokenBalance={this.state.tokenBalance}
-                  normalUtxos={this.state.normalUtxos}
-                  order={orderInfo}
-                  setActiveToken={this.setActiveToken}
-                  syncData={this.syncData}
-                  {...this.props} />
-              }
-              {(orderInfo.funcid === 's' || orderInfo.funcid === 'S') &&
-                <FillAskTokenModal
-                  tokenList={this.state.tokenList}
-                  tokenBalance={this.state.tokenBalance}
-                  normalUtxos={this.state.normalUtxos}
-                  order={orderInfo}
-                  setActiveToken={this.setActiveToken}
-                  syncData={this.syncData}
-                  {...this.props} />
-              }
-            </React.Fragment>
+            Order info
+            {(orderInfo.funcid === 'b' || orderInfo.funcid === 'B') &&
+              <FillBidTokenModal
+                tokenList={this.state.tokenList}
+                tokenBalance={this.state.tokenBalance}
+                normalUtxos={this.state.normalUtxos}
+                order={orderInfo}
+                setActiveToken={this.setActiveToken}
+                syncData={this.syncData}
+                {...this.props} />
+            }
+            {(orderInfo.funcid === 's' || orderInfo.funcid === 'S') &&
+              <FillAskTokenModal
+                tokenList={this.state.tokenList}
+                tokenBalance={this.state.tokenBalance}
+                normalUtxos={this.state.normalUtxos}
+                order={orderInfo}
+                setActiveToken={this.setActiveToken}
+                syncData={this.syncData}
+                {...this.props} />
+            }
           </h4>
           <div className="order-info-block">
             <table className="table">
