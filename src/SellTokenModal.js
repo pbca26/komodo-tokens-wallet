@@ -18,9 +18,9 @@ class SellTokenModal extends React.Component {
     return {
       isClosed: true,
       token: null,
-      pubkey: '03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3',
-      amount: 1,
-      price: 0.00001,
+      pubkey: '',
+      amount: '',
+      price: '',
       success: null,
       txid: null,
       error: null,

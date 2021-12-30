@@ -5,7 +5,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import Marketplace from './Marketplace';
 import './debug-util';
-import './app.scss'
+import './app.scss';
 
 class App extends React.Component {
   state = this.initialState;

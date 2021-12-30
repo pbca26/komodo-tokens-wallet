@@ -14,7 +14,7 @@ class FillBidTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      amount: 1,
+      amount: '',
       success: null,
       txid: null,
       error: null,

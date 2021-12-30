@@ -134,7 +134,7 @@ class Login extends React.Component {
               name="privKeyInput"
               placeholder="Seed or WIF key"
               value={this.state.privKeyInput}
-              onChange={this.updateInput} / >
+              onChange={this.updateInput} />
             <button
               type="button"
               onClick={this.getWifKey}

@@ -37,7 +37,6 @@ const orderDirection = [{
 
 module.exports = {
   chains,
-  nftDataTypes,
   orderType,
   orderDirection,
 };
