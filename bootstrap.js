@@ -92,7 +92,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "adc7ee1555955fcf6da7";
+/******/ 	var hotCurrentHash = "5a06889ee6a725b3fa3d";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -832,74 +832,74 @@
 /******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
 /******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_object_drop_ref"](p0i32);
 /******/ 					},
-/******/ 					"__wbindgen_is_null": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_is_null"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_debug_bcf4c89fc6b8072a": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_debug_bcf4c89fc6b8072a"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_error_756d2119a951f4e9": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_error_756d2119a951f4e9"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_info_10bf375e99ce481e": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_info_10bf375e99ce481e"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_log_7cd3d11e977f647f": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_log_7cd3d11e977f647f"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_warn_8ebd0504c9c4bd06": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_warn_8ebd0504c9c4bd06"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_get_a4f61a2fb16987bc": function(p0i32,p1i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_get_a4f61a2fb16987bc"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbg_length_f86925e8c69110ea": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_length_f86925e8c69110ea"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_new_fc8ee963685ada41": function() {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_fc8ee963685ada41"]();
-/******/ 					},
-/******/ 					"__wbg_get_75d36ef8b2e1d918": function(p0i32,p1i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_get_75d36ef8b2e1d918"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbg_new_ffb8fbe0ad5d4d2f": function() {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_ffb8fbe0ad5d4d2f"]();
-/******/ 					},
-/******/ 					"__wbg_from_cfe9a017acc727a1": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_from_cfe9a017acc727a1"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_isArray_df4c85ae44ed9ac8": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_isArray_df4c85ae44ed9ac8"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_push_ef0a52724cfe2a05": function(p0i32,p1i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_push_ef0a52724cfe2a05"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbg_buffer_eb2155f17856c20b": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_buffer_eb2155f17856c20b"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_newwithbyteoffsetandlength_9085942a60baa7df": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_newwithbyteoffsetandlength_9085942a60baa7df"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__wbg_length_fb012a20e74f2889": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_length_fb012a20e74f2889"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_new_e79680a6153792b1": function(p0i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_e79680a6153792b1"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_set_6ee7bbbf6a524401": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_set_6ee7bbbf6a524401"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__wbg_set_c7fc8735d70ceb11": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_set_c7fc8735d70ceb11"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__wbindgen_number_get": function(p0i32,p1i32) {
-/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_number_get"](p0i32,p1i32);
-/******/ 					},
 /******/ 					"__wbindgen_is_string": function(p0i32) {
 /******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_is_string"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_string_get": function(p0i32,p1i32) {
 /******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_string_get"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbindgen_is_null": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_is_null"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_number_get": function(p0i32,p1i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_number_get"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_debug_675b0ecb65722d2a": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_debug_675b0ecb65722d2a"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_error_cc38ce2b4b661e1d": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_error_cc38ce2b4b661e1d"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_info_e0c9813e6fd3bdc1": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_info_e0c9813e6fd3bdc1"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_log_3445347661d4505e": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_log_3445347661d4505e"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_warn_5ec7c7c02d0b3841": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_warn_5ec7c7c02d0b3841"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_get_67189fe0b323d288": function(p0i32,p1i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_get_67189fe0b323d288"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_length_42e02f5a04d67464": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_length_42e02f5a04d67464"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_new_949bbc1147195c4e": function() {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_949bbc1147195c4e"]();
+/******/ 					},
+/******/ 					"__wbg_get_4d0f21c2f823742e": function(p0i32,p1i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_get_4d0f21c2f823742e"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_new_0b83d3df67ecb33e": function() {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_0b83d3df67ecb33e"]();
+/******/ 					},
+/******/ 					"__wbg_from_3a079295289ec0d1": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_from_3a079295289ec0d1"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_isArray_eb7ad55f2da67dde": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_isArray_eb7ad55f2da67dde"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_push_284486ca27c6aa8b": function(p0i32,p1i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_push_284486ca27c6aa8b"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_buffer_397eaa4d72ee94dd": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_buffer_397eaa4d72ee94dd"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_newwithbyteoffsetandlength_8252bb2eb6e239b2": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_newwithbyteoffsetandlength_8252bb2eb6e239b2"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_new_287170343c5d35cd": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_new_287170343c5d35cd"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_set_4937a3963ca8dc9c": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_set_4937a3963ca8dc9c"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_length_546690163e18cf30": function(p0i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_length_546690163e18cf30"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_set_82a4e8a85e31ac42": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbg_set_82a4e8a85e31ac42"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["./cryptoconditions-js/pkg/cryptoconditions_bg.js"].exports["__wbindgen_throw"](p0i32,p1i32);
@@ -1063,7 +1063,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./cryptoconditions-js/pkg/cryptoconditions_bg.wasm":"9b5d672739df346ad7aa"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./cryptoconditions-js/pkg/cryptoconditions_bg.wasm":"8b9482a56819768876dc"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
