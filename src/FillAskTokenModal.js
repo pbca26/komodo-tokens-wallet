@@ -166,7 +166,7 @@ class FillAskTokenModal extends React.Component {
           className={`fill-ask-order-trigger ${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-dollar-sign"></i>
-          Sell
+          Buy
         </div>
         <Modal
           show={this.state.isClosed === false}
@@ -174,7 +174,7 @@ class FillAskTokenModal extends React.Component {
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
-            <h4>Sell token</h4>
+            <h4>Buy token</h4>
             <p>Fill out the form below</p>
             <div className="input-form">
               <input
@@ -182,26 +182,26 @@ class FillAskTokenModal extends React.Component {
                 name="token"
                 value={`Token: ${getTokenData(this.props.order.tokenid).name}`}
                 disabled
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="amount"
                 placeholder="Amount (qty)"
                 value={this.state.amount}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="token"
                 value={`Price: ${this.props.order.price}`}
                 disabled
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="token"
                 value={`Total: ${(this.state.amount || 0) * this.props.order.price}`}
                 disabled
-                className="form-input" / >
+                className="form-input" />
               <button
                 type="button"
                 onClick={this.buyToken}
