@@ -23,7 +23,7 @@ class App extends React.Component {
       },
       chain: null,
       appVersion: null,
-      walletView: false,
+      walletView: true,
     };
   }
 

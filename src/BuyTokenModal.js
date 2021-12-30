@@ -28,6 +28,17 @@ class BuyTokenModal extends React.Component {
     };
   }
 
+  getMaxSpendNormalUtxos() {
+    const normalUtxos = this.props.normalUtxos;
+    let maxSpend = -10000;
+
+    for (let i = 0; i < normalUtxos.length; i++) {
+      maxSpend += normalUtxos[i].satoshis;
+    }
+
+    return maxSpend < 0 ? 0 : maxSpend;
+  };
+
   updateInput(e) {
     if (e.target.name === 'amount') {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
@@ -94,6 +105,14 @@ class BuyTokenModal extends React.Component {
         success: null,
         txid: null,
         error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
+      });
+    } else if (toSats(this.state.price * this.state.amount) > this.getMaxSpendNormalUtxos()) {
+      //console.warn('bal', this.getMaxSpendNormalUtxos(), toSats(this.state.amount))
+      
+      this.setState({
+        success: null,
+        txid: null,
+        error: 'Not enough balance',
       });
     } else {
       try {

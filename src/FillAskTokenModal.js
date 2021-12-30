@@ -61,6 +61,12 @@ class FillAskTokenModal extends React.Component {
         txid: null,
         error: this.props.order.totalrequired === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.props.order.askamount,
       });
+    } else if (toSats(this.props.order.price * this.state.amount) > this.getMaxSpendNormalUtxos()) {
+      this.setState({
+        success: null,
+        txid: null,
+        error: 'Not enough balance',
+      });
     } else {
       try {
         let inputsData, rawtx;
