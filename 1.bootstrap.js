@@ -198,7 +198,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870314187\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/Modal.scss?");
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870437748\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/Modal.scss?");
 
 /***/ }),
 
@@ -258,7 +258,7 @@ eval("\n\nfunction _typeof(obj) { \"@babel/helpers - typeof\"; if (typeof Symbol
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870292980\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/TransactionDetailsModal.scss?");
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870417996\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/TransactionDetailsModal.scss?");
 
 /***/ }),
 
@@ -270,7 +270,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extr
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870290887\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/app.scss?");
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870416432\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/app.scss?");
 
 /***/ }),
 
@@ -306,7 +306,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar chains = {\n  TOKENSV2: {\n    ccLibVersion: 1,\n    faucetURL: 'https://www.atomicexplorer.com/#/faucet/tokensv2/',\n    txBuilderApi: 'utxoSelect',\n    // default|insight|utxoSelect\n    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',\n    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tokensv2/api/'\n  },\n  TKLTEST: {\n    ccLibVersion: 2,\n    ccIndex: true,\n    faucetURL: 'https://www.atomicexplorer.com/#/faucet/tkltest/',\n    txBuilderApi: 'utxoSelect',\n    // default|insight|utxoSelect\n    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',\n    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tkltest/api/'\n  }\n};\nvar orderType = [{\n  value: 'all',\n  title: 'All orders'\n}, {\n  value: 'my',\n  title: 'My orders'\n}];\nvar orderDirection = [{\n  value: 'all',\n  title: 'All directions'\n}, {\n  value: 'sell',\n  title: 'Sell orders'\n}, {\n  value: 'buy',\n  title: 'Buy orders'\n}];\nmodule.exports = {\n  chains: chains,\n  nftDataTypes: nftDataTypes,\n  orderType: orderType,\n  orderDirection: orderDirection\n};\n\n//# sourceURL=webpack:///./src/constants.js?");
+eval("\n\nvar chains = {\n  TOKENSV2: {\n    ccLibVersion: 1,\n    faucetURL: 'https://www.atomicexplorer.com/#/faucet/tokensv2/',\n    txBuilderApi: 'utxoSelect',\n    // default|insight|utxoSelect\n    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',\n    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tokensv2/api/'\n  },\n  TKLTEST: {\n    ccLibVersion: 2,\n    ccIndex: true,\n    faucetURL: 'https://www.atomicexplorer.com/#/faucet/tkltest/',\n    txBuilderApi: 'utxoSelect',\n    // default|insight|utxoSelect\n    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',\n    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tkltest/api/'\n  }\n};\nvar orderType = [{\n  value: 'all',\n  title: 'All orders'\n}, {\n  value: 'my',\n  title: 'My orders'\n}];\nvar orderDirection = [{\n  value: 'all',\n  title: 'All directions'\n}, {\n  value: 'sell',\n  title: 'Sell orders'\n}, {\n  value: 'buy',\n  title: 'Buy orders'\n}];\nmodule.exports = {\n  chains: chains,\n  orderType: orderType,\n  orderDirection: orderDirection\n};\n\n//# sourceURL=webpack:///./src/constants.js?");
 
 /***/ }),
 
@@ -342,7 +342,7 @@ eval("\n\nvar _react = _interopRequireDefault(__webpack_require__(/*! react */ \
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870315180\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/index.scss?");
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      // 1640870438493\n      var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.i, {\"locals\":false});\n      module.hot.dispose(cssReload);\n      module.hot.accept(undefined, cssReload);\n    }\n  \n\n//# sourceURL=webpack:///./src/index.scss?");
 
 /***/ }),
 
