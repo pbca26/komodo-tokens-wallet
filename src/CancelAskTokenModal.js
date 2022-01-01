@@ -67,7 +67,7 @@ class CancelAskTokenModal extends React.Component {
       }
   
       if (rawtx && rawtx.substr(0, 2) === '04') {
-        //const {txid} = await Blockchain.broadcast(rawtx);
+        const {txid} = await Blockchain.broadcast(rawtx);
   
         if (!txid || txid.length !== 64) {
           this.setState({
