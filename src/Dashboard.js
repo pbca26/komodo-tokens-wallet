@@ -60,11 +60,19 @@ class Dashboard extends React.Component {
     }
   }
 
-  syncData = async () => {    
-    const tokenList = await Blockchain.tokenList();
+  syncData = async () => {
+    let cctxids = [];
     const tokenBalance = await Blockchain.tokenBalance(this.props.address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(this.props.address.cc);
     const normalUtxos = await Blockchain.getNormalUtxos(this.props.address.normal);
+
+    for (var i = 0; i < tokenBalance.balance.length; i++) {
+      if (cctxids.indexOf(tokenBalance.balance[i].tokenId) === -1) cctxids.push(tokenBalance.balance[i].tokenId);
+    }
+    for (var i = 0; i < tokenTransactions.txs.length; i++) {
+      if (cctxids.indexOf(tokenTransactions.txs[i].tokenId) === -1) cctxids.push(tokenTransactions.txs[i].tokenId);
+    }
+    const tokenList = chains[this.props.chain].explorerApiVersion && chains[this.props.chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();
 
     this.setState({
       tokenList: tokenList.tokens,

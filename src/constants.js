@@ -13,6 +13,7 @@ const chains = {
     txBuilderApi: 'utxoSelect', // default|insight|utxoSelect
     explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
     explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tkltest/api/',
+    explorerApiVersion: 2,
   },
 };
 
