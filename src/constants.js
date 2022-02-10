@@ -5,6 +5,7 @@ const chains = {
     txBuilderApi: 'utxoSelect', // default|insight|utxoSelect
     explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
     explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tokensv2/api/',
+    enabled: true,
   },
   TKLTEST: {
     ccLibVersion: 2,
@@ -14,6 +15,16 @@ const chains = {
     explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
     explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tkltest/api/',
     explorerApiVersion: 2,
+    enabled: true,
+  },
+  TOKEL: {
+    ccLibVersion: 2,
+    ccIndex: true,
+    txBuilderApi: 'utxoSelect', // default|insight|utxoSelect
+    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
+    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tokel/api/',
+    explorerApiVersion: 2,
+    enabled: window.location.href.indexOf('enable-tokel') > -1 ? true : false,
   },
 };
 
