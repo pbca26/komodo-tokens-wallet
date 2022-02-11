@@ -4,6 +4,7 @@ import {secondsToString} from './time';
 import {sortTransactions} from './sort';
 import Jdenticon from 'react-jdenticon';
 import CreateTokenModal from './CreateTokenModal';
+import BatchCreateTokenModal from './BatchCreateTokenModal';
 import SendTokenModal from './SendTokenModal';
 import TransactionDetailsModal from './TransactionDetailsModal';
 import {chains} from './constants';
@@ -155,6 +156,12 @@ class Dashboard extends React.Component {
             {...this.props}
             normalUtxos={this.state.normalUtxos}
             syncData={this.syncData} />
+          {window.location.href.indexOf('enable-batch-create') > -1 &&
+            <BatchCreateTokenModal
+              {...this.props}
+              normalUtxos={this.state.normalUtxos}
+              syncData={this.syncData} />
+          }
         </div>
       </React.Fragment>
     );
@@ -270,10 +277,12 @@ class Dashboard extends React.Component {
           <div className="address-block">
             <div>
               <strong>My Normal address:</strong> {this.props.address.normal}
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`${chains[this.props.chain].faucetURL}${this.props.address.normal}`}><i className="fa fa-faucet faucet-btn"></i></a>
+              {chains[this.props.chain].faucetURL &&
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`${chains[this.props.chain].faucetURL}${this.props.address.normal}`}><i className="fa fa-faucet faucet-btn"></i></a>
+              }
             </div>
             <div style={{'paddingTop': '20px'}}>
               <strong>My CC address:</strong> {this.props.address.cc}
