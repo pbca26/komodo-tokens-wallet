@@ -104,7 +104,7 @@ class SellTokenModal extends React.Component {
         inputsData = {
           getInfo: await Blockchain.getInfo(),
           ccUtxos: await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
-          normalUtxos: await Blockchain.createCCTx(toSats(this.state.price) + 10000, this.props.address.pubkey),
+          normalUtxos: await Blockchain.createCCTx(10000, this.props.address.pubkey),
         };
 
         inputsData.getInfo = inputsData.getInfo.info;
