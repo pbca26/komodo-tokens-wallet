@@ -44,7 +44,7 @@ class BatchCreateTokenModal extends React.Component {
       this.props.syncData();
       if (checkTxConfsTimer) clearTimeout(checkTxConfsTimer);
       const txData1 = await Blockchain.getTransaction(txid);
-      this.createNewTokenBatch();
+      this.createNewTokenBatch(true);
     } else {
       checkTxConfsTimer = setTimeout(() => {
         self.checkTxConfs(txid);
@@ -81,12 +81,22 @@ class BatchCreateTokenModal extends React.Component {
       });
   }
 
-  createNewTokenBatch = async () => {
+  createNewTokenBatch = async (isAuto) => {
     const tokens = JSON.parse(this.state.batchJson);
     const i = this.state.currentTokenNumber;
     let rawtx;
     //console.log(tokens);
     //console.log(typeof tokens);
+
+    if (!isAuto) {
+      this.setState({
+        success: null,
+        error: null,
+        currentTokenName: null,
+        currentTokenNumber: 0,
+        totalTokens: 0,
+      });
+    }
 
     const formatNftData = (data) => {
       let _data = JSON.parse(data);
@@ -153,9 +163,6 @@ class BatchCreateTokenModal extends React.Component {
           /*this.setState({
             success: '123',
             error: null,
-            name: '',
-            description: '',
-            supply: '',
             currentTokenName: tokens[i].name,
             currentTokenNumber: this.state.currentTokenNumber + 1,
           });*/
@@ -169,9 +176,6 @@ class BatchCreateTokenModal extends React.Component {
             this.setState({
               success: txid,
               error: null,
-              name: '',
-              description: '',
-              supply: '',
               currentTokenName: tokens[i].name,
               currentTokenNumber: this.state.currentTokenNumber + 1,
               totalTokens: tokens.length,
@@ -196,6 +200,7 @@ class BatchCreateTokenModal extends React.Component {
       this.setState({
         success: true,
         inProgress: false,
+        batchJson: null,
       });
     }
   }
