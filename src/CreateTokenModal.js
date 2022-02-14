@@ -106,6 +106,23 @@ class CreateTokenModal extends React.Component {
       }
     };
 
+    const formatNftData = (data) => {
+      let _data = JSON.parse(data);
+
+      if (_data.arbitrary) {
+        if (typeof _data.arbitrary === 'object' || Array.isArray(_data.arbitrary)) {
+          _data.arbitrary = Buffer.from(JSON.stringify(_data.arbitrary)).toString('hex');
+        } else if (/^[A-F0-9]+$/i.test(_data.arbitrary)) {
+          // hex string, do nothing
+          //console.warn('arbitrary is a hex str');
+        } else {
+          _data.arbitrary = Buffer.from(_data.arbitrary.toString()).toString('hex');
+        }
+      }
+      
+      return _data;
+    };
+
     if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
       this.setState({
         success: null,
@@ -142,7 +159,7 @@ class CreateTokenModal extends React.Component {
           name: this.state.name, 
           description: this.state.description,
           supply: Number(this.state.supply),
-          nft: chains[this.props.chain].ccLibVersion === 1 ? (this.state.nft.indexOf('{') > -1 ? 'f7' : '00') : this.state.nft.indexOf('{') > -1 ? JSON.parse(this.state.nft) : '00' + Buffer.from(this.state.nft).toString('hex'),
+          nft: chains[this.props.chain].ccLibVersion === 1 ? (this.state.nft.indexOf('{') > -1 ? 'f7' : '00') : this.state.nft.indexOf('{') > -1 ? formatNftData(this.state.nft) : '00' + Buffer.from(this.state.nft).toString('hex'),
         } : {
           name: this.state.name, 
           description: this.state.description,
