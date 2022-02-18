@@ -159,8 +159,8 @@ class Marketplace extends React.Component {
     for (let i = 0; i < orders.length; i++) {
       items.push(
         <div
-          key={`token-tile-${orders[i].tokenid}`}
-          className={`token-tile${orders[i].tokenid === this.state.activeToken ? ' active' : ''}`}
+          key={`token-tile-${orders[i].txid}`}
+          className={`token-tile${i === this.state.activeOrderIndex ? ' active' : ''}`}
           onClick={() => this.setActiveToken(orders[i].tokenid, i)}>
           {orders[i].origtokenaddress === this.props.address.cc &&
            (orders[i].funcid === 's' || orders[i].funcid === 'S') &&
