@@ -1,0 +1,21 @@
+.order-info-block {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 30px 20px 20px 0;
+  color: #14172c;
+
+  .table {
+    word-break: break-all;
+
+    td:first-child {
+      width: 30%;
+    }
+    strong {
+      color: #14172c; 
+    }
+    pre {
+      white-space: break-spaces;
+    }
+  }
+}

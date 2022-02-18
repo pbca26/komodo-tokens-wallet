@@ -6,6 +6,12 @@ import Dashboard from './Dashboard';
 import Marketplace from './Marketplace';
 import './debug-util';
 import './app.scss';
+import './logo.scss';
+import './input.scss';
+import './order-info.scss';
+import './transactions.scss';
+import './balance.scss';
+import './marketplace.scss';
 
 class App extends React.Component {
   state = this.initialState;
