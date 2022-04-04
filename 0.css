@@ -16354,6 +16354,31 @@ strong {
 .ucfirst {
   text-transform: capitalize; }
 
+.escrow-send-token-trigger {
+  background: #fff;
+  width: 170px;
+  border-radius: 5px;
+  padding: 7px 7px 9px 5px;
+  float: right;
+  margin-right: 160px;
+  margin-top: -50px;
+  text-align: center;
+  cursor: pointer;
+  color: #14172c; }
+  .escrow-send-token-trigger i {
+    padding-right: 10px; }
+
+.escrow-token-explorer-link,
+.escrow-token-explorer-link:hover {
+  color: #37e39f;
+  position: absolute;
+  left: 400px;
+  margin-top: 25px; }
+
+.escrow-stop-btn {
+  background-color: #00b9d6ad;
+  border-color: #00b9d6ad; }
+
 .app-logo {
   padding-top: 20px; }
   .app-logo .box,
