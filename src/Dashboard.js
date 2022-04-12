@@ -7,6 +7,7 @@ import CreateTokenModal from './CreateTokenModal';
 import BatchCreateTokenModal from './BatchCreateTokenModal';
 import SendTokenModal from './SendTokenModal';
 import TransactionDetailsModal from './TransactionDetailsModal';
+import EscrowSendTokenModal from './EscrowSendTokenModal';
 import {chains} from './constants';
 
 const SYNC_INTERVAL = 30 * 1000;
@@ -143,12 +144,22 @@ class Dashboard extends React.Component {
         <h4>Current holdings</h4>
         {this.state.tokenBalance.length > 0 &&
          this.state.normalUtxos.length > 0 &&
-          <SendTokenModal
-            tokenList={this.state.tokenList}
-            tokenBalance={this.state.tokenBalance}
-            normalUtxos={this.state.normalUtxos}
-            syncData={this.syncData}
-            {...this.props} />
+          <React.Fragment>
+            <SendTokenModal
+              tokenList={this.state.tokenList}
+              tokenBalance={this.state.tokenBalance}
+              normalUtxos={this.state.normalUtxos}
+              syncData={this.syncData}
+              {...this.props} />
+            {window.location.href.indexOf('enable-escrow') > -1 &&
+              <EscrowSendTokenModal
+                {...this.props}
+                tokenList={this.state.tokenList}
+                tokenBalance={this.state.tokenBalance}
+                normalUtxos={this.state.normalUtxos}
+                syncData={this.syncData} />
+            }
+          </React.Fragment>
         }
         <div className="token-balance-block">
           {items}

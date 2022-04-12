@@ -1,7 +1,13 @@
-let explorerUrl;
+// TODO: rewrite as class
+let explorerUrl, _fetch = typeof window === 'undefined' ? null : fetch, _headers = typeof window === 'undefined' ? null : Headers;
 
-const setExplorerUrl = (name) => {
+const setExplorerUrl = name => {
   explorerUrl = name;
+};
+
+const setFetch = (fetchRef, headers) => {
+  _fetch = fetchRef;
+  _headers = headers;
 };
 
 const get = async (endpoint, postData) => {
@@ -9,13 +15,13 @@ const get = async (endpoint, postData) => {
 
   if (postData) {
     opts.body = JSON.stringify(postData);
-    opts.headers = new Headers();
+    opts.headers = new _headers();
     opts.headers.append('Content-Type', 'application/json');
     opts.headers.append('Content-Length', opts.body.length);
     opts.method = 'POST';
   }
 
-  const response = await fetch(`${explorerUrl}${endpoint}`, opts);
+  const response = await _fetch(`${explorerUrl}${endpoint}`, opts);
   const isJson = response.headers.get('Content-Type').includes('application/json');
 
   const body = isJson ? await response.json() : await response.text();
@@ -29,7 +35,7 @@ const get = async (endpoint, postData) => {
 
 const getAddress = address => get(`addr/${address}/?noTxList=1`);
 
-const getAddressHistory = (address) => get(`/txs?address=${address}`);
+const getAddressHistory = address => get(`/txs?address=${address}`);
 
 const getHistory = addresses => get(`addrs/txs`, {addrs: addresses.join(',')});
 
@@ -53,7 +59,7 @@ const getTipTime = async () => {
 
 const broadcast = transaction => get('tx/send', {rawtx: transaction});
 
-export const getInfo = async () => {
+const getInfo = async () => {
   try {
     const response = await fetch(`${explorerUrl}/status?q=getInfo`);
     const isJson = response.headers.get('Content-Type').includes('application/json');
@@ -72,9 +78,9 @@ export const getInfo = async () => {
 
 const tokenBalance = address => get(`tokens/balance?address=${address}`);
 const tokenTransactions = address => get(`tokens/transactions?address=${address}`);
-const tokenList = (cctxid) => cctxid ? get('tokens', {cctxid}) : get('tokens');
+const tokenList = cctxid => cctxid ? get('tokens', {cctxid}) : get('tokens');
 const tokenListAll = () => get('tokens?pageNum=all');
-const tokenOrderbook = (address) => address ? get(`tokens/orderbook?address=${address}`) : get('tokens/orderbook');
+const tokenOrderbook = address => address ? get(`tokens/orderbook?address=${address}`) : get('tokens/orderbook');
 const addCCInputs = (tokenid, pubkey, amount) => get(`tokens/addccinputs?pubkey=${pubkey}&tokenid=${tokenid}&amount=${amount}`);
 const createCCTx = (amount, pubkey) => get(`tokens/createtx?pubkey=${pubkey}&amount=${amount}`);
 const tokenUtxos = (address, tokenid, raw = false) => get(`tokens/utxo?address=${address}&cctxid=${tokenid}&raw=${raw}`)
@@ -93,6 +99,7 @@ const blockchain = {
   getTipTime,
   broadcast,
   setExplorerUrl,
+  setFetch,
   tokenBalance,
   tokenTransactions,
   tokenList,
@@ -105,4 +112,4 @@ const blockchain = {
   tokenOrderbook,
 };
 
-export default blockchain;
+module.exports = blockchain;
