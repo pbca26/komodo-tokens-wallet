@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FillBidTokenModal component render and token fill bid order event check 1`] = `
+Array [
+  <div
+    className="fill-buy-order-trigger "
+    onClick={[Function]}
+  >
+    <i
+      className="fa fa-dollar-sign"
+    />
+    Sell
+  </div>,
+  <div
+    className="Modal modal  Modal-send-token"
+  >
+    <div
+      onClick={[Function]}
+    >
+      <div
+        className="modal-background"
+      />
+    </div>
+    <div
+      className="modal-content"
+    >
+      <div
+        className="card"
+      >
+        <button
+          className="modal-close is-large "
+          onClick={[Function]}
+        />
+        <div
+          className="card-content"
+        >
+          <div
+            className="content"
+          >
+            <div
+              className="create-token-form"
+            >
+              <h4>
+                Sell token
+              </h4>
+              <p>
+                Fill out the form below
+              </p>
+              <div
+                className="input-form"
+              >
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Token: NFTJS"
+                />
+                <input
+                  className="form-input"
+                  name="amount"
+                  onChange={[Function]}
+                  placeholder="Amount (qty)"
+                  type="text"
+                  value={1}
+                />
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Price: 0.00001"
+                />
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Total: 0.00001"
+                />
+                <button
+                  className="form-input"
+                  disabled={false}
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Sell
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;
