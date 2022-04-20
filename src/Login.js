@@ -118,14 +118,14 @@ class Login extends React.Component {
                 id="dropdown-menu"
                 role="menu">
                 <div className="dropdown-content">
-                  {Object.keys(chains).map(chain => (
+                  {Object.keys(chains).map(chain => chains[chain].enabled ? (
                     <a
                       key={`chain-${chain}`}
                       className="dropdown-item"
                       onClick={() => this.setChain(chain)}>
                       <span className="dropdown-balance">{chain}</span>
                     </a>
-                  ))}
+                  ) : (null))}
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@ class Login extends React.Component {
               name="privKeyInput"
               placeholder="Seed or WIF key"
               value={this.state.privKeyInput}
-              onChange={this.updateInput} / >
+              onChange={this.updateInput} />
             <button
               type="button"
               onClick={this.getWifKey}

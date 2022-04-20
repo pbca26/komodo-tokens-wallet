@@ -86,12 +86,26 @@ class Marketplace extends React.Component {
     }
   }
 
-  syncData = async () => {    
-    const tokenList = await Blockchain.tokenList();
+  syncData = async () => {
+    let cctxids = [];
+    const tokenList = await Blockchain.tokenListAll();
     const tokenBalance = await Blockchain.tokenBalance(this.props.address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(this.props.address.cc);
     const normalUtxos = await Blockchain.getNormalUtxos(this.props.address.normal);
-    const tokenOrders = await Blockchain.tokenOrderbook();
+    const tokenOrders = await Blockchain.tokenOrderbook(chains[this.props.chain].explorerApiVersion && chains[this.props.chain].explorerApiVersion === 2 ? this.props.address.cc : null);
+    
+    /*for (var i = 0; i < tokenBalance.balance.length; i++) {
+      if (cctxids.indexOf(tokenBalance.balance[i].tokenId) === -1) cctxids.push(tokenBalance.balance[i].tokenId);
+    }
+    for (var i = 0; i < tokenTransactions.txs.length; i++) {
+      if (cctxids.indexOf(tokenTransactions.txs[i].tokenId) === -1) cctxids.push(tokenTransactions.txs[i].tokenId);
+    }
+    for (var i = 0; i < tokenOrders.orderbook.length; i++) {
+      if (cctxids.indexOf(tokenOrders.orderbook[i].tokenid) === -1) cctxids.push(tokenOrders.orderbook[i].tokenid);
+    }
+
+    const tokenList = chains[this.props.chain].explorerApiVersion && chains[this.props.chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();
+    */
 
     this.setState({
       tokenList: tokenList.tokens,
@@ -153,8 +167,8 @@ class Marketplace extends React.Component {
     for (let i = 0; i < orders.length; i++) {
       items.push(
         <div
-          key={`token-tile-${orders[i].tokenid}`}
-          className={`token-tile${orders[i].tokenid === this.state.activeToken ? ' active' : ''}`}
+          key={`token-tile-${orders[i].txid}`}
+          className={`token-tile${i === this.state.activeOrderIndex ? ' active' : ''}`}
           onClick={() => this.setActiveToken(orders[i].tokenid, i)}>
           {orders[i].origtokenaddress === this.props.address.cc &&
            (orders[i].funcid === 's' || orders[i].funcid === 'S') &&

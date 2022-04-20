@@ -18,9 +18,9 @@ class SellTokenModal extends React.Component {
     return {
       isClosed: true,
       token: null,
-      pubkey: '03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3',
-      amount: 1,
-      price: 0.00001,
+      pubkey: '',
+      amount: '',
+      price: '',
       success: null,
       txid: null,
       error: null,
@@ -104,7 +104,7 @@ class SellTokenModal extends React.Component {
         inputsData = {
           getInfo: await Blockchain.getInfo(),
           ccUtxos: await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
-          normalUtxos: await Blockchain.createCCTx(toSats(this.state.price) + 10000, this.props.address.pubkey),
+          normalUtxos: await Blockchain.createCCTx(10000, this.props.address.pubkey),
         };
 
         inputsData.getInfo = inputsData.getInfo.info;

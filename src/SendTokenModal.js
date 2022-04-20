@@ -87,7 +87,7 @@ class SendTokenModal extends React.Component {
       this.setState({
         success: null,
         txid: null,
-        error: 'Amount must be between 1 and ' + this.state.token.balance,
+        error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
       });
     } else {
       try {

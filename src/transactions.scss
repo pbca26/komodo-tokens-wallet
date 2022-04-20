@@ -1,0 +1,78 @@
+.token-transactions-block {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 30px 20px 20px 0;
+  color: #14172c;
+
+  .token-transaction-item {
+    border-bottom: solid 2px rgba(165, 167, 192, 0.1);
+    padding: 30px 10px 18px 10px;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .transaction-left {
+      margin-left: 30px;
+      position: relative;
+      top: -6px;
+
+      i {
+        position: absolute;
+        margin-left: -35px;
+        margin-top: 16px;
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 1.1rem;
+
+        &.color-green {
+          color: #0cb975;
+        }
+      }
+      .transaction-unconfirmed {
+        margin-top: 0;
+        margin-left: 12px;
+        font-size: 1em;
+      }
+      .token-name {
+        position: absolute;
+        margin-top: -50px;
+        font-weight: 500;
+        margin-left: 62px;
+      }
+      .transaction-time {
+        color: #7e7e80;
+        font-size: 0.9em;
+        margin-top: -28px;
+        margin-left: 62px;
+      }
+    }
+    .transaction-right {
+      float: right;
+      height: 64px;
+      margin-top: -64px;
+      width: 300px;
+
+      .transaction-address {
+        color: #7e7e80;
+        font-size: 0.92em;
+        top: 20px;
+      }
+      .transaction-value {
+        font-size: 1.2rem;
+        font-weight: 500;
+        top: 10px;
+      }
+      .transaction-address,
+      .transaction-value {
+        position: relative;
+        left: -40px;
+      }
+      i {
+        float: right;
+        margin-top: -8px;
+      }
+    }
+  }
+}

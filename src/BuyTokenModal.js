@@ -18,15 +18,26 @@ class BuyTokenModal extends React.Component {
     return {
       isClosed: true,
       token: null,
-      pubkey: '03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3',
-      amount: 1,
-      price: 0.00001,
+      pubkey: '',
+      amount: '',
+      price: '',
       success: null,
       txid: null,
       error: null,
       tokenDropdownOpen: false,
     };
   }
+
+  getMaxSpendNormalUtxos() {
+    const normalUtxos = this.props.normalUtxos;
+    let maxSpend = -10000;
+
+    for (let i = 0; i < normalUtxos.length; i++) {
+      maxSpend += normalUtxos[i].satoshis;
+    }
+
+    return maxSpend < 0 ? 0 : maxSpend;
+  };
 
   updateInput(e) {
     if (e.target.name === 'amount') {
@@ -95,6 +106,14 @@ class BuyTokenModal extends React.Component {
         txid: null,
         error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
       });
+    } else if (toSats(this.state.price * this.state.amount) > this.getMaxSpendNormalUtxos()) {
+      //console.warn('bal', this.getMaxSpendNormalUtxos(), toSats(this.state.amount))
+      
+      this.setState({
+        success: null,
+        txid: null,
+        error: 'Not enough balance',
+      });
     } else {
       try {
         let inputsData, rawtx;
@@ -103,7 +122,6 @@ class BuyTokenModal extends React.Component {
         
         inputsData = {
           getInfo: await Blockchain.getInfo(),
-          ccUtxos: await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
           normalUtxos: await Blockchain.createCCTx(toSats(this.state.price * this.state.amount) + 10000, this.props.address.pubkey),
         };
 
