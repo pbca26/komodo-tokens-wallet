@@ -18,6 +18,7 @@ class Dashboard extends React.Component {
     this.updateInput = this.updateInput.bind(this);
     this.setActiveToken = this.setActiveToken.bind(this);
     this.logout = this.logout.bind(this);
+    this.tokenInfoShowNftData = this.tokenInfoShowNftData.bind(this);
 
     return {
       tokenList: [],
@@ -26,7 +27,14 @@ class Dashboard extends React.Component {
       normalUtxos: [],
       activeToken: null,
       pristine: true,
+      tokenInfoShowNftData: false,
     };
+  }
+
+  tokenInfoShowNftData() {
+    this.setState({
+      tokenInfoShowNftData: !this.state.tokenInfoShowNftData,
+    });
   }
 
   getTokenData = (tokenid) => {
@@ -245,6 +253,161 @@ class Dashboard extends React.Component {
     );
   }
 
+  renderTokenInfo() {
+    if (this.state.activeToken) {
+      const tokenInfo = this.getTokenData(this.state.activeToken);
+
+      console.warn('tokenInfo', tokenInfo);
+
+      const checkTypeOfArbitraryData = (data) => {
+        try {
+          JSON.parse(data);
+          console.warn('JSON.parse(data)', JSON.parse(data));
+          return true;
+        } catch (e) {
+          console.warn(e)
+        }
+      };
+
+      const renderTokenNFTData = () => {
+        if (typeof tokenInfo.data.decoded === 'object') {
+          const tokenNFTData = tokenInfo.data.decoded;
+          let items = [];
+
+          for (let i = 0; i < Object.keys(tokenNFTData).length; i++) {
+            const tokenNFTDataKey = Object.keys(tokenNFTData)[i];
+            const tokenNFTDataValue = tokenNFTData[tokenNFTDataKey];
+
+            items.push(
+              <tr>
+                <td className="ucfirst">
+                  <strong>{tokenNFTDataKey}</strong>
+                </td>
+                <td>
+                  {tokenNFTDataKey === 'url' &&
+                    <React.Fragment>
+                      <a
+                        target="_blank"
+                        href={tokenNFTDataValue}>
+                        {tokenNFTDataValue}
+                      </a>
+                    </React.Fragment>
+                  }
+                  {tokenNFTDataKey !== 'url' &&
+                    <React.Fragment>{tokenNFTDataKey === 'arbitrary' && checkTypeOfArbitraryData(tokenNFTDataValue) ? <pre className="pre-nostyle">{JSON.stringify(JSON.parse(tokenNFTDataValue), null, 2)}</pre> : tokenNFTDataValue}</React.Fragment>
+                  }
+                </td>
+              </tr>
+            );
+          }
+
+          return (
+            <table className="table">
+              <tbody>
+                {items}
+              </tbody>
+            </table>
+          );
+        } else {
+          return tokenInfo.data.decoded;
+        }
+      };
+
+      return (
+        <React.Fragment>
+          <h4>
+            {tokenInfo.data && tokenInfo.data.decoded &&
+              <span
+                className="token-info-trigger"
+                onClick={this.tokenInfoShowNftData}>
+                Token info
+                <i className={`fa fa-chevron-${this.state.tokenInfoShowNftData ? 'up' : 'down'}`}></i>
+              </span>
+            }
+            {!tokenInfo.data &&
+              <React.Fragment>Token info</React.Fragment>
+            }
+          </h4>
+          <div className="token-info-block">
+            <table className="table">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Name</strong>
+                  </td>
+                  <td className="token-info-link">
+                    <a
+                      target="_blank"
+                      href={`${chains[this.props.chain].explorerUrl}/${tokenInfo.tokenid}/transactions/${this.props.chain}`}>
+                      {tokenInfo.name} <i className="fa fa-external-link-alt"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Description</strong>
+                  </td>
+                  <td>
+                    {tokenInfo.description}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Supply</strong>
+                  </td>
+                  <td>
+                    {tokenInfo.supply}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Owner</strong>
+                  </td>
+                  <td>
+                    {tokenInfo.owner}
+                  </td>
+                </tr>
+                {tokenInfo.data &&
+                 tokenInfo.data.decoded &&
+                 this.state.tokenInfoShowNftData &&
+                  <tr>
+                    <td>
+                      <strong>Data</strong>
+                    </td>
+                    <td>
+                      {renderTokenNFTData()}
+                    </td>
+                  </tr>
+                }
+                {tokenInfo.data &&
+                 tokenInfo.data.decoded &&
+                 this.state.tokenInfoShowNftData &&
+                  <tr>
+                    <td>
+                      <strong>Raw Data</strong>
+                    </td>
+                    <td>
+                      <pre>{JSON.stringify(tokenInfo.data.decoded, null, 2) }</pre>
+                    </td>
+                  </tr>
+                }
+                {tokenInfo.data &&
+                 tokenInfo.data.decoded &&
+                 !this.state.tokenInfoShowNftData &&
+                 <tr>
+                  <td colSpan="2">
+                    ...
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </React.Fragment>
+      );
+    }
+  }
+
   render() {
     return(
       <div className="main dashboard">
@@ -288,6 +451,7 @@ class Dashboard extends React.Component {
                 <strong>Please make a deposit (min of 0.00002 {this.props.chain}) to your normal address in order to create or send tokens</strong>
               </div>
             }
+            {this.renderTokenInfo()}
             {this.renderTransactions()}
           </div>
         </div>
