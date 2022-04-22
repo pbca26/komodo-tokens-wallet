@@ -28,6 +28,11 @@ const chains = {
   },
 };
 
+const nftDataTypes = {
+  'plain': 'Plain text or JSON',
+  'tokel': 'Tokel Standart',
+};
+
 const orderType = [{
   value: 'all',
   title: 'All orders',
