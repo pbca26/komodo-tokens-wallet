@@ -35,5 +35,5 @@ const checkTimestamp = (dateToCheck, currentEpochTime = Date.now() / 1000) => {
 
 module.exports = {
   secondsToString,
-  checkTimestamp
+  checkTimestamp,
 };
