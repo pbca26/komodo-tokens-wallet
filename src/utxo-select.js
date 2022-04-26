@@ -1,13 +1,14 @@
 import coinselect from 'coinselect';
 import blockchain from './blockchain';
 import TokensLib from './cclib-import';
+import writeLog from './log';
 
 const getUtxosRawTx = async utxos => {
   let rawTx = [];
 
   for (const utxo of utxos) {
     const {rawtx} = await blockchain.getRawTransaction(utxo.txid);
-    console.warn(rawtx)
+    writeLog(rawtx)
     rawTx.push(rawtx);
   }
 
@@ -20,24 +21,23 @@ export const utxoSelectNormal = (address, value, ccLibFormat, ccLibVersion) => {
       address,
       value,
     }];
-    let utxos = await blockchain.getNormalUtxos(address);
-    console.warn('targets', targets);
-    console.warn('utxoSelectNormal', utxos);
+    let utxos = JSON.parse(JSON.stringify(await blockchain.getNormalUtxos(address)));
+    writeLog('targets', targets);
+    writeLog('utxoSelectNormal', utxos);
 
     for (let i = 0; i < utxos.length; i++) {
       utxos[i].value = utxos[i].satoshis;
       delete utxos[i].satoshis;
     }
-    console.warn('utxoSelectNormal', utxos);
+    writeLog('utxoSelectNormal', utxos);
     
     const coinSelectData = coinselect(utxos, targets, 0);
-    console.warn('coinSelectData', coinSelectData);
+    writeLog('coinSelectData', coinSelectData);
 
     const utxoSum = coinSelectData.inputs.reduce((acc, input) => acc + input.value, 0);
-    console.warn('utxoSum', utxoSum);
+    writeLog('utxoSum', utxoSum);
 
     // TODO: check that utxo sum is less than target value
-
     if (ccLibFormat) {
       const tx = new TokensLib[ccLibVersion === 1 ? 'V1' : 'V2'].TransactionBuilder(TokensLib[ccLibVersion === 1 ? 'V1' : 'V2'].mynetwork);
       tx.setVersion(4);
@@ -47,7 +47,7 @@ export const utxoSelectNormal = (address, value, ccLibFormat, ccLibVersion) => {
         tx.addInput(coinSelectData.inputs[i].txid, coinSelectData.inputs[i].vout);
       }
 
-      console.warn(tx.buildIncomplete().toHex());
+      writeLog(tx.buildIncomplete().toHex());
 
       const rawtTx = await getUtxosRawTx(coinSelectData.inputs);
 
@@ -63,9 +63,9 @@ export const utxoSelectNormal = (address, value, ccLibFormat, ccLibVersion) => {
 
 export const utxoSelectCC = (address, tokenId, ccLibFormat, ccLibVersion) => {
   return new Promise(async(resolve, reject) => {
-    let utxos = await blockchain.tokenUtxos(address, tokenId, true);
-    console.warn('utxoSelectCC', utxos);
-    console.warn('utxoSelectCC ccLibVersion', ccLibVersion)
+    let utxos = JSON.parse(JSON.stringify(await blockchain.tokenUtxos(address, tokenId, true)));
+    writeLog('utxoSelectCC', utxos);
+    writeLog('utxoSelectCC ccLibVersion', ccLibVersion)
 
     if (ccLibFormat) {
       const tx = new TokensLib[ccLibVersion === 1 ? 'V1' : 'V2'].TransactionBuilder(TokensLib[ccLibVersion === 1 ? 'V1' : 'V2'].mynetwork);
@@ -78,7 +78,7 @@ export const utxoSelectCC = (address, tokenId, ccLibFormat, ccLibVersion) => {
         rawTx.push(utxos[i].hex);
       }
 
-      console.warn(tx.buildIncomplete().toHex());
+      writeLog(tx.buildIncomplete().toHex());
 
       resolve({
         //evalcodeNFT: 245,
