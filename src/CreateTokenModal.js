@@ -4,13 +4,15 @@ import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectNormal} from './utxo-select';
+import {getMaxSpendNormalUtxos} from './math';
+import writeLog from './log';
+import devVars from './dev'
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
   
   get initialState() {
     this.updateInput = this.updateInput.bind(this);
-    this.getMaxSupply = this.getMaxSupply.bind(this);
 
     return {
       isClosed: true,
@@ -72,11 +74,7 @@ class CreateTokenModal extends React.Component {
       success: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    writeLog('login this.state', this.state);
   }
 
   close() {
@@ -95,6 +93,7 @@ class CreateTokenModal extends React.Component {
   }
 
   createNewToken = async () => {
+    const maxSupply = getMaxSpendNormalUtxos(this.props.normalUtxos, 20000);
     let rawtx;
 
     const testJSON = (data) => {
@@ -106,10 +105,11 @@ class CreateTokenModal extends React.Component {
       }
     };
 
-    if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
+    if (Number(this.state.supply) > maxSupply ||
+        Number(this.state.supply) < 1) {
       this.setState({
         success: null,
-        error: 'Token supply must be between 1 and ' + this.getMaxSupply(),
+        error: 'Token supply must be between 1 and ' + maxSupply,
       });
     } else if (
       this.state.nft &&
@@ -122,33 +122,37 @@ class CreateTokenModal extends React.Component {
       });
     } else {
       try {
+        const {chain, address} = this.props;
         let inputsData;
 
-        console.warn('create token modal txBuilderApi', chains[this.props.chain].txBuilderApi);
+        writeLog('create token modal txBuilderApi', chains[chain].txBuilderApi);
         
-        if (chains[this.props.chain].txBuilderApi === 'utxoSelect') {
-          inputsData = await utxoSelectNormal(this.props.address.normal, Number(this.state.supply) + 20000, true, chains[this.props.chain].ccLibVersion);
+        if (chains[chain].txBuilderApi === 'utxoSelect') {
+          inputsData = await utxoSelectNormal(
+            address.normal,
+            Number(this.state.supply) + 20000,
+            true,
+            chains[chain].ccLibVersion
+          );
         } else {
-          inputsData = chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+          inputsData = chains[chain].txBuilderApi === 'default' ? await TokensLib[chains[chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, address.pubkey);
         }
         
-        if (window.DEBUG) {
-          console.warn('create tx modal inputsData', inputsData);
-        }
+        writeLog('create tx modal inputsData', inputsData);
 
-        const createTxFunc = chains[this.props.chain].ccLibVersion === 1 ? TokensLib.V1.createTokenTx : this.state.nft.indexOf('{') > -1 ? TokensLib.V2.createTokenTxTokel : TokensLib.V2.createTokenTx;
-        console.warn('createTxFunc', createTxFunc)
+        const createTxFunc = chains[chain].ccLibVersion === 1 ? TokensLib.V1.createTokenTx : this.state.nft.indexOf('{') > -1 ? TokensLib.V2.createTokenTxTokel : TokensLib.V2.createTokenTx;
+        writeLog('createTxFunc', createTxFunc)
         const createTxPayload = this.state.nft.length > 0 ? {
           name: this.state.name, 
           description: this.state.description,
           supply: Number(this.state.supply),
-          nft: chains[this.props.chain].ccLibVersion === 1 ? (this.state.nft.indexOf('{') > -1 ? 'f7' : '00') : this.state.nft.indexOf('{') > -1 ? JSON.parse(this.state.nft) : '00' + Buffer.from(this.state.nft).toString('hex'),
+          nft: chains[chain].ccLibVersion === 1 ? (this.state.nft.indexOf('{') > -1 ? 'f7' : '00') : this.state.nft.indexOf('{') > -1 ? JSON.parse(this.state.nft) : '00' + Buffer.from(this.state.nft).toString('hex'),
         } : {
           name: this.state.name, 
           description: this.state.description,
           supply: Number(this.state.supply),
         };
-        console.warn('createTxPayload', createTxPayload);
+        writeLog('createTxPayload', createTxPayload);
         rawtx = await createTxFunc(
           inputsData,
           createTxPayload,
@@ -161,9 +165,7 @@ class CreateTokenModal extends React.Component {
         });
       }
 
-      if (window.DEBUG) {
-        console.warn('createNewToken rawtx', rawtx);
-      }
+      writeLog('createNewToken rawtx', rawtx);
 
       if (rawtx && rawtx.substr(0, 2) === '04') {
         const {txid} = await Blockchain.broadcast(rawtx);
@@ -195,22 +197,14 @@ class CreateTokenModal extends React.Component {
     }
   }
 
-  getMaxSupply() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSupply = -20000; // maker + tx fee
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSupply += normalUtxos[i].satoshis;
-    }
-
-    return maxSupply < 0 ? 0 : maxSupply;
-  };
-
   render() {
+    const maxSupply = getMaxSpendNormalUtxos(this.props.normalUtxos, 20000);
+    const {chain} = this.props;
+
     return (
       <React.Fragment>
         <div
-          className={`token-tile create-new-trigger${this.getMaxSupply() === 0 ? ' disabled' : ''}`}
+          className={`token-tile create-new-trigger${maxSupply === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-plus"></i>
           Create
@@ -258,7 +252,7 @@ class CreateTokenModal extends React.Component {
                 disabled={
                   !this.state.name ||
                   !this.state.supply ||
-                  this.getMaxSupply() === 0
+                  maxSupply === 0
                 }>Create</button>
               {this.state.success &&
                 <div className="success">
@@ -267,7 +261,7 @@ class CreateTokenModal extends React.Component {
                     <strong>Transaction ID:</strong> {this.state.success}
                   </div>
                   <a
-                    href={`${chains[this.props.chain].explorerUrl}/${this.state.success}/transactions/${this.props.chain}`}
+                    href={`${chains[chain].explorerUrl}/${this.state.success}/transactions/${chain}`}
                     target="_blank">Open on explorer</a>
                 </div>
               }

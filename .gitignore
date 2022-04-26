@@ -4,3 +4,4 @@ build
 cryptoconditions-js
 /src/tokenslib.js
 /src/tokenslib-v2.js
+/src/dev.js
