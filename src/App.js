@@ -5,6 +5,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import Marketplace from './Marketplace';
 import './debug-util';
+import writeLog from './log';
 import './app.scss';
 
 class App extends React.Component {
@@ -45,11 +46,9 @@ class App extends React.Component {
       chain,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('app this.state', this.state);
-      }, 100);
-    }
+    setTimeout(() => {
+      writeLog('app this.state', this.state);
+    }, 100);
   }
 
   setActiveView() {
