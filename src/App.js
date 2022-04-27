@@ -46,9 +46,9 @@ class App extends React.Component {
       chain,
     });
 
-    /*setTimeout(() => {
+    setTimeout(() => {
       writeLog('app this.state', this.state);
-    }, 100);*/
+    }, 100);
   }
 
   setActiveView() {

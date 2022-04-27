@@ -255,7 +255,7 @@ class SendTokenModal extends React.Component {
         );
       }
 
-      for (let i = 0; i < tokenBalanceItems.length; i++)  {
+      for (let i = 0; i < tokenBalanceItems.length; i++) {
         const tokenInfo = this.getTokenData(tokenBalanceItems[i].tokenId);
 
         if (!this.state.dropdownQuickSearch ||

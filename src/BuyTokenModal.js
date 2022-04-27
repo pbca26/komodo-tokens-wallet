@@ -232,7 +232,7 @@ class BuyTokenModal extends React.Component {
     const renderDropdownOptions = () => {
       const tokenListItems = this.props.tokenList;
       let items = [];
-      
+
       if (tokenListItems &&
           tokenListItems.length > 2) {
         items.push(
