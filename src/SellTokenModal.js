@@ -27,6 +27,7 @@ class SellTokenModal extends React.Component {
       txid: null,
       error: null,
       tokenDropdownOpen: false,
+      dropdownQuickSearch: '',
     };
   }
 
@@ -185,6 +186,7 @@ class SellTokenModal extends React.Component {
 
     this.setState({
       tokenDropdownOpen: !this.state.tokenDropdownOpen,
+      dropdownQuickSearch: '',
     });
   }
 
@@ -212,7 +214,8 @@ class SellTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'token-tile send-token-trigger') {
+        srcElement.className !== 'token-tile send-token-trigger' &&
+        srcElement.className.indexOf('form-input-quick-search') === -1) {
       this.setState({
         tokenDropdownOpen: false,
       });
@@ -232,28 +235,46 @@ class SellTokenModal extends React.Component {
       const tokenBalanceItems = this.props.tokenBalance;
       let items = [];
 
+      if (tokenBalanceItems &&
+          tokenBalanceItems.length > 2) {
+        items.push(
+          <input
+            type="text"
+            name="dropdownQuickSearch"
+            placeholder="Search..."
+            autoComplete="off"
+            value={this.state.dropdownQuickSearch}
+            onChange={this.updateInput}
+            key="sell-token-quick-search"
+            className="form-input form-input-quick-search" />
+        );
+      }
+
       for (let i = 0; i < tokenBalanceItems.length; i++)  {
         const tokenInfo = this.getTokenData(tokenBalanceItems[i].tokenId);
 
-        items.push(
-          <a
-            key={`sell-token-${tokenBalanceItems[i].tokenId}`}
-            className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
-            title={tokenInfo.height === -1 ? 'Pending confirmation' : ''}
-            onClick={tokenInfo.height === -1 ? null : () => this.setToken({
-              balance: tokenBalanceItems[i].balance,
-              tokenId: tokenBalanceItems[i].tokenId,
-              name: tokenInfo.name
-            })}>
-            {tokenInfo.name}
-            {tokenInfo.height > 0 &&
-              <span className="dropdown-balance">{tokenBalanceItems[i].balance}</span>
-            }
-            {tokenInfo.height === -1 &&
-              <i className="fa fa-spinner"></i>
-            }
-          </a>
-        );
+        if (!this.state.dropdownQuickSearch ||
+            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+          items.push(
+            <a
+              key={`sell-token-${tokenBalanceItems[i].tokenId}`}
+              className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
+              title={tokenInfo.height === -1 ? 'Pending confirmation' : ''}
+              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+                balance: tokenBalanceItems[i].balance,
+                tokenId: tokenBalanceItems[i].tokenId,
+                name: tokenInfo.name
+              })}>
+              {tokenInfo.name}
+              {tokenInfo.height > 0 &&
+                <span className="dropdown-balance">{tokenBalanceItems[i].balance}</span>
+              }
+              {tokenInfo.height === -1 &&
+                <i className="fa fa-spinner"></i>
+              }
+            </a>
+          );
+        }
       }
 
       return(

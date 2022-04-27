@@ -27,6 +27,7 @@ class BuyTokenModal extends React.Component {
       txid: null,
       error: null,
       tokenDropdownOpen: false,
+      dropdownQuickSearch: '',
     };
   }
 
@@ -182,6 +183,7 @@ class BuyTokenModal extends React.Component {
 
     this.setState({
       tokenDropdownOpen: !this.state.tokenDropdownOpen,
+      dropdownQuickSearch: '',
     });
   }
 
@@ -209,7 +211,8 @@ class BuyTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'token-tile send-token-trigger') {
+        srcElement.className !== 'token-tile send-token-trigger' &&
+        srcElement.className.indexOf('form-input-quick-search') === -1) {
       this.setState({
         tokenDropdownOpen: false,
       });
@@ -228,29 +231,47 @@ class BuyTokenModal extends React.Component {
     const renderDropdownOptions = () => {
       const tokenListItems = this.props.tokenList;
       let items = [];
+      
+      if (tokenListItems &&
+          tokenListItems.length > 2) {
+        items.push(
+          <input
+            type="text"
+            name="dropdownQuickSearch"
+            placeholder="Search..."
+            autoComplete="off"
+            value={this.state.dropdownQuickSearch}
+            onChange={this.updateInput}
+            key="buy-token-quick-search"
+            className="form-input form-input-quick-search" />
+        );
+      }
 
       for (let i = 0; i < tokenListItems.length; i++)  {
         const tokenInfo = this.getTokenData(tokenListItems[i].tokenid);
 
-        items.push(
-          <a
-            key={`buy-token-${tokenListItems[i].tokenid}`}
-            className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
-            title={tokenInfo.height === -1 ? `Pending confirmation` : ''}
-            onClick={tokenInfo.height === -1 ? null : () => this.setToken({
-              balance: tokenListItems[i].supply,
-              tokenId: tokenListItems[i].tokenid,
-              name: tokenInfo.name
-            })}>
-            {tokenInfo.name}
-            {tokenInfo.height > 0 &&
-              <span className="dropdown-balance">{tokenListItems[i].supply}</span>
-            }
-            {tokenInfo.height === -1 &&
-              <i className="fa fa-spinner"></i>
-            }
-          </a>
-        );
+        if (!this.state.dropdownQuickSearch ||
+            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+          items.push(
+            <a
+              key={`buy-token-${tokenListItems[i].tokenid}`}
+              className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
+              title={tokenInfo.height === -1 ? `Pending confirmation` : ''}
+              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+                balance: tokenListItems[i].supply,
+                tokenId: tokenListItems[i].tokenid,
+                name: tokenInfo.name
+              })}>
+              {tokenInfo.name}
+              {tokenInfo.height > 0 &&
+                <span className="dropdown-balance">{tokenListItems[i].supply}</span>
+              }
+              {tokenInfo.height === -1 &&
+                <i className="fa fa-spinner"></i>
+              }
+            </a>
+          );
+        }
       }
 
       return(
