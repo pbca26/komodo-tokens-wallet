@@ -7,6 +7,7 @@ import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
 import writeLog from './log';
 import {getMaxSpendNormalUtxos} from './math';
+import devVars from './dev'
 
 class SellTokenModal extends React.Component {
   state = this.initialState;
@@ -19,10 +20,10 @@ class SellTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      token: '',
-      pubkey: '',
-      amount: '',
-      price: '',
+      token: devVars && devVars.sell.token || '',
+      pubkey: devVars && devVars.sell.pubkey || '',
+      amount: devVars && devVars.sell.amount || '',
+      price: devVars && devVars.sell.price || '',
       success: null,
       txid: null,
       error: null,

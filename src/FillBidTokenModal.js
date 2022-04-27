@@ -7,6 +7,7 @@ import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
 import {getMaxSpendNormalUtxos} from './math';
 import writeLog from './log';
+import devVars from './dev'
 
 class FillBidTokenModal extends React.Component {
   state = this.initialState;
@@ -16,7 +17,7 @@ class FillBidTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      amount: '',
+      amount: devVars && devVars.fill.amountBid || '',
       success: null,
       txid: null,
       error: null,

@@ -6,6 +6,7 @@ import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {getMaxSpendNormalUtxos} from './math';
 import writeLog from './log';
+import devVars from './dev'
 
 class SendTokenModal extends React.Component {
   state = this.initialState;
@@ -18,9 +19,9 @@ class SendTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      token: null,
-      pubkey: '',
-      amount: '',
+      token: devVars && devVars.send.token || null,
+      pubkey: devVars && devVars.send.pubkey || '',
+      amount: devVars && devVars.send.amount || '',
       success: null,
       txid: null,
       error: null,

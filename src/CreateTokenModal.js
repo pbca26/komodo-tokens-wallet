@@ -6,7 +6,7 @@ import {chains} from './constants';
 import {utxoSelectNormal} from './utxo-select';
 import {getMaxSpendNormalUtxos} from './math';
 import writeLog from './log';
-import devVars from './dev'
+import devVars from './dev';
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
@@ -16,10 +16,10 @@ class CreateTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      name: '',
-      description: '',
-      supply: 1,
-      nft: '',
+      name: devVars && devVars.create.name || '',
+      description: devVars && devVars.create.description || '',
+      supply: devVars && devVars.send.supply || 1,
+      nft: devVars && devVars.send.nft || '',
       success: null,
       error: null,
     };
