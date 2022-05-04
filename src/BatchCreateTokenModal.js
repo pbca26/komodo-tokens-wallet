@@ -36,16 +36,23 @@ class BatchCreateTokenModal extends React.Component {
   checkTxConfs = async txid => {
     const self = this;
 
-    const txData = await Blockchain.getTransaction(txid);
-    console.warn('txData', txData);
+    try {
+      const txData = await Blockchain.getTransaction(txid);
+      console.warn('txData', txData);
 
-    if (txData && txData.confirmations && Number(txData.confirmations) >= 1) {
-      console.warn(txid, 'is confirmed');
-      this.props.syncData();
-      if (checkTxConfsTimer) clearTimeout(checkTxConfsTimer);
-      const txData1 = await Blockchain.getTransaction(txid);
-      this.createNewTokenBatch(true);
-    } else {
+      if (txData && txData.confirmations && Number(txData.confirmations) >= 1) {
+        console.warn(txid, 'is confirmed');
+        this.props.syncData();
+        if (checkTxConfsTimer) clearTimeout(checkTxConfsTimer);
+        const txData1 = await Blockchain.getTransaction(txid);
+        this.createNewTokenBatch(true);
+      } else {
+        checkTxConfsTimer = setTimeout(() => {
+          self.checkTxConfs(txid);
+        }, 5000);
+      }
+    } catch (e) {
+      console.warn('error fetching confs data, retry', e);
       checkTxConfsTimer = setTimeout(() => {
         self.checkTxConfs(txid);
       }, 5000);
