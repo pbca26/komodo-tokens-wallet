@@ -73,6 +73,7 @@ export const getInfo = async () => {
 const tokenBalance = address => get(`tokens/balance?address=${address}`);
 const tokenTransactions = address => get(`tokens/transactions?address=${address}`);
 const tokenList = (cctxid) => cctxid ? get('tokens', {cctxid}) : get('tokens');
+const tokenListAll = () => get('tokens?pageNum=all');
 const tokenOrderbook = (address) => address ? get(`tokens/orderbook?address=${address}`) : get('tokens/orderbook');
 const addCCInputs = (tokenid, pubkey, amount) => get(`tokens/addccinputs?pubkey=${pubkey}&tokenid=${tokenid}&amount=${amount}`);
 const createCCTx = (amount, pubkey) => get(`tokens/createtx?pubkey=${pubkey}&amount=${amount}`);
@@ -95,6 +96,7 @@ const blockchain = {
   tokenBalance,
   tokenTransactions,
   tokenList,
+  tokenListAll,
   getNormalUtxos,
   addCCInputs,
   createCCTx,
