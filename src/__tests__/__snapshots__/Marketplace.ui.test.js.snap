@@ -1,0 +1,260 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Marketplace component render check 1`] = `
+<div
+  className="main dashboard marketplace"
+>
+  <i
+    className="fa fa-lock logout-btn"
+    onClick={[Function]}
+  />
+  <div
+    className="app-logo"
+  >
+    <div
+      className="box"
+    />
+    <div
+      className="circle"
+    />
+    <img
+      src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"
+    />
+  </div>
+  <div
+    className="content"
+  >
+    <h4>
+      Marketplace | 
+      <a>
+        Wallet
+      </a>
+    </h4>
+    <div
+      className="address-block"
+    >
+      <div>
+        <strong>
+          My Normal address:
+        </strong>
+         
+        RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc
+        <a
+          href="https://www.atomicexplorer.com/#/faucet/tkltest/RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <i
+            className="fa fa-faucet faucet-btn"
+          />
+        </a>
+      </div>
+      <div
+        style={
+          Object {
+            "paddingTop": "20px",
+          }
+        }
+      >
+        <strong>
+          My CC address:
+        </strong>
+         
+        CaopajuemreFwEAfbywvFi8oFyrJPNkDs1
+      </div>
+      <div
+        style={
+          Object {
+            "paddingTop": "20px",
+          }
+        }
+      >
+        <strong>
+          My pubkey:
+        </strong>
+         
+        03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3
+      </div>
+    </div>
+    <div
+      className="tokens-block"
+    >
+      <h4>
+        Orderbook
+      </h4>
+      <div
+        onClick={[Function]}
+      >
+        <a
+          className="filters-trigger"
+        >
+          Filters
+        </a>
+      </div>
+      <div
+        className="Modal modal  Order-filters-modal"
+      >
+        <div
+          onClick={[Function]}
+        >
+          <div
+            className="modal-background"
+          />
+        </div>
+        <div
+          className="modal-content"
+        >
+          <div
+            className="card"
+          >
+            <button
+              className="modal-close is-large "
+              onClick={[Function]}
+            />
+            <div
+              className="card-content"
+            >
+              <div
+                className="content"
+              >
+                <h4>
+                  Order filters
+                </h4>
+                <div
+                  className="dropdown"
+                >
+                  <div
+                    className="dropdown-trigger"
+                  >
+                    <button
+                      className="button"
+                      onClick={[Function]}
+                    >
+                      <span>
+                        All directions
+                      </span>
+                      <span
+                        className="icon is-small"
+                      >
+                        <i
+                          className="fas fa-angle-down"
+                        />
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    className="dropdown-menu"
+                    id="dropdown-menu"
+                    role="menu"
+                  >
+                    <div
+                      className="dropdown-content"
+                    >
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          All directions
+                        </span>
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          Sell orders
+                        </span>
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          Buy orders
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="dropdown"
+                >
+                  <div
+                    className="dropdown-trigger"
+                  >
+                    <button
+                      className="button"
+                      onClick={[Function]}
+                    >
+                      <span>
+                        All orders
+                      </span>
+                      <span
+                        className="icon is-small"
+                      >
+                        <i
+                          className="fas fa-angle-down"
+                        />
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    className="dropdown-menu"
+                    id="dropdown-menu"
+                    role="menu"
+                  >
+                    <div
+                      className="dropdown-content"
+                    >
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          All orders
+                        </span>
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          My orders
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="token-balance-block"
+      >
+        No orders
+      </div>
+      <h4>
+        Last trades
+      </h4>
+      <div
+        className="token-transactions-block"
+      >
+        No trades history
+      </div>
+    </div>
+  </div>
+</div>
+`;

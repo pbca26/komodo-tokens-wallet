@@ -4,6 +4,9 @@ import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
 import {chains, nftDataTypes} from './constants';
 import {utxoSelectNormal} from './utxo-select';
+import {getMaxSpendNormalUtxos} from './math';
+import writeLog from './log';
+import devVars from './dev';
 
 class CreateTokenModal extends React.Component {
   state = this.initialState;
@@ -17,10 +20,10 @@ class CreateTokenModal extends React.Component {
     
     return {
       isClosed: true,
-      name: '',
-      description: '',
-      supply: 1,
-      nft: '',
+      name: devVars && devVars.create.name || '',
+      description: devVars && devVars.create.description || '',
+      supply: devVars && devVars.send.supply || 1,
+      nft: devVars && devVars.send.nft || '',
       success: null,
       error: null,
       tokenDropdownOpen: false,
@@ -91,11 +94,7 @@ class CreateTokenModal extends React.Component {
       success: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    writeLog('login this.state', this.state);
   }
 
   close() {
@@ -114,6 +113,7 @@ class CreateTokenModal extends React.Component {
   }
 
   createNewToken = async () => {
+    const maxSupply = getMaxSpendNormalUtxos(this.props.normalUtxos, 20000);
     // ref: https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
     const regexCheckUrl = new RegExp('^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|(www\\.)?){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?');
     let rawtx;
@@ -127,27 +127,28 @@ class CreateTokenModal extends React.Component {
       }
     };
 
-    const formatNftData = (data) => {
-      let _data = JSON.parse(data);
+    if (Number(this.state.supply) > maxSupply ||
+        Number(this.state.supply) < 1) {
+      const formatNftData = (data) => {
+        let _data = JSON.parse(data);
 
-      if (_data.arbitrary) {
-        if (typeof _data.arbitrary === 'object' || Array.isArray(_data.arbitrary)) {
-          _data.arbitrary = Buffer.from(JSON.stringify(_data.arbitrary)).toString('hex');
-        } else if (/^[A-F0-9]+$/i.test(_data.arbitrary)) {
-          // hex string, do nothing
-          //console.warn('arbitrary is a hex str');
-        } else {
-          _data.arbitrary = Buffer.from(_data.arbitrary.toString()).toString('hex');
+        if (_data.arbitrary) {
+          if (typeof _data.arbitrary === 'object' || Array.isArray(_data.arbitrary)) {
+            _data.arbitrary = Buffer.from(JSON.stringify(_data.arbitrary)).toString('hex');
+          } else if (/^[A-F0-9]+$/i.test(_data.arbitrary)) {
+            // hex string, do nothing
+            //console.warn('arbitrary is a hex str');
+          } else {
+            _data.arbitrary = Buffer.from(_data.arbitrary.toString()).toString('hex');
+          }
         }
-      }
-      
-      return _data;
-    };
 
-    if (Number(this.state.supply) > this.getMaxSupply() || Number(this.state.supply) < 1) {
+        return _data;
+      };
+
       this.setState({
         success: null,
-        error: 'Token supply must be between 1 and ' + this.getMaxSupply(),
+        error: 'Token supply must be between 1 and ' + maxSupply,
       });
     } else if (
       this.state.nft &&
@@ -177,6 +178,9 @@ class CreateTokenModal extends React.Component {
       });
     } else {
       try {
+        const {chain, address} = this.props;
+
+        writeLog('create token modal txBuilderApi', chains[chain].txBuilderApi);
         let inputsData, nftData;
 
         if (this.state.nftDataType === 'tokel') {
@@ -208,17 +212,20 @@ class CreateTokenModal extends React.Component {
         console.warn('create token modal txBuilderApi', chains[this.props.chain].txBuilderApi);
         console.warn('create token modal NFT data', nftData);
         
-        if (chains[this.props.chain].txBuilderApi === 'utxoSelect') {
-          inputsData = await utxoSelectNormal(this.props.address.normal, Number(this.state.supply) + 20000, true, chains[this.props.chain].ccLibVersion);
+        if (chains[chain].txBuilderApi === 'utxoSelect') {
+          inputsData = await utxoSelectNormal(
+            address.normal,
+            Number(this.state.supply) + 20000,
+            true,
+            chains[chain].ccLibVersion
+          );
         } else {
-          inputsData = chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, this.props.address.pubkey);
+          inputsData = chains[chain].txBuilderApi === 'default' ? await TokensLib[chains[chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(Number(this.state.supply) + 10000 + 10000, address.pubkey) : await Blockchain.createCCTx(Number(this.state.supply) + 10000 + 10000, address.pubkey);
         }
         
-        if (window.DEBUG) {
-          console.warn('create tx modal inputsData', inputsData);
-        }
+        writeLog('create tx modal inputsData', inputsData);
 
-        const createTxFunc = chains[this.props.chain].ccLibVersion === 1 ? TokensLib.V1.createTokenTx : nftData.indexOf('{') > -1 ? TokensLib.V2.createTokenTxTokel : TokensLib.V2.createTokenTx;
+        const createTxFunc = chains[chain].ccLibVersion === 1 ? TokensLib.V1.createTokenTx : this.state.nft.indexOf('{') > -1 ? TokensLib.V2.createTokenTxTokel : TokensLib.V2.createTokenTx;
         console.warn('createTxFunc', createTxFunc)
         const createTxPayload = nftData.length > 0 ? {
           name: this.state.name, 
@@ -230,7 +237,7 @@ class CreateTokenModal extends React.Component {
           description: this.state.description,
           supply: Number(this.state.supply),
         };
-        console.warn('createTxPayload', createTxPayload);
+        writeLog('createTxPayload', createTxPayload);
         rawtx = await createTxFunc(
           inputsData,
           createTxPayload,
@@ -243,9 +250,7 @@ class CreateTokenModal extends React.Component {
         });
       }
 
-      if (window.DEBUG) {
-        console.warn('createNewToken rawtx', rawtx);
-      }
+      writeLog('createNewToken rawtx', rawtx);
 
       if (rawtx && rawtx.substr(0, 2) === '04') {
         //const {txid} = await Blockchain.broadcast(rawtx);
@@ -404,10 +409,13 @@ class CreateTokenModal extends React.Component {
   }
 
   render() {
+    const maxSupply = getMaxSpendNormalUtxos(this.props.normalUtxos, 20000);
+    const {chain} = this.props;
+
     return (
       <React.Fragment>
         <div
-          className={`token-tile create-new-trigger${this.getMaxSupply() === 0 ? ' disabled' : ''}`}
+          className={`token-tile create-new-trigger${maxSupply === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-plus"></i>
           Create
@@ -448,7 +456,7 @@ class CreateTokenModal extends React.Component {
                 disabled={
                   !this.state.name ||
                   !this.state.supply ||
-                  this.getMaxSupply() === 0
+                  maxSupply === 0
                 }>Create</button>
               {this.state.success &&
                 <div className="success">
@@ -457,7 +465,7 @@ class CreateTokenModal extends React.Component {
                     <strong>Transaction ID:</strong> {this.state.success}
                   </div>
                   <a
-                    href={`${chains[this.props.chain].explorerUrl}/${this.state.success}/transactions/${this.props.chain}`}
+                    href={`${chains[chain].explorerUrl}/${this.state.success}/transactions/${chain}`}
                     target="_blank">Open on explorer</a>
                 </div>
               }

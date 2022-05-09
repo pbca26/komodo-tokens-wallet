@@ -5,6 +5,8 @@ import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
+import {getMaxSpendNormalUtxos} from './math';
+import writeLog from './log';
 
 class CancelBidTokenModal extends React.Component {
   state = this.initialState;
@@ -33,28 +35,31 @@ class CancelBidTokenModal extends React.Component {
   }
 
   cancelBuyTokenOrder = async () => {
+    const {chain, address, order} = this.props;
+    
     try {
       let inputsData, rawtx;
-      console.warn('cancelBidTokenOrder');
-      console.warn(TokensLib.V2Assets)
+      writeLog('cancelBidTokenOrder');
+      writeLog(TokensLib.V2Assets);
 
       inputsData = {
-        transactionsMany: await Blockchain.tokenTransactionsMany(this.props.order.tokenid, this.props.order.txid),
-        normalUtxos: await Blockchain.createCCTx(10000, this.props.address.pubkey),
+        transactionsMany: await Blockchain.tokenTransactionsMany(order.tokenid, order.txid),
+        normalUtxos: await Blockchain.createCCTx(10000, address.pubkey),
       };
 
-      console.warn('cancelBidTokenOrder inputs data', inputsData);
-      console.warn('send tx modal inputsData', JSON.stringify(inputsData));
-      console.warn(this.state);
+      writeLog('cancelBidTokenOrder inputs data', inputsData);
+      writeLog('send tx modal inputsData', JSON.stringify(inputsData));
+      writeLog(this.state);
+      
       try {
         rawtx = await TokensLib.V2Assets.buildTokenv2cancelbid(
-          this.props.order.tokenid,
-          this.props.order.txid,
+          order.tokenid,
+          order.txid,
           this.props.wif,
           inputsData,
         );
       } catch (e) {
-        console.warn(e);
+        writeLog(e);
         this.setState({
           success: null,
           txid: null,
@@ -62,9 +67,7 @@ class CancelBidTokenModal extends React.Component {
         });
       }
   
-      if (window.DEBUG) {
-        console.warn('cancelBidTokenOrder token rawtx', rawtx);
-      }
+      writeLog('cancelBidTokenOrder token rawtx', rawtx);
   
       if (rawtx && rawtx.substr(0, 2) === '04') {
         const {txid} = await Blockchain.broadcast(rawtx);
@@ -77,7 +80,7 @@ class CancelBidTokenModal extends React.Component {
           });
         } else {
           this.setState({
-            success: `${chains[this.props.chain].explorerUrl}/${this.props.order.tokenid}/transactions/${txid}/${this.props.chain}`,
+            success: `${chains[chain].explorerUrl}/${order.tokenid}/transactions/${txid}/${chain}`,
             txid,
             error: null,
             price: '',
@@ -85,7 +88,6 @@ class CancelBidTokenModal extends React.Component {
             amount: '',
             tokenDropdownOpen: false,
           });
-          //this.props.setActiveToken();
           setTimeout(() => {
             this.props.syncData();
           }, 100);
@@ -106,27 +108,20 @@ class CancelBidTokenModal extends React.Component {
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
+  getTokenData(tokenid) {
+    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo;
+  }
 
   render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
+    const tokenInfo = this.getTokenData(this.props.order.tokenid);
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
+    const {order} = this.props;
 
     return (
       <React.Fragment>
         <div
-          className={`${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          className={`${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           {this.props.children}
         </div>
@@ -141,33 +136,31 @@ class CancelBidTokenModal extends React.Component {
               <input
                 type="text"
                 name="token"
-                value={`Token: ${getTokenData(this.props.order.tokenid).name}`}
+                value={`Token: ${tokenInfo.name}`}
                 disabled
                 className="form-input" / >
               <input
                 type="text"
                 name="token"
-                value={`Order size: ${this.props.order.totalrequired}`}
+                value={`Order size: ${order.totalrequired}`}
                 disabled
                 className="form-input" / >
               <input
                 type="text"
                 name="token"
-                value={`Price: ${this.props.order.price}`}
+                value={`Price: ${order.price}`}
                 disabled
                 className="form-input" / >
               <input
                 type="text"
                 name="token"
-                value={`Total: ${(this.props.order.totalrequired || 0) * this.props.order.price}`}
+                value={`Total: ${(order.totalrequired || 0) * order.price}`}
                 disabled
                 className="form-input" / >
               <button
                 type="button"
                 onClick={this.cancelBuyTokenOrder}
-                disabled={
-                  this.getMaxSpendNormalUtxos() === 0
-                }
+                disabled={maxNormalSpendValue === 0}
                 className="form-input">Cancel</button>
               {this.state.success &&
                 <div className="success">

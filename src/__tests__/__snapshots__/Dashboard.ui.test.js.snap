@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard component render check 1`] = `
+<div
+  className="main dashboard"
+>
+  <i
+    className="fa fa-lock logout-btn"
+    onClick={[Function]}
+  />
+  <div
+    className="app-logo"
+  >
+    <div
+      className="box"
+    />
+    <div
+      className="circle"
+    />
+    <img
+      src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"
+    />
+  </div>
+  <div
+    className="content"
+  >
+    <h4>
+      Wallet | 
+      <a>
+        Marketplace
+      </a>
+    </h4>
+    <div
+      className="address-block"
+    >
+      <div>
+        <strong>
+          My Normal address:
+        </strong>
+         
+        RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc
+        <a
+          href="https://www.atomicexplorer.com/#/faucet/tkltest/RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <i
+            className="fa fa-faucet faucet-btn"
+          />
+        </a>
+      </div>
+      <div
+        style={
+          Object {
+            "paddingTop": "20px",
+          }
+        }
+      >
+        <strong>
+          My CC address:
+        </strong>
+         
+        CaopajuemreFwEAfbywvFi8oFyrJPNkDs1
+      </div>
+      <div
+        style={
+          Object {
+            "paddingTop": "20px",
+          }
+        }
+      >
+        <strong>
+          My pubkey:
+        </strong>
+         
+        03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3
+      </div>
+    </div>
+    <div
+      className="tokens-block"
+    >
+      <h4>
+        Current holdings
+      </h4>
+      <div
+        className="token-balance-block"
+      >
+        <div
+          className="token-tile create-new-trigger disabled"
+          onClick={[Function]}
+        >
+          <i
+            className="fa fa-plus"
+          />
+          Create
+        </div>
+        <div
+          className="Modal modal  Modal-create-token"
+        >
+          <div
+            onClick={[Function]}
+          >
+            <div
+              className="modal-background"
+            />
+          </div>
+          <div
+            className="modal-content"
+          >
+            <div
+              className="card"
+            >
+              <button
+                className="modal-close is-large "
+                onClick={[Function]}
+              />
+              <div
+                className="card-content"
+              >
+                <div
+                  className="content"
+                >
+                  <div
+                    className="create-token-form"
+                  >
+                    <h4>
+                      New token
+                    </h4>
+                    <p>
+                      Provide token details in the form below
+                    </p>
+                    <div
+                      className="input-form"
+                    >
+                      <input
+                        name="name"
+                        onChange={[Function]}
+                        placeholder="Token name"
+                        type="text"
+                        value="Test"
+                      />
+                      <input
+                        name="supply"
+                        onChange={[Function]}
+                        placeholder="Token supply"
+                        type="text"
+                        value={1}
+                      />
+                      <textarea
+                        cols="33"
+                        name="description"
+                        onChange={[Function]}
+                        placeholder="Token description"
+                        rows="5"
+                        value="123"
+                      />
+                      <textarea
+                        cols="33"
+                        name="nft"
+                        onChange={[Function]}
+                        placeholder="Token NFT data (optional)"
+                        rows="5"
+                        value=""
+                      />
+                      <button
+                        disabled={true}
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h4>
+        Last transactions
+      </h4>
+      <div
+        className="token-transactions-block"
+      >
+        No transactions history
+      </div>
+    </div>
+  </div>
+</div>
+`;
