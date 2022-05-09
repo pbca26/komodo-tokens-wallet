@@ -18,6 +18,17 @@ const chains = {
     explorerApiVersion: 2,
     enabled: true,
   },
+  TKLTEST2: {
+    ccLibVersion: 2,
+    ccIndex: true,
+    explorerApiVersion: 2,
+    faucetURL: 'https://www.atomicexplorer.com/#/faucet/tkltest2/',
+    txBuilderApi: 'utxoSelect', // default|insight|utxoSelect
+    explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
+    explorerApiUrl: 'https://explorer.komodoplatform.com:10000/tkltest2/api/',
+    explorerApiVersion: 2,
+    enabled: true,
+  },
   TOKEL: {
     ccLibVersion: 2,
     ccIndex: true,
