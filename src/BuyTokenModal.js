@@ -5,6 +5,9 @@ import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
+import writeLog from './log';
+import {getMaxSpendNormalUtxos} from './math';
+import devVars from './dev'
 
 class BuyTokenModal extends React.Component {
   state = this.initialState;
@@ -17,27 +20,17 @@ class BuyTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      token: null,
-      pubkey: '',
-      amount: '',
-      price: '',
+      token: devVars && devVars.buy.token || '',
+      pubkey: devVars && devVars.buy.pubkey || '',
+      amount: devVars && devVars.buy.amount || '',
+      price: devVars && devVars.buy.price || '',
       success: null,
       txid: null,
       error: null,
       tokenDropdownOpen: false,
+      dropdownQuickSearch: '',
     };
   }
-
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
 
   updateInput(e) {
     if (e.target.name === 'amount') {
@@ -55,11 +48,9 @@ class BuyTokenModal extends React.Component {
       txid: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    setTimeout(() => {
+      writeLog('login this.state', this.state);
+    }, 100);
   }
 
   close() {
@@ -74,11 +65,6 @@ class BuyTokenModal extends React.Component {
       ...this.initialState,
       isClosed: false
     });
-
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
 
     if (this.props.tokenList &&
         this.props.tokenList.length &&
@@ -100,14 +86,16 @@ class BuyTokenModal extends React.Component {
   }
 
   buyToken = async () => {
-    if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
+    const {address, chain} = this.props;
+
+    if (Number(this.state.amount) > this.state.token.balance ||
+        Number(this.state.amount) < 1) {
       this.setState({
         success: null,
         txid: null,
         error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
       });
-    } else if (toSats(this.state.price * this.state.amount) > this.getMaxSpendNormalUtxos()) {
-      //console.warn('bal', this.getMaxSpendNormalUtxos(), toSats(this.state.amount))
+    } else if (toSats(this.state.price * this.state.amount) > getMaxSpendNormalUtxos(this.props.normalUtxos)) {
       
       this.setState({
         success: null,
@@ -117,18 +105,21 @@ class BuyTokenModal extends React.Component {
     } else {
       try {
         let inputsData, rawtx;
-        console.warn('buyToken');
-        console.warn(TokensLib.V2Assets)
+        writeLog('buyToken');
+        writeLog(TokensLib.V2Assets)
         
         inputsData = {
           getInfo: await Blockchain.getInfo(),
-          normalUtxos: await Blockchain.createCCTx(toSats(this.state.price * this.state.amount) + 10000, this.props.address.pubkey),
+          normalUtxos: await Blockchain.createCCTx(
+            toSats(this.state.price * this.state.amount) + 10000,
+            address.pubkey
+          ),
         };
 
         inputsData.getInfo = inputsData.getInfo.info;
         inputsData.getInfo.height = inputsData.getInfo.blocks;
 
-        console.warn('buytoken inputs data', inputsData);
+        writeLog('buytoken inputs data', inputsData);
 
         try {
           rawtx = await TokensLib.V2Assets.buildTokenv2bid(
@@ -146,9 +137,7 @@ class BuyTokenModal extends React.Component {
           });
         }
     
-        if (window.DEBUG) {
-          console.warn('buy token rawtx', rawtx);
-        }
+        writeLog('buy token rawtx', rawtx);
     
         if (rawtx && rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
@@ -161,7 +150,7 @@ class BuyTokenModal extends React.Component {
             });
           } else {
             this.setState({
-              success: `${chains[this.props.chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${this.props.chain}`,
+              success: `${chains[chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${chain}`,
               txid,
               error: null,
               price: '',
@@ -195,6 +184,7 @@ class BuyTokenModal extends React.Component {
 
     this.setState({
       tokenDropdownOpen: !this.state.tokenDropdownOpen,
+      dropdownQuickSearch: '',
     });
   }
 
@@ -222,34 +212,78 @@ class BuyTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'token-tile send-token-trigger') {
+        srcElement.className !== 'token-tile send-token-trigger' &&
+        srcElement.className.indexOf('form-input-quick-search') === -1) {
       this.setState({
         tokenDropdownOpen: false,
       });
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
+  getTokenData(tokenid) {
+    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo || {};
+  }
 
   render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo || {};
-    }
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
+    const {chain} = this.props;
+
+    const renderDropdownOptions = () => {
+      const tokenListItems = this.props.tokenList;
+      let items = [];
+
+      if (tokenListItems &&
+          tokenListItems.length > 2) {
+        items.push(
+          <input
+            type="text"
+            name="dropdownQuickSearch"
+            placeholder="Search..."
+            autoComplete="off"
+            value={this.state.dropdownQuickSearch}
+            onChange={this.updateInput}
+            key="buy-token-quick-search"
+            className="form-input form-input-quick-search" />
+        );
+      }
+
+      for (let i = 0; i < tokenListItems.length; i++)  {
+        const tokenInfo = this.getTokenData(tokenListItems[i].tokenid);
+
+        if (!this.state.dropdownQuickSearch ||
+            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+          items.push(
+            <a
+              key={`buy-token-${tokenListItems[i].tokenid}`}
+              className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
+              title={tokenInfo.height === -1 ? `Pending confirmation` : ''}
+              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+                balance: tokenListItems[i].supply,
+                tokenId: tokenListItems[i].tokenid,
+                name: tokenInfo.name
+              })}>
+              {tokenInfo.name}
+              {tokenInfo.height > 0 &&
+                <span className="dropdown-balance">{tokenListItems[i].supply}</span>
+              }
+              {tokenInfo.height === -1 &&
+                <i className="fa fa-spinner"></i>
+              }
+            </a>
+          );
+        }
+      }
+
+      return(
+        <React.Fragment>{items}</React.Fragment>
+      )
+    };
 
     return (
       <React.Fragment>
         <div
-          className={`token-tile send-token-trigger buy-token-trigger${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          className={`token-tile send-token-trigger buy-token-trigger${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-dollar-sign"></i>
           Bid
@@ -281,27 +315,7 @@ class BuyTokenModal extends React.Component {
                   className="dropdown-menu"
                   id="dropdown-menu"
                   role="menu">
-                  <div className="dropdown-content">
-                    {this.props.tokenList.map(tokenListItem => (
-                      <a
-                        key={`send-token-${tokenListItem.tokenid}`}
-                        className={`dropdown-item${getTokenData(tokenListItem.tokenid).height === -1 ? ' disabled' : ''}`}
-                        title={getTokenData(tokenListItem.tokenId).height === -1 ? `Pending confirmation` : ''}
-                        onClick={getTokenData(tokenListItem.tokenId).height === -1 ? null : () => this.setToken({
-                          balance: tokenListItem.supply,
-                          tokenId: tokenListItem.tokenid,
-                          name: getTokenData(tokenListItem.tokenid).name
-                        })}>
-                        {getTokenData(tokenListItem.tokenid).name}
-                        {getTokenData(tokenListItem.tokenid).height > 0 &&
-                          <span className="dropdown-balance">{tokenListItem.supply}</span>
-                        }
-                        {getTokenData(tokenListItem.tokenidtokenid).height === -1 &&
-                          <i className="fa fa-spinner"></i>
-                        }
-                      </a>
-                    ))}
-                  </div>
+                  <div className="dropdown-content">{renderDropdownOptions()}</div>
                 </div>
               </div>
               <input
@@ -310,14 +324,14 @@ class BuyTokenModal extends React.Component {
                 placeholder="Amount (qty)"
                 value={this.state.amount}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="price"
-                placeholder={`Price in ${this.props.chain}`}
+                placeholder={`Price in ${chain}`}
                 value={this.state.price}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <button
                 type="button"
                 onClick={this.buyToken}
@@ -325,7 +339,7 @@ class BuyTokenModal extends React.Component {
                   !this.state.token ||
                   !this.state.price ||
                   !this.state.amount ||
-                  this.getMaxSpendNormalUtxos() === 0
+                  maxNormalSpendValue === 0
                 }
                 className="form-input">Buy</button>
               {this.state.success &&

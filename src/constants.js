@@ -10,6 +10,7 @@ const chains = {
   TKLTEST: {
     ccLibVersion: 2,
     ccIndex: true,
+    explorerApiVersion: 2,
     faucetURL: 'https://www.atomicexplorer.com/#/faucet/tkltest/',
     txBuilderApi: 'utxoSelect', // default|insight|utxoSelect
     explorerUrl: 'http://explorer.komodoplatform.com:20000/tokens',
@@ -26,6 +27,11 @@ const chains = {
     explorerApiVersion: 2,
     enabled: window.location.href.indexOf('enable-tokel') > -1 ? true : false,
   },
+};
+
+const nftDataTypes = {
+  'plain': 'Plain text or JSON',
+  'tokel': 'Tokel Standart',
 };
 
 const orderType = [{

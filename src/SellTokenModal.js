@@ -5,6 +5,9 @@ import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
+import writeLog from './log';
+import {getMaxSpendNormalUtxos} from './math';
+import devVars from './dev'
 
 class SellTokenModal extends React.Component {
   state = this.initialState;
@@ -17,14 +20,15 @@ class SellTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      token: null,
-      pubkey: '',
-      amount: '',
-      price: '',
+      token: devVars && devVars.sell.token || '',
+      pubkey: devVars && devVars.sell.pubkey || '',
+      amount: devVars && devVars.sell.amount || '',
+      price: devVars && devVars.sell.price || '',
       success: null,
       txid: null,
       error: null,
       tokenDropdownOpen: false,
+      dropdownQuickSearch: '',
     };
   }
 
@@ -44,11 +48,9 @@ class SellTokenModal extends React.Component {
       txid: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    setTimeout(() => {
+      writeLog('login this.state', this.state);
+    }, 100);
   }
 
   close() {
@@ -89,7 +91,10 @@ class SellTokenModal extends React.Component {
   }
 
   sellToken = async () => {
-    if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
+    const {chain, address} = this.props;
+
+    if (Number(this.state.amount) > this.state.token.balance ||
+        Number(this.state.amount) < 1) {
       this.setState({
         success: null,
         txid: null,
@@ -98,19 +103,26 @@ class SellTokenModal extends React.Component {
     } else {
       try {
         let inputsData, rawtx;
-        console.warn('sellToken');
-        console.warn(TokensLib.V2Assets)
+        writeLog('sellToken');
+        writeLog(TokensLib.V2Assets);
         
         inputsData = {
           getInfo: await Blockchain.getInfo(),
-          ccUtxos: await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
-          normalUtxos: await Blockchain.createCCTx(10000, this.props.address.pubkey),
+          ccUtxos: await Blockchain.addCCInputs(
+            this.state.token.tokenId,
+            address.pubkey,
+            Number(this.state.amount)
+          ),
+          normalUtxos: await Blockchain.createCCTx(
+            toSats(this.state.price) + 10000,
+            address.pubkey
+          ),
         };
 
         inputsData.getInfo = inputsData.getInfo.info;
         inputsData.getInfo.height = inputsData.getInfo.blocks;
 
-        console.warn('selltoken inputs data', inputsData);
+        writeLog('selltoken inputs data', inputsData);
 
         try {
           rawtx = await TokensLib.V2Assets.buildTokenv2ask(
@@ -128,9 +140,7 @@ class SellTokenModal extends React.Component {
           });
         }
     
-        if (window.DEBUG) {
-          console.warn('sell token rawtx', rawtx);
-        }
+        writeLog('sell token rawtx', rawtx);
     
         if (rawtx && rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
@@ -143,7 +153,7 @@ class SellTokenModal extends React.Component {
             });
           } else {
             this.setState({
-              success: `${chains[this.props.chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${this.props.chain}`,
+              success: `${chains[chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${chain}`,
               txid,
               error: null,
               price: '',
@@ -177,6 +187,7 @@ class SellTokenModal extends React.Component {
 
     this.setState({
       tokenDropdownOpen: !this.state.tokenDropdownOpen,
+      dropdownQuickSearch: '',
     });
   }
 
@@ -204,34 +215,78 @@ class SellTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'token-tile send-token-trigger') {
+        srcElement.className !== 'token-tile send-token-trigger' &&
+        srcElement.className.indexOf('form-input-quick-search') === -1) {
       this.setState({
         tokenDropdownOpen: false,
       });
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
+  getTokenData(tokenid) {
+    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo;
+  }
 
   render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
+    const {chain} = this.props;
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
+
+    const renderDropdownOptions = () => {
+      const tokenBalanceItems = this.props.tokenBalance;
+      let items = [];
+
+      if (tokenBalanceItems &&
+          tokenBalanceItems.length > 2) {
+        items.push(
+          <input
+            type="text"
+            name="dropdownQuickSearch"
+            placeholder="Search..."
+            autoComplete="off"
+            value={this.state.dropdownQuickSearch}
+            onChange={this.updateInput}
+            key="sell-token-quick-search"
+            className="form-input form-input-quick-search" />
+        );
+      }
+
+      for (let i = 0; i < tokenBalanceItems.length; i++) {
+        const tokenInfo = this.getTokenData(tokenBalanceItems[i].tokenId);
+
+        if (!this.state.dropdownQuickSearch ||
+            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+          items.push(
+            <a
+              key={`sell-token-${tokenBalanceItems[i].tokenId}`}
+              className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
+              title={tokenInfo.height === -1 ? 'Pending confirmation' : ''}
+              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+                balance: tokenBalanceItems[i].balance,
+                tokenId: tokenBalanceItems[i].tokenId,
+                name: tokenInfo.name
+              })}>
+              {tokenInfo.name}
+              {tokenInfo.height > 0 &&
+                <span className="dropdown-balance">{tokenBalanceItems[i].balance}</span>
+              }
+              {tokenInfo.height === -1 &&
+                <i className="fa fa-spinner"></i>
+              }
+            </a>
+          );
+        }
+      }
+
+      return(
+        <React.Fragment>{items}</React.Fragment>
+      )
+    };
 
     return (
       <React.Fragment>
         <div
-          className={`token-tile send-token-trigger sell-token-trigger${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          className={`token-tile send-token-trigger sell-token-trigger${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-dollar-sign"></i>
           Ask
@@ -242,7 +297,7 @@ class SellTokenModal extends React.Component {
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
-            <h4>Place token sell token</h4>
+            <h4>Place token sell order</h4>
             <p>Fill out the form below</p>
             <div className="input-form">
               <div className={`dropdown${this.state.tokenDropdownOpen ? ' is-active' : ''}`}>
@@ -263,27 +318,7 @@ class SellTokenModal extends React.Component {
                   className="dropdown-menu"
                   id="dropdown-menu"
                   role="menu">
-                  <div className="dropdown-content">
-                    {this.props.tokenBalance.map(tokenBalanceItem => (
-                      <a
-                        key={`send-token-${tokenBalanceItem.tokenId}`}
-                        className={`dropdown-item${getTokenData(tokenBalanceItem.tokenId).height === -1 ? ' disabled' : ''}`}
-                        title={getTokenData(tokenBalanceItem.tokenId).height === -1 ? `Pending confirmation` : ''}
-                        onClick={getTokenData(tokenBalanceItem.tokenId).height === -1 ? null : () => this.setToken({
-                          balance: tokenBalanceItem.balance,
-                          tokenId: tokenBalanceItem.tokenId,
-                          name: getTokenData(tokenBalanceItem.tokenId).name
-                        })}>
-                        {getTokenData(tokenBalanceItem.tokenId).name}
-                        {getTokenData(tokenBalanceItem.tokenId).height > 0 &&
-                          <span className="dropdown-balance">{tokenBalanceItem.balance}</span>
-                        }
-                        {getTokenData(tokenBalanceItem.tokenId).height === -1 &&
-                          <i className="fa fa-spinner"></i>
-                        }
-                      </a>
-                    ))}
-                  </div>
+                  <div className="dropdown-content">{renderDropdownOptions()}</div>
                 </div>
               </div>
               <input
@@ -292,14 +327,14 @@ class SellTokenModal extends React.Component {
                 placeholder="Amount (qty)"
                 value={this.state.amount}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="price"
-                placeholder={`Price in ${this.props.chain}`}
+                placeholder={`Price in ${chain}`}
                 value={this.state.price}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <button
                 type="button"
                 onClick={this.sellToken}
@@ -307,7 +342,7 @@ class SellTokenModal extends React.Component {
                   !this.state.token ||
                   !this.state.price ||
                   !this.state.amount ||
-                  this.getMaxSpendNormalUtxos() === 0
+                  maxNormalSpendValue === 0
                 }
                 className="form-input">Sell</button>
               {this.state.success &&

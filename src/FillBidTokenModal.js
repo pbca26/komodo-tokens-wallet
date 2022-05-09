@@ -5,6 +5,9 @@ import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
 import {toSats} from './math';
+import {getMaxSpendNormalUtxos} from './math';
+import writeLog from './log';
+import devVars from './dev'
 
 class FillBidTokenModal extends React.Component {
   state = this.initialState;
@@ -14,7 +17,7 @@ class FillBidTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      amount: '',
+      amount: devVars && devVars.fill.amountBid || '',
       success: null,
       txid: null,
       error: null,
@@ -33,11 +36,9 @@ class FillBidTokenModal extends React.Component {
       txid: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    setTimeout(() => {
+      writeLog('login this.state', this.state);
+    }, 100);
   }
 
   close() {
@@ -54,14 +55,17 @@ class FillBidTokenModal extends React.Component {
     });
   }
 
-  buyToken = async () => {
-    if (Number(this.state.amount) > this.props.order.askamount || Number(this.state.amount) < 1) {
+  sellToken = async () => {
+    const {chain, address, order} = this.props;
+    
+    if (Number(this.state.amount) > order.askamount ||
+        Number(this.state.amount) < 1) {
       this.setState({
         success: null,
         txid: null,
-        error: this.props.order.askamount === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.props.order.askamount,
+        error: order.askamount === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + order.askamount,
       });
-    } else if (toSats(this.props.order.price * this.state.amount) > this.getMaxSpendNormalUtxos()) {
+    } else if (toSats(order.price * this.state.amount) > getMaxSpendNormalUtxos(this.props.normalUtxos)) {
       this.setState({
         success: null,
         txid: null,
@@ -70,28 +74,28 @@ class FillBidTokenModal extends React.Component {
     } else {
       try {
         let inputsData, rawtx;
-        console.warn('fillbidToken');
-        console.warn(TokensLib.V2Assets)
+        writeLog('fillbidToken');
+        writeLog(TokensLib.V2Assets);
 
         inputsData = {
-          transactionsMany: await Blockchain.tokenTransactionsMany(this.props.order.tokenid, this.props.order.txid),
-          ccUtxos: await Blockchain.addCCInputs(this.props.order.tokenid, this.props.address.pubkey, Number(this.state.amount)),
-          normalUtxos: await Blockchain.createCCTx(toSats(this.props.order.price * this.state.amount) + 10000, this.props.address.pubkey),
+          transactionsMany: await Blockchain.tokenTransactionsMany(order.tokenid, order.txid),
+          ccUtxos: await Blockchain.addCCInputs(order.tokenid, address.pubkey, Number(this.state.amount)),
+          normalUtxos: await Blockchain.createCCTx(toSats(order.price * this.state.amount) + 10000, address.pubkey),
         };
 
-        console.warn('fillbidToken inputs data', inputsData);
+        writeLog('fillbidToken inputs data', inputsData);
 
         try {
           rawtx = await TokensLib.V2Assets.buildTokenv2fillbid(
-            this.props.order.tokenid,
-            this.props.order.txid,
+            order.tokenid,
+            order.txid,
             Number(this.state.amount),
-            this.props.order.price,
+            order.price,
             this.props.wif,
             inputsData,
           );
         } catch (e) {
-          console.warn(e);
+          writeLog(e);
           this.setState({
             success: null,
             txid: null,
@@ -99,9 +103,7 @@ class FillBidTokenModal extends React.Component {
           });
         }
     
-        if (window.DEBUG) {
-          console.warn('fillbidToken token rawtx', rawtx);
-        }
+        writeLog('fillbidToken token rawtx', rawtx);
     
         if (rawtx && rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
@@ -114,7 +116,7 @@ class FillBidTokenModal extends React.Component {
             });
           } else {
             this.setState({
-              success: `${chains[this.props.chain].explorerUrl}/${this.props.order.tokenid}/transactions/${txid}/${this.props.chain}`,
+              success: `${chains[chain].explorerUrl}/${order.tokenid}/transactions/${txid}/${chain}`,
               txid,
               error: null,
               price: '',
@@ -144,27 +146,20 @@ class FillBidTokenModal extends React.Component {
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
+  getTokenData(tokenid) {
+    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo;
+  }
 
   render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
+    const tokenInfo = this.getTokenData(this.props.order.tokenid);
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
+    const {order} = this.props;
 
     return (
       <React.Fragment>
         <div
-          className={`fill-buy-order-trigger ${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          className={`fill-buy-order-trigger ${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-dollar-sign"></i>
           Sell
@@ -181,7 +176,7 @@ class FillBidTokenModal extends React.Component {
               <input
                 type="text"
                 name="token"
-                value={`Token: ${getTokenData(this.props.order.tokenid).name}`}
+                value={`Token: ${tokenInfo.name}`}
                 disabled
                 className="form-input" />
               <input
@@ -194,23 +189,23 @@ class FillBidTokenModal extends React.Component {
               <input
                 type="text"
                 name="token"
-                value={`Price: ${this.props.order.price}`}
+                value={`Price: ${order.price}`}
                 disabled
                 className="form-input" />
               <input
                 type="text"
                 name="token"
-                value={`Total: ${(this.state.amount || 0) * this.props.order.price}`}
+                value={`Total: ${(this.state.amount || 0) * order.price}`}
                 disabled
                 className="form-input" />
               <button
                 type="button"
-                onClick={this.buyToken}
+                onClick={this.sellToken}
                 disabled={
                   !this.state.amount ||
-                  this.getMaxSpendNormalUtxos() === 0
+                  maxNormalSpendValue === 0
                 }
-                className="form-input">Buy</button>
+                className="form-input">Sell</button>
               {this.state.success &&
                 <div className="success">
                   Token sell order filled!

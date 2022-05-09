@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transaction details component render check 1`] = `
+Array [
+  <div
+    onClick={[Function]}
+  />,
+  <div
+    className="Modal modal  Modal-transaction-details"
+  >
+    <div
+      onClick={[Function]}
+    >
+      <div
+        className="modal-background"
+      />
+    </div>
+    <div
+      className="modal-content"
+    >
+      <div
+        className="card"
+      >
+        <button
+          className="modal-close is-large "
+          onClick={[Function]}
+        />
+        <div
+          className="card-content"
+        >
+          <div
+            className="content"
+          >
+            <table
+              className="table"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>
+                      Token
+                    </strong>
+                  </td>
+                  <td
+                    className="token-info-link"
+                  >
+                    <a
+                      href="http://explorer.komodoplatform.com:20000/tokens/743b30659a947779f3a0d002bee4e1ab1fa5b03182beccd1a3ca0d55db99d015/transactions/TKLTEST"
+                      target="_blank"
+                    >
+                      Test
+                       
+                      <i
+                        className="fa fa-external-link-alt"
+                      />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Status
+                    </strong>
+                  </td>
+                  <td>
+                    token created
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Date
+                    </strong>
+                  </td>
+                  <td>
+                    15 Oct 2021 16:36
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Height
+                    </strong>
+                  </td>
+                  <td>
+                    81701
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Value
+                    </strong>
+                  </td>
+                  <td>
+                    10
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    className="text-left no-border"
+                    colSpan="2"
+                  >
+                    <strong>
+                      Transaction ID
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    className="text-left"
+                    colSpan="2"
+                  >
+                    743b30659a947779f3a0d002bee4e1ab1fa5b03182beccd1a3ca0d55db99d015
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              className="modal-action-block center"
+            >
+              <a
+                href="http://explorer.komodoplatform.com:20000/tokens/743b30659a947779f3a0d002bee4e1ab1fa5b03182beccd1a3ca0d55db99d015/transactions/743b30659a947779f3a0d002bee4e1ab1fa5b03182beccd1a3ca0d55db99d015/TKLTEST"
+                target="_blank"
+              >
+                <button
+                  className="button"
+                >
+                  Open in explorer 
+                  <i
+                    className="fa fa-external-link-alt"
+                  />
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;

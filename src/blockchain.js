@@ -65,7 +65,7 @@ const getInfo = async () => {
     const isJson = response.headers.get('Content-Type').includes('application/json');
 
     const body = isJson ? await response.json() : await response.text();
-
+    
     if (!response.ok) {
       throw new Error(body);
     }

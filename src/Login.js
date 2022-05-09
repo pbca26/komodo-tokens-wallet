@@ -1,7 +1,9 @@
 import React from 'react';
+import Logo from './Logo';
 import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
 import {chains} from './constants';
+import writeLog from './log';
 
 class Login extends React.Component {
   state = this.initialState;
@@ -25,7 +27,7 @@ class Login extends React.Component {
       chain,
     });
 
-    console.warn('explorer is set to ' + chains[chain].explorerApiUrl);
+    writeLog('explorer is set to ' + chains[chain].explorerApiUrl);
     Blockchain.setExplorerUrl(chains[chain].explorerApiUrl);
   }
 
@@ -66,38 +68,32 @@ class Login extends React.Component {
       [e.target.name]: e.target.value,
     });
 
-    if (DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    setTimeout(() => {
+      writeLog('login this.state', this.state);
+    }, 100);
   }
 
   getWifKey() {
-    const wif = TokensLib[chains[this.state.chain].ccLibVersion === 1 ? 'V1' : 'V2'].keyToWif(this.state.privKeyInput);
-    const address = TokensLib[chains[this.state.chain].ccLibVersion === 1 ? 'V1' : 'V2'].keyToCCAddress(wif, 'wif', chains[this.state.chain].ccIndex);
+    const {chain} = this.state;
+    const ccLibVersion = chains[chain].ccLibVersion === 1 ? 'V1' : 'V2';
+    const wif = TokensLib[ccLibVersion].keyToWif(this.state.privKeyInput);
+    const address = TokensLib[ccLibVersion].keyToCCAddress(wif, 'wif', chains[chain].ccIndex);
 
     this.props.setKey({
       wif,
       address,
-      chain: this.state.chain,
+      chain,
     });
 
-    if (DEBUG) {
-      console.warn('login wif', wif);
-      console.warn('login address', address);
-      console.warn('chain ' + this.state.chain, chains[this.state.chain]);
-    }
+    writeLog('login wif', wif);
+    writeLog('login address', address);
+    writeLog('chain ' + chain, chains[chain]);
   }
 
   render() {
     return(
       <div className="main">
-        <div className="app-logo">
-          <div className="box"></div>
-          <div className="circle"></div>
-          <img src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"></img>
-        </div>
+        <Logo />
         <div className="content login-form">
           <h4>Login</h4>
           <p>Enter your seed phrase or WIF key in the form below</p>
@@ -138,7 +134,10 @@ class Login extends React.Component {
             <button
               type="button"
               onClick={this.getWifKey}
-              disabled={!this.state.privKeyInput || !this.state.chain}>Login</button>
+              disabled={
+                !this.state.privKeyInput ||
+                !this.state.chain
+              }>Login</button>
           </div>
         </div>
       </div>

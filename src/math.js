@@ -21,23 +21,20 @@ const fromSats = value => convertExponentialToDecimal(Number(Number(value * 0.00
 const toSats = value => Number((Number(value).toFixed(8) * 100000000).toFixed(0));
 
 // ref: https://github.com/pbca26/agama-wallet-lib/blob/master/src/utils.js#L117
-const maxSpendBalance = (utxoList, fee) => {
-  let maxSpendBalance = 0;
-
-  for (let i = 0; i < utxoList.length; i++) {
-    maxSpendBalance += Number(utxoList[i].value);
-  }
-
-  if (fee) {
-    return Number((Number(maxSpendBalance) - Number(fee)).toFixed(8));
-  }
+const getMaxSpendNormalUtxos = (utxos = [], fee = 10000) => {
+  const normalUtxos = utxos;
+  let maxSpend = -1 * fee;
   
-  return Number(maxSpendBalance);
+  for (let i = 0; i < normalUtxos.length; i++) {
+    maxSpend += Number(normalUtxos[i].satoshis);
+  }
+
+  return maxSpend < 0 ? 0 : maxSpend;
 };
 
 module.exports = {
   fromSats,
   toSats,
-  maxSpendBalance,
+  getMaxSpendNormalUtxos,
   convertExponentialToDecimal,
 };

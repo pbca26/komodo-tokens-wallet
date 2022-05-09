@@ -4,6 +4,9 @@ import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
 import {chains} from './constants';
 import {utxoSelectCC, utxoSelectNormal} from './utxo-select';
+import {getMaxSpendNormalUtxos} from './math';
+import writeLog from './log';
+import devVars from './dev'
 
 class SendTokenModal extends React.Component {
   state = this.initialState;
@@ -16,13 +19,14 @@ class SendTokenModal extends React.Component {
 
     return {
       isClosed: true,
-      token: null,
-      pubkey: '',
-      amount: '',
+      token: devVars && devVars.send.token || null,
+      pubkey: devVars && devVars.send.pubkey || '',
+      amount: devVars && devVars.send.amount || '',
       success: null,
       txid: null,
       error: null,
       tokenDropdownOpen: false,
+      dropdownQuickSearch: '',
     };
   }
 
@@ -38,11 +42,7 @@ class SendTokenModal extends React.Component {
       txid: null,
     });
 
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('login this.state', this.state);
-      }, 100);
-    }
+    writeLog('login this.state', this.state);
   }
 
   close() {
@@ -52,26 +52,29 @@ class SendTokenModal extends React.Component {
     });
   }
 
+  getTokenData(tokenid) {
+    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+    return tokenInfo;
+  }
+
   open() {
+    const tokenInfo = this.getTokenData(this.props.tokenBalance[0].tokenId);
+    const {tokenBalance} = this.props;
+
     this.setState({
       ...this.initialState,
-      isClosed: false
+      isClosed: false,
     });
 
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
-
-    if (this.props.tokenBalance &&
-        this.props.tokenBalance.length &&
-        this.props.tokenBalance.length === 1 &&
-        getTokenData(this.props.tokenBalance[0].tokenId).height !== -1 &&
+    if (tokenBalance &&
+        tokenBalance.length &&
+        tokenBalance.length === 1 &&
+        tokenInfo.height !== -1 &&
         !this.state.token) {
       this.setToken({
-        balance: this.props.tokenBalance[0].balance,
-        tokenId: this.props.tokenBalance[0].tokenId,
-        name: getTokenData(this.props.tokenBalance[0].tokenId).name
+        balance: tokenBalance[0].balance,
+        tokenId: tokenBalance[0].tokenId,
+        name: tokenInfo.name,
       });
     }
   }
@@ -83,39 +86,61 @@ class SendTokenModal extends React.Component {
   }
 
   sendToken = async () => {
-    if (Number(this.state.amount) > this.state.token.balance || Number(this.state.amount) < 1) {
+    if (Number(this.state.amount) > this.state.token.balance ||
+        Number(this.state.amount) < 1) {
       this.setState({
         success: null,
         txid: null,
         error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
       });
     } else {
+      const {chain, address} = this.props;
+      const cclibVersion = chains[chain].ccLibVersion === 1 ? 'V1' : 'V2';
+
       try {
         let inputsData, rawtx;
           
-        console.warn('create token modal txBuilderApi', chains[this.props.chain].txBuilderApi);
+        writeLog('create token modal txBuilderApi', chains[chain].txBuilderApi);
         
-        if (chains[this.props.chain].txBuilderApi === 'utxoSelect') {
+        if (chains[chain].txBuilderApi === 'utxoSelect') {
           inputsData = {
-            ccUtxos: await utxoSelectCC(this.props.address.cc, this.state.token.tokenId, true, chains[this.props.chain].ccLibVersion),
-            normalUtxos: await utxoSelectNormal(this.props.address.normal, 10000, true, chains[this.props.chain].ccLibVersion),
+            ccUtxos: await utxoSelectCC(
+              address.cc,
+              this.state.token.tokenId,
+              true,
+              chains[chain].ccLibVersion
+            ),
+            normalUtxos: await utxoSelectNormal(
+              address.normal,
+              10000,
+              true,
+              chains[chain].ccLibVersion
+            ),
           };
         } else {
           inputsData = {
-            ccUtxos: chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].AddTokensInputsRemote(
-              this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)
-            ) : await Blockchain.addCCInputs(this.state.token.tokenId, this.props.address.pubkey, Number(this.state.amount)),
-            normalUtxos: chains[this.props.chain].txBuilderApi === 'default' ? await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].createTxAndAddNormalInputs(10000, this.props.address.pubkey) : await Blockchain.createCCTx(10000, this.props.address.pubkey),
+            ccUtxos: chains[chain].txBuilderApi === 'default' ? await TokensLib[cclibVersion].AddTokensInputsRemote(
+              this.state.token.tokenId,
+              address.pubkey,
+              Number(this.state.amount)
+            ) : await Blockchain.addCCInputs(
+              this.state.token.tokenId,
+              address.pubkey,
+              Number(this.state.amount)
+            ),
+            normalUtxos: chains[chain].txBuilderApi === 'default' ? await TokensLib[cclibVersion].createTxAndAddNormalInputs(10000, address.pubkey) : await Blockchain.createCCTx(10000, address.pubkey),
           };
         }
 
-        if (window.DEBUG) {
-          console.warn('send tx modal inputsData', inputsData);
-        }
+        writeLog('send tx modal inputsData', inputsData);
 
         try {
-          rawtx = await TokensLib[chains[this.props.chain].ccLibVersion === 1 ? 'V1' : 'V2'].transferTokenTx(
-            this.state.token.tokenId, this.state.pubkey, Number(this.state.amount), this.props.wif, inputsData
+          rawtx = await TokensLib[cclibVersion].transferTokenTx(
+            this.state.token.tokenId,
+            this.state.pubkey,
+            Number(this.state.amount),
+            this.props.wif,
+            inputsData
           );
         } catch (e) {
           this.setState({
@@ -125,9 +150,7 @@ class SendTokenModal extends React.Component {
           });
         }
     
-        if (window.DEBUG) {
-          console.warn('send token rawtx', rawtx);
-        }
+        writeLog('send token rawtx', rawtx);
     
         if (rawtx && rawtx.substr(0, 2) === '04') {
           const {txid} = await Blockchain.broadcast(rawtx);
@@ -140,7 +163,7 @@ class SendTokenModal extends React.Component {
             });
           } else {
             this.setState({
-              success: `${chains[this.props.chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${this.props.chain}`,
+              success: `${chains[chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${chain}`,
               txid,
               error: null,
               pubkey: '',
@@ -174,6 +197,7 @@ class SendTokenModal extends React.Component {
 
     this.setState({
       tokenDropdownOpen: !this.state.tokenDropdownOpen,
+      dropdownQuickSearch: '',
     });
   }
 
@@ -201,34 +225,72 @@ class SendTokenModal extends React.Component {
         srcElement &&
         srcElement.className &&
         typeof srcElement.className === 'string' &&
-        srcElement.className !== 'token-tile send-token-trigger') {
+        srcElement.className !== 'token-tile send-token-trigger' &&
+        srcElement.className.indexOf('form-input-quick-search') === -1) {
       this.setState({
         tokenDropdownOpen: false,
       });
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
-    let maxSpend = -10000;
-
-    for (let i = 0; i < normalUtxos.length; i++) {
-      maxSpend += normalUtxos[i].satoshis;
-    }
-
-    return maxSpend < 0 ? 0 : maxSpend;
-  };
-
   render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
-      return tokenInfo;
-    }
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
+
+    const renderDropdownOptions = () => {
+      const tokenBalanceItems = this.props.tokenBalance;
+      let items = [];
+
+      if (tokenBalanceItems &&
+          tokenBalanceItems.length > 2) {
+        items.push(
+          <input
+            key="send-token-search"
+            type="text"
+            name="dropdownQuickSearch"
+            placeholder="Search..."
+            autoComplete="off"
+            value={this.state.dropdownQuickSearch}
+            onChange={this.updateInput}
+            className="form-input form-input-quick-search" />
+        );
+      }
+
+      for (let i = 0; i < tokenBalanceItems.length; i++) {
+        const tokenInfo = this.getTokenData(tokenBalanceItems[i].tokenId);
+
+        if (!this.state.dropdownQuickSearch ||
+            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+          items.push(
+            <a
+              key={`send-token-${tokenBalanceItems[i].tokenId}`}
+              className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
+              title={tokenInfo.height === -1 ? 'Pending confirmation' : ''}
+              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+                balance: tokenBalanceItems[i].balance,
+                tokenId: tokenBalanceItems[i].tokenId,
+                name: tokenInfo.name
+              })}>
+              {tokenInfo.name}
+              {tokenInfo.height > 0 &&
+                <span className="dropdown-balance">{tokenBalanceItems[i].balance}</span>
+              }
+              {tokenInfo.height === -1 &&
+                <i className="fa fa-spinner"></i>
+              }
+            </a>
+          );
+        }
+      }
+
+      return(
+        <React.Fragment>{items}</React.Fragment>
+      )
+    };
 
     return (
       <React.Fragment>
         <div
-          className={`token-tile send-token-trigger${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          className={`token-tile send-token-trigger${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
           onClick={() => this.open()}>
           <i className="fa fa-paper-plane"></i>
           Send
@@ -260,27 +322,7 @@ class SendTokenModal extends React.Component {
                   className="dropdown-menu"
                   id="dropdown-menu"
                   role="menu">
-                  <div className="dropdown-content">
-                    {this.props.tokenBalance.map(tokenBalanceItem => (
-                      <a
-                        key={`send-token-${tokenBalanceItem.tokenId}`}
-                        className={`dropdown-item${getTokenData(tokenBalanceItem.tokenId).height === -1 ? ' disabled' : ''}`}
-                        title={getTokenData(tokenBalanceItem.tokenId).height === -1 ? `Pending confirmation` : ''}
-                        onClick={getTokenData(tokenBalanceItem.tokenId).height === -1 ? null : () => this.setToken({
-                          balance: tokenBalanceItem.balance,
-                          tokenId: tokenBalanceItem.tokenId,
-                          name: getTokenData(tokenBalanceItem.tokenId).name
-                        })}>
-                        {getTokenData(tokenBalanceItem.tokenId).name}
-                        {getTokenData(tokenBalanceItem.tokenId).height > 0 &&
-                          <span className="dropdown-balance">{tokenBalanceItem.balance}</span>
-                        }
-                        {getTokenData(tokenBalanceItem.tokenId).height === -1 &&
-                          <i className="fa fa-spinner"></i>
-                        }
-                      </a>
-                    ))}
-                  </div>
+                  <div className="dropdown-content">{renderDropdownOptions()}</div>
                 </div>
               </div>
               <input
@@ -289,14 +331,14 @@ class SendTokenModal extends React.Component {
                 placeholder="Destination pubkey"
                 value={this.state.pubkey}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <input
                 type="text"
                 name="amount"
                 placeholder="Amount"
                 value={this.state.amount}
                 onChange={this.updateInput}
-                className="form-input" / >
+                className="form-input" />
               <button
                 type="button"
                 onClick={this.sendToken}
@@ -304,7 +346,7 @@ class SendTokenModal extends React.Component {
                   !this.state.token ||
                   !this.state.pubkey ||
                   !this.state.amount ||
-                  this.getMaxSpendNormalUtxos() === 0
+                  maxNormalSpendValue === 0
                 }
                 className="form-input">Send</button>
               {this.state.success &&
