@@ -91,7 +91,6 @@ class Marketplace extends React.Component {
     let cctxids = [];
 
     const {address, chain} = this.props;
-    const tokenList = await Blockchain.tokenListAll();/*chains[chain].explorerApiVersion && chains[chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();*/
     const tokenBalance = await Blockchain.tokenBalance(address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(address.cc);
     const normalUtxos = await Blockchain.getNormalUtxos(address.normal);
@@ -106,8 +105,8 @@ class Marketplace extends React.Component {
     for (var i = 0; i < tokenOrders.orderbook.length; i++) {
       if (cctxids.indexOf(tokenOrders.orderbook[i].tokenid) === -1) cctxids.push(tokenOrders.orderbook[i].tokenid);
     }
-    const tokenList = chains[chain].explorerApiVersion && chains[chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();
-
+    const tokenList = await Blockchain.tokenListAll();/*chains[chain].explorerApiVersion && chains[chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();*/
+    
     this.setState({
       tokenList: tokenList.tokens,
       tokenBalance: tokenBalance.balance,

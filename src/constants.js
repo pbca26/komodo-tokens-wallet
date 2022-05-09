@@ -57,4 +57,5 @@ module.exports = {
   chains,
   orderType,
   orderDirection,
+  nftDataTypes,
 };
