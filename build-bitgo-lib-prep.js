@@ -33,7 +33,7 @@ if (process.argv.indexOf('v2') > -1) {
   fs.writeFileSync('./bitgo-utxo-lib/samples/cctokenspoc-temp.js', v2MainImport);
 } else {
   // quick hack to build bitgo-utxo-lib-cc/samples/cctokenspoc.js for browser
-  let libContents = fs.readFileSync('./bitgo-utxo-lib/samples/cctokenspocv1.js', 'utf-8');
+  let libContents = fs.readFileSync('./bitgo-utxo-lib/samples/cctokenspoc.js', 'utf-8');
 
   libContents = libContents
   .replace("var ccimp;", '//var ccimp;')

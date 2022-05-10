@@ -24,6 +24,7 @@ jobs:
     - name: Install deps
       run: |
         npm install
+        npm install -g browserify
         npm run build-cclib
         npm run build-bitgo-lib
         npm run build-bitgo-lib-v2
