@@ -16,9 +16,17 @@ jobs:
       with:
         node-version: '12'
         check-latest: true
+    - uses: jetli/wasm-pack-action@v0.3.0
+      with:
+        # Optional version of wasm-pack to install(eg. 'v0.9.1', 'latest')
+        version: 'latest'
 
     - name: Install deps
-      run: npm install
+      run: |
+        npm install
+        npm run build-cclib
+        npm run build-bitgo-lib
+        npm run build-bitgo-lib-v2
 
     - name: Run tests
-      run:  npm run test
+      run:  env TZ='Europe/Moscow' npm run test

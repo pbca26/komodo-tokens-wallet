@@ -13,7 +13,7 @@
 
 ## About
 
-This project is designed to run Komodo CryptoContidions (tokens and assets modules) in a browser.
+This project is designed to run Komodo CryptoConditions (tokens and assets modules) in a browser.
 
 ## 🚴 Usage
 
