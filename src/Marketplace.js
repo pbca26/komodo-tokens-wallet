@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Blockchain from './blockchain';
 import {secondsToString} from './time';
 import {sortTransactions} from './sort';
@@ -20,77 +20,61 @@ import {getMaxSpendNormalUtxos} from './math';
 const SYNC_INTERVAL = 30 * 1000;
 let syncTimeoutRef;
 
-class Marketplace extends React.Component {
-  state = this.initialState;
+const Marketplace = (props) => {
+  const initialState = {
+    tokenList: [],
+    tokenBalance: [],
+    tokenTransactions: [],
+    normalUtxos: [],
+    activeToken: null,
+    activeOrderIndex: null,
+    tokenOrders: [],
+    pristine: true,
+    filtersType: 'all',
+    filtersDirection: 'all',
+    tokenInfoShowNftData: false,
+  };
+  const [state, setState] = useState(initialState);
 
-  get initialState() {
-    this.updateInput = this.updateInput.bind(this);
-    this.setActiveToken = this.setActiveToken.bind(this);
-    this.logout = this.logout.bind(this);
-    this.setFilter = this.setFilter.bind(this);
-    this.tokenInfoShowNftData = this.tokenInfoShowNftData.bind(this);
-
-    return {
-      tokenList: [],
-      tokenBalance: [],
-      tokenTransactions: [],
-      normalUtxos: [],
-      activeToken: null,
-      activeOrderIndex: null,
-      tokenOrders: [],
-      pristine: true,
-      filtersType: 'all',
-      filtersDirection: 'all',
-      tokenInfoShowNftData: false,
-    };
+  const tokenInfoShowNftData = () => {
+    setState(prevState => ({
+      ...prevState,
+      tokenInfoShowNftData: !tokenInfoShowNftData
+    }));
   }
 
-  tokenInfoShowNftData() {
-    this.setState({
-      tokenInfoShowNftData: !this.state.tokenInfoShowNftData,
-    });
+  const setFilter = (name, value) => {
+    setState(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   }
 
-  setFilter(name, value) {
-    this.setState({
-      [name]: value,
-    });
-  }
-
-  getTokenData = (tokenid) => {
-    const tokenInfo = this.state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const getTokenData = tokenid => {
+    const tokenInfo = state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
     return tokenInfo;
   }
 
-  logout() {
+  const logout = () => {
     clearInterval(syncTimeoutRef);
     syncTimeoutRef = null;
     Blockchain.setExplorerUrl();
-    this.setState(this.initialState);
-    this.props.resetApp();
+    setState(initialState);
+    props.resetApp();
   }
 
-  setActiveToken(activeToken, activeOrderIndex) {
-    this.setState({
-      activeToken: this.state.activeToken === activeToken ? null : activeToken,
-      activeOrderIndex: this.state.activeToken === activeToken ? null : activeOrderIndex,
-    });
+  const setActiveToken = (activeToken, activeOrderIndex) => {
+    setState(prevState => ({
+      ...prevState,
+      activeToken: state.activeToken === activeToken ? null : activeToken,
+      activeOrderIndex: state.activeToken === activeToken ? null : activeOrderIndex,
+    }));
   }
 
-  updateInput(e) {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
-
-    setTimeout(() => {
-      writeLog('marketplace this.state', this.state);
-    }, 100);
-  }
-
-  syncData = async () => {    
+  const syncData = async () => {    
     let cctxids = [];
 
-    const {address, chain} = this.props;
+    const {address, chain} = props;
     const tokenBalance = await Blockchain.tokenBalance(address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(address.cc);
     const normalUtxos = await Blockchain.getNormalUtxos(address.normal);
@@ -106,38 +90,39 @@ class Marketplace extends React.Component {
       if (cctxids.indexOf(tokenOrders.orderbook[i].tokenid) === -1) cctxids.push(tokenOrders.orderbook[i].tokenid);
     }
     const tokenList = await Blockchain.tokenListAll();/*chains[chain].explorerApiVersion && chains[chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();*/
-    
-    this.setState({
+
+    setState(prevState => ({
+      ...prevState,
       tokenList: tokenList.tokens,
       tokenBalance: tokenBalance.balance,
       tokenTransactions: tokenTransactions.txs,
       tokenOrders: tokenOrders.orderbook,
       normalUtxos,
       pristine: false,
-    });
-
-    setTimeout(() => {
-      writeLog('data synced', this.state);
-    }, 100);
+    }));
   }
 
-  componentWillMount() {
+  useEffect(() => {
+    writeLog('marketplace state', state);
+  });
+
+  useEffect(() => {
     syncTimeoutRef = setInterval(() => {
-      this.syncData();
+      syncData();
     }, SYNC_INTERVAL);
 
-    this.syncData();
-  }
+    syncData();
 
-  componentWillUnmount() {
-    clearInterval(syncTimeoutRef);
-  }
+    return () => {
+      clearInterval(syncTimeoutRef);
+    };
+  }, []);
 
-  getNormalBalance() {
-    if (this.state.normalUtxos.length) {
+  const getNormalBalance = () => {
+    if (state.normalUtxos.length) {
       return {
-        value: this.state.normalUtxos.length === 1 ? Number(this.state.normalUtxos[0].amount || 0) : Number(this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.amount), 0).toFixed(8)),
-        satoshi: this.state.normalUtxos.length === 1 ? this.state.normalUtxos[0].satoshi || 0 : this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.satoshi), 0),
+        value: state.normalUtxos.length === 1 ? Number(state.normalUtxos[0].amount || 0) : Number(state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.amount), 0).toFixed(8)),
+        satoshi: state.normalUtxos.length === 1 ? state.normalUtxos[0].satoshi || 0 : state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.satoshi), 0),
       };
     } else {
       return {
@@ -147,40 +132,40 @@ class Marketplace extends React.Component {
     }
   }
 
-  renderOrders() {
-    const {address, chain} = this.props;
-    let orders = this.state.tokenOrders;
+  const renderOrders = () => {
+    const {address, chain} = props;
+    let orders = state.tokenOrders;
     let items = [];
 
-    if (this.state.filtersType === 'my') {
+    if (state.filtersType === 'my') {
       orders = orders.filter(x => x.origtokenaddress === address.cc);
     }
 
-    if (this.state.filtersDirection === 'sell') {
+    if (state.filtersDirection === 'sell') {
       orders = orders.filter(x => x.funcid === 's' || x.funcid === 'S');
-    } else if (this.state.filtersDirection === 'buy') {
+    } else if (state.filtersDirection === 'buy') {
       orders = orders.filter(x => x.funcid === 'b' || x.funcid === 'B');
     }
 
     for (let i = 0; i < orders.length; i++) {
-      const tokenInfo = this.getTokenData(orders[i].tokenid);
+      const tokenInfo = getTokenData(orders[i].tokenid);
 
       items.push(
         <div
           key={`token-tile-${orders[i].tokenid}`}
-          className={`token-tile${orders[i].tokenid === this.state.activeToken ? ' active' : ''}`}
-          onClick={() => this.setActiveToken(orders[i].tokenid, i)}
+          className={`token-tile${orders[i].tokenid === state.activeToken ? ' active' : ''}`}
+          onClick={() => setActiveToken(orders[i].tokenid, i)}
           data-testid={`token-order-item-${orders[i].tokenid}`}>
           {orders[i].origtokenaddress === address.cc &&
            (orders[i].funcid === 's' || orders[i].funcid === 'S') &&
             <CancelAskTokenModal
-              tokenList={this.state.tokenList}
-              tokenBalance={this.state.tokenBalance}
-              normalUtxos={this.state.normalUtxos}
+              tokenList={state.tokenList}
+              tokenBalance={state.tokenBalance}
+              normalUtxos={state.normalUtxos}
               order={orders[i]}
-              setActiveToken={this.setActiveToken}
-              syncData={this.syncData}
-              {...this.props}>
+              setActiveToken={setActiveToken}
+              syncData={syncData}
+              {...props}>
               <i
                 className="fa fa-trash order-cancel-trigger"
                 data-testid={`token-order-cancel-${orders[i].tokenid}`}></i>
@@ -189,13 +174,13 @@ class Marketplace extends React.Component {
           {orders[i].origtokenaddress === address.cc &&
            (orders[i].funcid === 'b' || orders[i].funcid === 'B') &&
             <CancelBidTokenModal
-              tokenList={this.state.tokenList}
-              tokenBalance={this.state.tokenBalance}
-              normalUtxos={this.state.normalUtxos}
+              tokenList={state.tokenList}
+              tokenBalance={state.tokenBalance}
+              normalUtxos={state.normalUtxos}
               order={orders[i]}
-              setActiveToken={this.setActiveToken}
-              syncData={this.syncData}
-              {...this.props}>
+              setActiveToken={setActiveToken}
+              syncData={syncData}
+              {...props}>
               <i
                 className="fa fa-trash order-cancel-trigger"
                 data-testid={`token-order-cancel-${orders[i].tokenid}`}></i>
@@ -234,25 +219,25 @@ class Marketplace extends React.Component {
       <React.Fragment>
         <h4>Orderbook</h4>
         <OrderFiltersModal
-          {...this.state}
-          setFilter={this.setFilter}>
+          {...state}
+          setFilter={setFilter}>
           <a className="filters-trigger">Filters</a>
         </OrderFiltersModal>
-        {this.state.tokenBalance.length > 0 &&
-         this.state.normalUtxos.length > 0 &&
+        {state.tokenBalance.length > 0 &&
+         state.normalUtxos.length > 0 &&
           <React.Fragment>
             <SellTokenModal
-              tokenList={this.state.tokenList}
-              tokenBalance={this.state.tokenBalance}
-              normalUtxos={this.state.normalUtxos}
-              syncData={this.syncData}
-              {...this.props} />
+              tokenList={state.tokenList}
+              tokenBalance={state.tokenBalance}
+              normalUtxos={state.normalUtxos}
+              syncData={syncData}
+              {...props} />
             <BuyTokenModal
-              tokenList={this.state.tokenList}
-              tokenBalance={this.state.tokenBalance}
-              normalUtxos={this.state.normalUtxos}
-              syncData={this.syncData}
-              {...this.props} />
+              tokenList={state.tokenList}
+              tokenBalance={state.tokenBalance}
+              normalUtxos={state.normalUtxos}
+              syncData={syncData}
+              {...props} />
           </React.Fragment>
         }
         <div className="token-balance-block">
@@ -262,16 +247,16 @@ class Marketplace extends React.Component {
     );
   }
 
-  renderTransactions() {
-    const {address, chain} = this.props;
-    let transactions = this.state.tokenTransactions;
+  const renderTransactions = () => {
+    const {address, chain} = props;
+    let transactions = state.tokenTransactions;
     let items = [];
 
     let transactionsMerge = [];
     for (let i = 0; i < transactions.length; i++) {
       for (let j = 0; j < transactions[i].txs.length; j++) {
-        if (!this.state.activeToken ||
-            (this.state.activeToken && this.state.activeToken === transactions[i].tokenId)) {
+        if (!state.activeToken ||
+            (state.activeToken && state.activeToken === transactions[i].tokenId)) {
           if (transactions[i].txs[j].height === -1 ||
               transactions[i].txs[j].height === 0) {
             transactions[i].txs[j].height = 0;
@@ -285,7 +270,7 @@ class Marketplace extends React.Component {
             transactionsMerge.push({
               ...transactions[i].txs[j],
               tokenid: transactions[i].tokenId,
-              tokenName: this.getTokenData(transactions[i].tokenId).name,
+              tokenName: getTokenData(transactions[i].tokenId).name,
             });
           }
         }
@@ -296,7 +281,7 @@ class Marketplace extends React.Component {
     transactions = sortTransactions(transactions);
 
     for (let i = 0; i < transactions.length; i++) {
-      const tokenInfo = this.getTokenData(transactions[i].tokenid);
+      const tokenInfo = getTokenData(transactions[i].tokenid);
       let directionClass = transactions[i].to === address.cc && transactions[i].to !== transactions[i].from ? 'arrow-alt-circle-down color-green' : 'arrow-alt-circle-up';
 
       if (transactions[i].to === transactions[i].from) directionClass = 'circle';
@@ -309,7 +294,7 @@ class Marketplace extends React.Component {
           directionClass={directionClass}
           tokenInfo={tokenInfo}
           chainInfo={chains[chain]}
-          chain={this.props.chain}
+          chain={props.chain}
           key={`token-tile-${transactions[i].txid}-wrapper`}>
           <div
             key={`token-tile-${transactions[i].txid}`}
@@ -354,13 +339,13 @@ class Marketplace extends React.Component {
     );
   }
 
-  renderOrderInfo() {
-    if (this.state.activeToken) {
-      const tokenInfo = this.getTokenData(this.state.activeToken);
-      const orderInfo = this.state.tokenOrders[this.state.activeOrderIndex];
-      const {chain} = this.props;
+  const renderOrderInfo = () => {
+    if (state.activeToken) {
+      const tokenInfo = getTokenData(state.activeToken);
+      const orderInfo = state.tokenOrders[state.activeOrderIndex];
+      const {chain} = props;
 
-      //console.warn(this.state.activeOrderIndex)
+      //console.warn(state.activeOrderIndex)
       //console.warn('tokenInfo', tokenInfo);
       //console.warn('orderInfo', orderInfo);
 
@@ -424,28 +409,28 @@ class Marketplace extends React.Component {
             {tokenInfo.data && tokenInfo.data.decoded &&
               <span
                 className="token-info-trigger"
-                onClick={this.tokenInfoShowNftData}>
+                onClick={tokenInfoShowNftData}>
                 Order info
-                <i className={`fa fa-chevron-${this.state.tokenInfoShowNftData ? 'up' : 'down'}`}></i>
+                <i className={`fa fa-chevron-${state.tokenInfoShowNftData ? 'up' : 'down'}`}></i>
                 {(orderInfo.funcid === 'b' || orderInfo.funcid === 'B') &&
                   <FillBidTokenModal
-                    tokenList={this.state.tokenList}
-                    tokenBalance={this.state.tokenBalance}
-                    normalUtxos={this.state.normalUtxos}
+                    tokenList={state.tokenList}
+                    tokenBalance={state.tokenBalance}
+                    normalUtxos={state.normalUtxos}
                     order={orderInfo}
-                    setActiveToken={this.setActiveToken}
-                    syncData={this.syncData}
-                    {...this.props} />
+                    setActiveToken={setActiveToken}
+                    syncData={syncData}
+                    {...props} />
                 }
                 {(orderInfo.funcid === 's' || orderInfo.funcid === 'S') &&
                   <FillAskTokenModal
-                    tokenList={this.state.tokenList}
-                    tokenBalance={this.state.tokenBalance}
-                    normalUtxos={this.state.normalUtxos}
+                    tokenList={state.tokenList}
+                    tokenBalance={state.tokenBalance}
+                    normalUtxos={state.normalUtxos}
                     order={orderInfo}
-                    setActiveToken={this.setActiveToken}
-                    syncData={this.syncData}
-                    {...this.props} />
+                    setActiveToken={setActiveToken}
+                    syncData={syncData}
+                    {...props} />
                 }
               </span>
             }
@@ -454,23 +439,23 @@ class Marketplace extends React.Component {
                 Order info
                 {(orderInfo.funcid === 'b' || orderInfo.funcid === 'B') &&
                   <FillBidTokenModal
-                    tokenList={this.state.tokenList}
-                    tokenBalance={this.state.tokenBalance}
-                    normalUtxos={this.state.normalUtxos}
+                    tokenList={state.tokenList}
+                    tokenBalance={state.tokenBalance}
+                    normalUtxos={state.normalUtxos}
                     order={orderInfo}
-                    setActiveToken={this.setActiveToken}
-                    syncData={this.syncData}
-                    {...this.props} />
+                    setActiveToken={setActiveToken}
+                    syncData={syncData}
+                    {...props} />
                 }
                 {(orderInfo.funcid === 's' || orderInfo.funcid === 'S') &&
                   <FillAskTokenModal
-                    tokenList={this.state.tokenList}
-                    tokenBalance={this.state.tokenBalance}
-                    normalUtxos={this.state.normalUtxos}
+                    tokenList={state.tokenList}
+                    tokenBalance={state.tokenBalance}
+                    normalUtxos={state.normalUtxos}
                     order={orderInfo}
-                    setActiveToken={this.setActiveToken}
-                    syncData={this.syncData}
-                    {...this.props} />
+                    setActiveToken={setActiveToken}
+                    syncData={syncData}
+                    {...props} />
                 }
               </React.Fragment>
             }
@@ -553,7 +538,7 @@ class Marketplace extends React.Component {
                 </tr>
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 this.state.tokenInfoShowNftData &&
+                 state.tokenInfoShowNftData &&
                   <tr>
                     <td>
                       <strong>Data</strong>
@@ -565,7 +550,7 @@ class Marketplace extends React.Component {
                 }
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 this.state.tokenInfoShowNftData &&
+                 state.tokenInfoShowNftData &&
                   <tr>
                     <td>
                       <strong>Raw Data</strong>
@@ -577,7 +562,7 @@ class Marketplace extends React.Component {
                 }
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 !this.state.tokenInfoShowNftData &&
+                 !state.tokenInfoShowNftData &&
                  <tr>
                   <td colSpan="2">
                     ...
@@ -592,19 +577,19 @@ class Marketplace extends React.Component {
     }
   }
 
-  render() {
-    const maxSpendNormalUtxos = getMaxSpendNormalUtxos(this.state.normalUtxos, 20000);
-    const normalBalance = this.getNormalBalance().value;
-    const {chain, address} = this.props;
+  const render = () => {
+    const maxSpendNormalUtxos = getMaxSpendNormalUtxos(state.normalUtxos, 20000);
+    const normalBalance = getNormalBalance().value;
+    const {chain, address} = props;
 
     return(
       <div className="main dashboard marketplace">
         <i
           className="fa fa-lock logout-btn"
-          onClick={this.logout}></i>
+          onClick={logout}></i>
         <Logo />
         <div className="content">
-          <h4>Marketplace | <a onClick={this.props.setActiveView}>Wallet</a></h4>
+          <h4>Marketplace | <a onClick={(e) => props.setActiveView(e, true)}>Wallet</a></h4>
 
           <div className="address-block">
             <div>
@@ -623,25 +608,27 @@ class Marketplace extends React.Component {
           </div>
 
           <div className="tokens-block">
-            {this.state.normalUtxos.length > 0  &&
+            {state.normalUtxos.length > 0  &&
               <React.Fragment>
                 <strong>Normal balance:</strong> <span>{normalBalance}</span> <span>{chain}</span>
               </React.Fragment>
             }
-            {this.renderOrders()}
+            {renderOrders()}
             {maxSpendNormalUtxos === 0 &&
-             !this.state.pristine &&
+             !state.pristine &&
               <div>
                 <strong>Please make a deposit (min of 0.00002 {chain}) to your normal address in order to create or send tokens</strong>
               </div>
             }
-            {this.renderOrderInfo()}
-            {this.renderTransactions()}
+            {renderOrderInfo()}
+            {renderTransactions()}
           </div>
         </div>
       </div>
     );
   }
+
+  return render();
 }
 
 export default Marketplace;

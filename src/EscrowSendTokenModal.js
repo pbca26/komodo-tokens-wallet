@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from './Modal';
 import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
@@ -6,124 +6,120 @@ import {chains} from './constants';
 import * as utxoLib from './utxo-select';
 import EscrowClass from '../escrow-scripts/escrow';
 
-class EscrowSendTokenModal extends React.Component {
-  state = this.initialState;
-  
-  get initialState() {
-    this.updateInput = this.updateInput.bind(this);
-    this.dropdownTrigger = this.dropdownTrigger.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-    this.setToken = this.setToken.bind(this);
-    this.stop = this.stop.bind(this);
-    this.escrowFormTimeoutRef = null;
-    this.RUN_INTERVAL = 120 * 1000;
+let escrowFormTimeoutRef = null;
+let RUN_INTERVAL = 120 * 1000;
 
-    return {
-      isClosed: true,
-      token: null,
-      tokensMask: null,
-      success: null,
-      txid: null,
-      error: null,
-      tokenDropdownOpen: false,
-      isInProgress: false,
-      stopped: false,
-      log: '',
-    };
-  }
+const EscrowSendTokenModal = props => {
+  const initialState = {
+    isClosed: true,
+    token: null,
+    tokensMask: null,
+    success: null,
+    txid: null,
+    error: null,
+    tokenDropdownOpen: false,
+    isInProgress: false,
+    stopped: false,
+    log: '',
+  };
+  const [state, setState] = useState(initialState);
 
-  updateInput(e) {
-    this.setState({
+  const updateInput = e => {
+    setState(prevState => ({
+      ...prevState,
       [e.target.name]: e.target.value,
       error: null,
       success: null,
       txid: null,
-    });
-
-    if (window.DEBUG) {
-      setTimeout(() => {
-        console.warn('escrow send token this.state', this.state);
-      }, 100);
-    }
+    }));
   }
 
-  close() {
-    this.setState({
-      ...this.initialState,
+  useEffect(() => {
+    writeLog('escrow send token modal state', state);
+  });
+
+  const close = () => {
+    setState({
+      ...initialState,
       isClosed: true
     });
 
-    if (this.escrowFormTimeoutRef) clearTimeout(this.escrowFormTimeoutRef);
+    if (escrowFormTimeoutRef) clearTimeout(escrowFormTimeoutRef);
   }
 
-  open() {
-    this.setState({
-      ...this.initialState,
+  const open = () => {
+    setState({
+      ...initialState,
       isClosed: false
     });
 
     const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+      const tokenInfo = props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
       return tokenInfo;
     }
 
-    if (this.props.tokenBalance &&
-        this.props.tokenBalance.length &&
-        this.props.tokenBalance.length === 1 &&
-        getTokenData(this.props.tokenBalance[0].tokenId).height !== -1 &&
-        !this.state.token) {
-      this.setToken({
-        balance: this.props.tokenBalance[0].balance,
-        tokenId: this.props.tokenBalance[0].tokenId,
-        name: getTokenData(this.props.tokenBalance[0].tokenId).name
+    if (props.tokenBalance &&
+        props.tokenBalance.length &&
+        props.tokenBalance.length === 1 &&
+        getTokenData(props.tokenBalance[0].tokenId).height !== -1 &&
+        !state.token) {
+      setToken({
+        balance: props.tokenBalance[0].balance,
+        tokenId: props.tokenBalance[0].tokenId,
+        name: getTokenData(props.tokenBalance[0].tokenId).name
       });
     }
   }
 
-  setToken(token) {
-    this.setState({
+  const setToken = token => {
+    setState(prevState => ({
+      ...prevState,
       token,
-    });
+    }));
   }
 
   startEscrowCheck = async () => {
-    this.setState({
+    setState(prevState => ({
+      ...prevState,
       isInProgress: true,
       stopped: false,
       log: '',
-    });
+    }));
 
     const config = {
-      seed: this.props.wif,
-      tokenId: this.state.token.tokenId,
-      tokenOutputNameMask: this.state.tokensMask,
-      explorerApiUrl: chains[this.props.chain].explorerApiUrl,
+      seed: props.wif,
+      tokenId: state.token.tokenId,
+      tokenOutputNameMask: state.tokensMask,
+      explorerApiUrl: chains[props.chain].explorerApiUrl,
     };
     const log = (...arg) => {
       console.warn('escrow step', ...arg);
 
-      this.setState({
-        log: this.state.log + [...arg].join(' ') + '\n\n',
-      });
+      setState(prevState => ({
+        ...prevState,
+        log: state.log + [...arg].join(' ') + '\n\n',
+      }));
 
       if ([...arg].indexOf('endrun') > -1) {
-        this.setState({
-          log: `finished processing deposits\nresume in ${this.RUN_INTERVAL / 1000}s`,
-        });
+        setState(prevState => ({
+          ...prevState,
+          log: `finished processing deposits\nresume in ${RUN_INTERVAL / 1000}s`,
+        }));
 
-        if (this.escrowFormTimeoutRef) clearTimeout(this.escrowFormTimeoutRef);
-        if (!this.state.stopped) {
+        if (escrowFormTimeoutRef) clearTimeout(escrowFormTimeoutRef);
+        if (!state.stopped) {
           console.warn('setup escrow timer');
-          this.escrowFormTimeoutRef = setTimeout(() => {
+          escrowFormTimeoutRef = setTimeout(() => {
             escrow.run();
-          }, this.RUN_INTERVAL);
+          }, RUN_INTERVAL);
         } else {
           console.warn('manual stop event finished');
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             isInProgress: false,
             stopped: false,
             log: '',
-          });
+          }));
         }
       }
     }
@@ -134,11 +130,12 @@ class EscrowSendTokenModal extends React.Component {
       escrow.run();
     } catch(e) {
       console.warn(e);
-      /*this.setState({
+      /*setState(prevState => ({
+      ...prevState,
         success: null,
         txid: null,
         error: e.message,
-      });*/
+      }));*/
     }
     
     /*setInterval(() => {
@@ -146,38 +143,40 @@ class EscrowSendTokenModal extends React.Component {
     }, RUN_INTERVAL);*/
   }
 
-  stop() {
-    this.setState({
+  const stop = () => {
+    setState(prevState => ({
+      ...prevState,
       stopped: true,
       isInProgress: 'stopping',
-    });
+    }));
   }
 
-  dropdownTrigger(e) {
+  const dropdownTrigger = e => {
     e.stopPropagation();
 
-    this.setState({
-      tokenDropdownOpen: !this.state.tokenDropdownOpen,
-    });
+    setState(prevState => ({
+      ...prevState,
+      tokenDropdownOpen: !state.tokenDropdownOpen,
+    }));
   }
 
-  componentWillMount() {
+  useEffect(() => {
     document.addEventListener(
       'click',
-      this.handleClickOutside,
+      handleClickOutside,
       false
     );
-  }
 
-  componentWillUnmount() {
-    document.removeEventListener(
-      'click',
-      this.handleClickOutside,
-      false
-    );
-  }
+    return () => {
+      document.removeEventListener(
+        'click',
+        handleClickOutside,
+        false
+      );
+    };
+  }, []);
 
-  handleClickOutside(e) {
+  const handleClickOutside = e => {
     const srcElement = e ? e.srcElement : null;
     let state = {};
 
@@ -186,14 +185,15 @@ class EscrowSendTokenModal extends React.Component {
         srcElement.className &&
         typeof srcElement.className === 'string' &&
         srcElement.className !== 'token-tile escrow-send-token-trigger') {
-      this.setState({
+      setState(prevState => ({
+        ...prevState,
         tokenDropdownOpen: false,
-      });
+      }));
     }
   }
 
-  getMaxSpendNormalUtxos() {
-    const normalUtxos = this.props.normalUtxos;
+  const getMaxSpendNormalUtxos = () => {
+    const normalUtxos = props.normalUtxos;
     let maxSpend = -10000;
 
     for (let i = 0; i < normalUtxos.length; i++) {
@@ -203,37 +203,37 @@ class EscrowSendTokenModal extends React.Component {
     return maxSpend < 0 ? 0 : maxSpend;
   };
 
-  render() {
-    const getTokenData = (tokenid) => {
-      const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const render = () => {
+    const getTokenData = tokenid => {
+      const tokenInfo = props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
       return tokenInfo;
     }
 
     return (
       <React.Fragment>
         <div
-          className={`token-tile escrow-send-token-trigger${this.getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
-          onClick={() => this.open()}>
+          className={`token-tile escrow-send-token-trigger${getMaxSpendNormalUtxos() === 0 ? ' disabled' : ''}`}
+          onClick={() => open()}>
           <i className="fa fa-credit-card"></i>
           Process Deposits
         </div>
         <Modal
-          show={this.state.isClosed === false}
-          handleClose={() => this.close()}
+          show={state.isClosed === false}
+          handleClose={() => close()}
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
             <h4>Escrow Deposit Processing</h4>
             <p>Fill out the form below</p>
             <div className="input-form">
-              <div className={`dropdown${this.state.tokenDropdownOpen ? ' is-active' : ''}`}>
-                <div className={`dropdown-trigger${this.state.token ? ' highlight' : ''}`}>
+              <div className={`dropdown${state.tokenDropdownOpen ? ' is-active' : ''}`}>
+                <div className={`dropdown-trigger${state.token ? ' highlight' : ''}`}>
                   <button
                     className="button"
-                    onClick={this.dropdownTrigger}>
-                    <span>{this.state.token && this.state.token.name ? this.state.token.name : 'Select token'}</span>
-                    {this.state.token &&
-                      <span className="dropdown-balance">{this.state.token.balance}</span>
+                    onClick={dropdownTrigger}>
+                    <span>{state.token && state.token.name ? state.token.name : 'Select token'}</span>
+                    {state.token &&
+                      <span className="dropdown-balance">{state.token.balance}</span>
                     }
                     <span className="icon is-small">
                       <i className="fas fa-angle-down"></i>
@@ -245,11 +245,11 @@ class EscrowSendTokenModal extends React.Component {
                   id="dropdown-menu"
                   role="menu">
                   <div className="dropdown-content">
-                    {this.props.tokenList.map(tokenListItem => (
+                    {props.tokenList.map(tokenListItem => (
                       <a
                         key={`send-token-${tokenListItem.tokenid}`}
                         className="dropdown-item"
-                        onClick={() => this.setToken({
+                        onClick={() => setToken({
                           balance: tokenListItem.supply,
                           tokenId: tokenListItem.tokenid,
                           name: getTokenData(tokenListItem.tokenid).name
@@ -263,9 +263,9 @@ class EscrowSendTokenModal extends React.Component {
                   </div>
                 </div>
               </div>
-              {this.state.token &&
+              {state.token &&
                 <a
-                  href={`${chains[this.props.chain].explorerUrl}/${this.state.token.tokenId}/transactions/${this.props.chain}`}
+                  href={`${chains[props.chain].explorerUrl}/${state.token.tokenId}/transactions/${props.chain}`}
                   target="_blank"
                   className="escrow-token-explorer-link">Open on explorer</a>
               }
@@ -273,38 +273,38 @@ class EscrowSendTokenModal extends React.Component {
                 type="text"
                 name="pubkey"
                 placeholder="Tokens to send mask"
-                value={this.state.tokensMask}
-                onChange={this.updateInput}
+                value={state.tokensMask}
+                onChange={updateInput}
                 className="form-input" />
               <button
                 type="button"
-                onClick={this.state.isInProgress && !this.state.stopped ? this.stop : this.startEscrowCheck}
+                onClick={state.isInProgress && !state.stopped ? stop : startEscrowCheck}
                 disabled={
-                  !this.state.token ||
-                  !this.state.tokensMask ||
-                  this.getMaxSpendNormalUtxos() === 0 ||
-                  this.state.isInProgress === 'stopping'
+                  !state.token ||
+                  !state.tokensMask ||
+                  getMaxSpendNormalUtxos() === 0 ||
+                  state.isInProgress === 'stopping'
                 }
-                className={`form-input${this.state.isInProgress && !this.state.stopped ? ' escrow-stop-btn' : ''}`}>
-                {this.state.isInProgress && !this.state.stopped ? 'Stop' : (this.state.isInProgress === 'stopping' && this.state.stopped ? 'Stopping...' : 'Start')}
+                className={`form-input${state.isInProgress && !state.stopped ? ' escrow-stop-btn' : ''}`}>
+                {state.isInProgress && !state.stopped ? 'Stop' : (state.isInProgress === 'stopping' && state.stopped ? 'Stopping...' : 'Start')}
               </button>
-              {this.state.isInProgress &&
+              {state.isInProgress &&
                 <React.Fragment>
                   <strong style={{'marginTop': '20px', 'display': 'block'}}>Progress log</strong>
                   <textarea
                     rows="5"
                     cols="33"
-                    value={this.state.log}
+                    value={state.log}
                     disabled
                     style={{'marginTop': '10px', 'fontSize': '14px'}}>
                   </textarea>
                 </React.Fragment>
               }
-              {this.state.error &&
+              {state.error &&
                 <div className="error">
                   <div>
                     <strong>Error!</strong>
-                    <div>{this.state.error}</div>
+                    <div>{state.error}</div>
                   </div>
                 </div>
               }
@@ -314,6 +314,8 @@ class EscrowSendTokenModal extends React.Component {
       </React.Fragment>
     );
   }
+
+  return render();
 }
 
 export default EscrowSendTokenModal;
