@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateTokenModal component render and token create event check 1`] = `
+Array [
+  <div
+    className="token-tile create-new-trigger"
+    onClick={[Function]}
+  >
+    <i
+      className="fa fa-plus"
+    />
+    Create
+  </div>,
+  <div
+    className="Modal modal  Modal-create-token"
+  >
+    <div
+      onClick={[Function]}
+    >
+      <div
+        className="modal-background"
+      />
+    </div>
+    <div
+      className="modal-content"
+    >
+      <div
+        className="card"
+      >
+        <button
+          className="modal-close is-large "
+          onClick={[Function]}
+        />
+        <div
+          className="card-content"
+        >
+          <div
+            className="content"
+          >
+            <div
+              className="create-token-form"
+            >
+              <h4>
+                New token
+              </h4>
+              <p>
+                Provide token details in the form below
+              </p>
+              <div
+                className="input-form"
+              >
+                <input
+                  name="name"
+                  onChange={[Function]}
+                  placeholder="Token name"
+                  type="text"
+                  value="Test"
+                />
+                <input
+                  name="supply"
+                  onChange={[Function]}
+                  placeholder="Token supply"
+                  type="text"
+                  value={1}
+                />
+                <textarea
+                  cols="33"
+                  name="description"
+                  onChange={[Function]}
+                  placeholder="Token description"
+                  rows="5"
+                  value="123"
+                />
+                <div
+                  className="dropdown"
+                >
+                  <div
+                    className="dropdown-trigger"
+                  >
+                    <button
+                      className="button"
+                      onClick={[Function]}
+                    >
+                      <span>
+                        Plain text or JSON
+                      </span>
+                      <span
+                        className="icon is-small"
+                      >
+                        <i
+                          className="fas fa-angle-down"
+                        />
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    className="dropdown-menu"
+                    id="dropdown-menu"
+                    role="menu"
+                  >
+                    <div
+                      className="dropdown-content"
+                    >
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          Plain text or JSON
+                        </span>
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={[Function]}
+                      >
+                        <span
+                          className="dropdown-balance"
+                        >
+                          Tokel Standart
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <textarea
+                  cols="33"
+                  name="nft"
+                  onChange={[Function]}
+                  placeholder="Token NFT data (optional)"
+                  rows="5"
+                  value=""
+                />
+                <button
+                  disabled={false}
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;

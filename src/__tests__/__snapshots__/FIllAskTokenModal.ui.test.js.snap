@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FillAskTokenModal component render and token cancel ask order event check 1`] = `
+exports[`FillAskTokenModal component render and token fill ask order event check 1`] = `
 Array [
   <div
     className="fill-ask-order-trigger "

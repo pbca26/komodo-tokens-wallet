@@ -1,5 +1,5 @@
 // TODO: rewrite as class
-let explorerUrl, _fetch = typeof window === 'undefined' ? null : fetch, _headers = typeof window === 'undefined' ? null : Headers;
+let explorerUrl, _fetch, _headers = typeof window === 'undefined' ? null : Headers;
 
 const setExplorerUrl = name => {
   explorerUrl = name;

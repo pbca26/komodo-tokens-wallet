@@ -5,10 +5,11 @@ import Dashboard from '../Dashboard';
 import blockchainMockData from '../__mocks__/blockchain.json';
 import 'regenerator-runtime/runtime';
 
-import mockFetch from '../__mocks__/fetch';
+import mockFetch, {mockHeaders} from '../__mocks__/fetch';
 import blockchain from '../blockchain';
 
 global.fetch = mockFetch;
+blockchain.setFetch(mockFetch, mockHeaders);
 blockchain.setExplorerUrl('');
 
 // TODO: test dynamic elements/triggers

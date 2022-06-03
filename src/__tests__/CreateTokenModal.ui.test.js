@@ -7,10 +7,11 @@ import blockchainMockData from '../__mocks__/blockchain.json';
 import {chains} from '../constants';
 import 'regenerator-runtime/runtime';
 
-import mockFetch from '../__mocks__/fetch';
+import mockFetch, {mockHeaders} from '../__mocks__/fetch';
 import blockchain from '../blockchain';
 
 global.fetch = mockFetch;
+blockchain.setFetch(mockFetch, mockHeaders);
 blockchain.setExplorerUrl('');
 
 // TODO: (1) test keying input data actually changes state
@@ -43,7 +44,7 @@ test('CreateTokenModal component render and token create event check', async () 
   const {getAllByText, getByText, getByRole, getAllByRole, getByPlaceholderText} = render(<CreateTokenModal {...mProps} />);
 
   // check if all labels/titles/form elements are present
-  expect(getAllByRole('button').length).toBe(2);
+  expect(getAllByRole('button').length).toBe(3);
   
   // form name
   expect(getAllByText('Create')[0]).toBeDefined();

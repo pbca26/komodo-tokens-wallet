@@ -18,7 +18,7 @@ const mockFetch = jest.fn((url) => {
         return mockData.rawtx['890a375c18cbc420d3293dbd661f557caf5e4ca43c770cf479bcc9cfe14b9cbd'];
       } else if (url.indexOf('addr/undefined/utxo') > -1 || url.indexOf('addr/RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc/utxo') > -1) {
         return mockData.utxo;
-      } else if (url === 'tokens') {
+      } else if (url === 'tokens' || url === 'tokens?pageNum=all') {
         return mockData.tokens;
       } else if (url.indexOf('tokens/balance') > -1) {
         return mockData.balance;
@@ -29,12 +29,12 @@ const mockFetch = jest.fn((url) => {
       } else if (url.indexOf('tokens/createtx') > -1) {
         if (url.indexOf('tokens/createtx?pubkey=03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3&amount=10000') > -1) {
           return mockData.cancelAsk.createtx;
-        } else if (url.indexOf('tokens/createtx?pubkey=03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3&amount=11000' > -1)) {
+        } else if (url.indexOf('tokens/createtx?pubkey=03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3&amount=11000') > -1) {
           return mockData.sellToken.createtx;
         }
         return mockData.createtx;
       } else if (url.indexOf('tokens/addccinputs') > -1) {
-        if (url.indexOf('tokens/addccinputs?pubkey=03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3&tokenid=7e2b623cb57b44b8dc5d3a3cc36c20d08f66023a85fa2a4490a8fb8783d38347&amount=1' > -1)) {
+        if (url.indexOf('tokens/addccinputs?pubkey=03256ba44eeb188404b94ae8ed64f1fe6ad89580375830845361e365598efa3ff3&tokenid=7e2b623cb57b44b8dc5d3a3cc36c20d08f66023a85fa2a4490a8fb8783d38347&amount=1') > -1) {
           return mockData.sellToken.addccinputs;
         }
         return mockData.createToken.fixedSupplyToken.chainData;
@@ -55,5 +55,11 @@ const mockFetch = jest.fn((url) => {
     ok: true,
   });
 });
+
+export const mockHeaders = () => {
+  return {
+    append: () => {}
+  };
+};
 
 export default mockFetch;

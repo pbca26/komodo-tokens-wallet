@@ -28,6 +28,7 @@ class Login extends React.Component {
     });
 
     writeLog('explorer is set to ' + chains[chain].explorerApiUrl);
+    if (!process || (process && process.title.indexOf('node') === -1)) Blockchain.setFetch(fetch, Headers);
     Blockchain.setExplorerUrl(chains[chain].explorerApiUrl);
   }
 

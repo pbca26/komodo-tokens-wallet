@@ -7,10 +7,11 @@ import blockchainMockData from '../__mocks__/blockchain.json';
 import {chains} from '../constants';
 import 'regenerator-runtime/runtime';
 
-import mockFetch from '../__mocks__/fetch';
+import mockFetch, {mockHeaders} from '../__mocks__/fetch';
 import blockchain from '../blockchain';
 
 global.fetch = mockFetch;
+blockchain.setFetch(mockFetch, mockHeaders);
 blockchain.setExplorerUrl('');
 
 // TODO: (1) test keying input data actually changes state
@@ -20,15 +21,15 @@ test('CancelBidTokenModal component render and token cancel bid order event chec
   const mProps = {
     tokenList: blockchainMockData.tokens.tokens,
     order: {
-      "funcid": "b",
-      "txid": "f196eefba29cfa1e8636ac97d0bd51196b062b4757107ef8e192d2164b1c8b06",
-      "bidamount": 0.00001,
-      "origaddress": "CHpN2oZ8oCdjR8sS85NEZEDe9nrVYwQP6E",
-      "origtokenaddress": "CaopajuemreFwEAfbywvFi8oFyrJPNkDs1",
-      "tokenid": "7e2b623cb57b44b8dc5d3a3cc36c20d08f66023a85fa2a4490a8fb8783d38347",
-      "totalrequired": 1,
-      "price": 0.00001,
-      "ExpiryHeight": 209614
+      'funcid': 'b',
+      'txid': 'f196eefba29cfa1e8636ac97d0bd51196b062b4757107ef8e192d2164b1c8b06',
+      'bidamount': 0.00001,
+      'origaddress': 'CHpN2oZ8oCdjR8sS85NEZEDe9nrVYwQP6E',
+      'origtokenaddress': 'CaopajuemreFwEAfbywvFi8oFyrJPNkDs1',
+      'tokenid': '7e2b623cb57b44b8dc5d3a3cc36c20d08f66023a85fa2a4490a8fb8783d38347',
+      'totalrequired': 1,
+      'price': 0.00001,
+      'ExpiryHeight': 209614
     },
     normalUtxos: blockchainMockData.utxo,
     wif: 'UtaKVKuNvDVYxqS8PhRESwKeRYHhzYYkEGgvwEJ9XvghuRVs1VNM',

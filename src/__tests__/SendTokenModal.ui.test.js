@@ -7,10 +7,11 @@ import blockchainMockData from '../__mocks__/blockchain.json';
 import {chains} from '../constants';
 import 'regenerator-runtime/runtime';
 
-import mockFetch from '../__mocks__/fetch';
+import mockFetch, {mockHeaders} from '../__mocks__/fetch';
 import blockchain from '../blockchain';
 
 global.fetch = mockFetch;
+blockchain.setFetch(mockFetch, mockHeaders);
 blockchain.setExplorerUrl('');
 
 // TODO: (1) test keying input data actually changes state
@@ -50,7 +51,7 @@ test('SendTokenModal component render and token send event check', async () => {
   // form name
   expect(getAllByText('Send')[0]).toBeDefined();
   // submit button
-  expect(getAllByText('Send')[2]).toBeDefined();
+  expect(getAllByText('Send')[1]).toBeDefined();
   
   // form labels
   expect(getByText('Send token')).toBeDefined();

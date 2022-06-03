@@ -154,6 +154,59 @@ exports[`Dashboard component render check 1`] = `
                         rows="5"
                         value="123"
                       />
+                      <div
+                        className="dropdown"
+                      >
+                        <div
+                          className="dropdown-trigger"
+                        >
+                          <button
+                            className="button"
+                            onClick={[Function]}
+                          >
+                            <span>
+                              Plain text or JSON
+                            </span>
+                            <span
+                              className="icon is-small"
+                            >
+                              <i
+                                className="fas fa-angle-down"
+                              />
+                            </span>
+                          </button>
+                        </div>
+                        <div
+                          className="dropdown-menu"
+                          id="dropdown-menu"
+                          role="menu"
+                        >
+                          <div
+                            className="dropdown-content"
+                          >
+                            <a
+                              className="dropdown-item"
+                              onClick={[Function]}
+                            >
+                              <span
+                                className="dropdown-balance"
+                              >
+                                Plain text or JSON
+                              </span>
+                            </a>
+                            <a
+                              className="dropdown-item"
+                              onClick={[Function]}
+                            >
+                              <span
+                                className="dropdown-balance"
+                              >
+                                Tokel Standart
+                              </span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
                       <textarea
                         cols="33"
                         name="nft"

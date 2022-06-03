@@ -79,6 +79,16 @@ exports[`Login component render check 1`] = `
                 TKLTEST
               </span>
             </a>
+            <a
+              className="dropdown-item"
+              onClick={[Function]}
+            >
+              <span
+                className="dropdown-balance"
+              >
+                TKLTEST2
+              </span>
+            </a>
           </div>
         </div>
       </div>
@@ -87,10 +97,10 @@ exports[`Login component render check 1`] = `
         onChange={[Function]}
         placeholder="Seed or WIF key"
         type="password"
-        value="lime lime3"
+        value=""
       />
       <button
-        disabled={false}
+        disabled={true}
         onClick={[Function]}
         type="button"
       >
