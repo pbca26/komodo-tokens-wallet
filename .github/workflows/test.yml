@@ -25,7 +25,7 @@ jobs:
       run: |
         npm install
         npm install -g browserify
-        npm run build-cclib
+        npm run build-cclib-tests
         npm run build-bitgo-lib
         npm run build-bitgo-lib-v2
 

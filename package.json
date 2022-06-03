@@ -10,6 +10,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "build-cclib": "./build-cryptoconditions-lib.sh",
+    "build-cclib-tests": "./build-cc-lib-tests.sh",
     "build-bitgo-lib": "./build-bitgo-lib.sh",
     "build-bitgo-lib-v2": "./build-bitgo-lib.sh v2",
     "test": "jest"
