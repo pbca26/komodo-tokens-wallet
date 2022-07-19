@@ -8,6 +8,7 @@ import BatchCreateTokenModal from './BatchCreateTokenModal';
 import SendTokenModal from './SendTokenModal';
 import TransactionDetailsModal from './TransactionDetailsModal';
 import EscrowSendTokenModal from './EscrowSendTokenModal';
+import MetaConverterModal from './MetaConverterModal';
 import Logo from './Logo';
 import {chains} from './constants';
 import {getMaxSpendNormalUtxos} from './math';
@@ -181,10 +182,13 @@ class Dashboard extends React.Component {
             syncData={this.syncData}
             {...this.props} />
           {window.location.href.indexOf('enable-batch-create') > -1 &&
-            <BatchCreateTokenModal
-              {...this.props}
-              normalUtxos={this.state.normalUtxos}
-              syncData={this.syncData} />
+            <React.Fragment>
+              <BatchCreateTokenModal
+                {...this.props}
+                normalUtxos={this.state.normalUtxos}
+                syncData={this.syncData} />
+              <MetaConverterModal />
+            </React.Fragment>
           }
         </div>
       </React.Fragment>
