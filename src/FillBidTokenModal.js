@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from './Modal';
 import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
@@ -9,68 +9,66 @@ import {getMaxSpendNormalUtxos} from './math';
 import writeLog from './log';
 import devVars from './dev'
 
-class FillBidTokenModal extends React.Component {
-  state = this.initialState;
-  
-  get initialState() {
-    this.updateInput = this.updateInput.bind(this);
+const FillBidTokenModal = props => {
+  const initialState = {
+    isClosed: true,
+    amount: devVars && devVars.fill.amountBid || '',
+    success: null,
+    txid: null,
+    error: null,
+  };
+  const [state, setState] = useState(initialState);
 
-    return {
-      isClosed: true,
-      amount: devVars && devVars.fill.amountBid || '',
-      success: null,
-      txid: null,
-      error: null,
-    };
-  }
-
-  updateInput(e) {
+  const updateInput = e => {
     if (e.target.name === 'amount') {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     }
 
-    this.setState({
+    setState(prevState => ({
+      ...prevState,
       [e.target.name]: e.target.value,
       error: null,
       success: null,
       txid: null,
-    });
-
-    setTimeout(() => {
-      writeLog('login this.state', this.state);
-    }, 100);
+    }));
   }
 
-  close() {
-    this.setState({
-      ...this.initialState,
+  useEffect(() => {
+    writeLog('fillbid token modal state', state);
+  });
+
+  const close = () => {
+    setState({
+      ...initialState,
       isClosed: true
     });
   }
 
-  open() {
-    this.setState({
-      ...this.initialState,
+  const open = () => {
+    setState({
+      ...initialState,
       isClosed: false
     });
   }
 
-  sellToken = async () => {
-    const {chain, address, order} = this.props;
+  const sellToken = async () => {
+    const {chain, address, order} = props;
     
-    if (Number(this.state.amount) > order.askamount ||
-        Number(this.state.amount) < 1) {
-      this.setState({
+    if (Number(state.amount) > order.askamount ||
+        Number(state.amount) < 1) {
+      setState(prevState => ({
+        ...prevState,
         success: null,
         txid: null,
         error: order.askamount === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + order.askamount,
-      });
-    } else if (toSats(order.price * this.state.amount) > getMaxSpendNormalUtxos(this.props.normalUtxos)) {
-      this.setState({
+      }));
+    } else if (toSats(order.price * state.amount) > getMaxSpendNormalUtxos(props.normalUtxos)) {
+      setState(prevState => ({
+        ...prevState,
         success: null,
         txid: null,
         error: 'Not enough balance',
-      });
+      }));
     } else {
       try {
         let inputsData, rawtx;
@@ -79,8 +77,8 @@ class FillBidTokenModal extends React.Component {
 
         inputsData = {
           transactionsMany: await Blockchain.tokenTransactionsMany(order.tokenid, order.txid),
-          ccUtxos: await Blockchain.addCCInputs(order.tokenid, address.pubkey, Number(this.state.amount)),
-          normalUtxos: await Blockchain.createCCTx(toSats(order.price * this.state.amount) + 10000, address.pubkey),
+          ccUtxos: await Blockchain.addCCInputs(order.tokenid, address.pubkey, Number(state.amount)),
+          normalUtxos: await Blockchain.createCCTx(toSats(order.price * state.amount) + 10000, address.pubkey),
         };
 
         writeLog('fillbidToken inputs data', inputsData);
@@ -89,18 +87,19 @@ class FillBidTokenModal extends React.Component {
           rawtx = await TokensLib.V2Assets.buildTokenv2fillbid(
             order.tokenid,
             order.txid,
-            Number(this.state.amount),
+            Number(state.amount),
             order.price,
-            this.props.wif,
+            props.wif,
             inputsData,
           );
         } catch (e) {
           writeLog(e);
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: null,
             txid: null,
             error: e.message,
-          });
+          }));
         }
     
         writeLog('fillbidToken token rawtx', rawtx);
@@ -109,13 +108,15 @@ class FillBidTokenModal extends React.Component {
           const {txid} = await Blockchain.broadcast(rawtx);
     
           if (!txid || txid.length !== 64) {
-            this.setState({
+            setState(prevState => ({
+              ...prevState,
               success: null,
               txid: null,
               error: 'Unable to broadcast transaction!',
-            });
+            }));
           } else {
-            this.setState({
+            setState(prevState => ({
+              ...prevState,
               success: `${chains[chain].explorerUrl}/${order.tokenid}/transactions/${txid}/${chain}`,
               txid,
               error: null,
@@ -123,50 +124,52 @@ class FillBidTokenModal extends React.Component {
               token: null,
               amount: '',
               tokenDropdownOpen: false,
-            });
-            //this.props.setActiveToken();
+            }));
+            //props.setActiveToken();
             setTimeout(() => {
-              this.props.syncData();
+              props.syncData();
             }, 100);
           }
         } else {
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: null,
             txid: null,
             error: 'Unable to build transaction!',
-          });
+          }));
         }
       } catch (e) {
-        this.setState({
+        setState(prevState => ({
+          ...prevState,
           success: null,
           txid: null,
           error: e.message,
-        });
+        }));
       }
     }
   }
 
-  getTokenData(tokenid) {
-    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const getTokenData = tokenid => {
+    const tokenInfo = props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
     return tokenInfo;
   }
 
-  render() {
-    const tokenInfo = this.getTokenData(this.props.order.tokenid);
-    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
-    const {order} = this.props;
+  const render = () => {
+    const {order} = props;
+    const tokenInfo = getTokenData(order.tokenid);
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(props.normalUtxos);
 
     return (
       <React.Fragment>
         <div
           className={`fill-buy-order-trigger ${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
-          onClick={() => this.open()}>
+          onClick={() => open()}>
           <i className="fa fa-dollar-sign"></i>
           Sell
         </div>
         <Modal
-          show={this.state.isClosed === false}
-          handleClose={() => this.close()}
+          show={state.isClosed === false}
+          handleClose={() => close()}
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
@@ -183,8 +186,8 @@ class FillBidTokenModal extends React.Component {
                 type="text"
                 name="amount"
                 placeholder="Amount (qty)"
-                value={this.state.amount}
-                onChange={this.updateInput}
+                value={state.amount}
+                onChange={updateInput}
                 className="form-input" />
               <input
                 type="text"
@@ -195,33 +198,33 @@ class FillBidTokenModal extends React.Component {
               <input
                 type="text"
                 name="token"
-                value={`Total: ${(this.state.amount || 0) * order.price}`}
+                value={`Total: ${(state.amount || 0) * order.price}`}
                 disabled
                 className="form-input" />
               <button
                 type="button"
-                onClick={this.sellToken}
+                onClick={sellToken}
                 disabled={
-                  !this.state.amount ||
+                  !state.amount ||
                   maxNormalSpendValue === 0
                 }
                 className="form-input">Sell</button>
-              {this.state.success &&
+              {state.success &&
                 <div className="success">
                   Token sell order filled!
                   <div className="txid-label">
-                    <strong>Transaction ID:</strong> {this.state.txid}
+                    <strong>Transaction ID:</strong> {state.txid}
                   </div>
                   <a
-                    href={this.state.success}
+                    href={state.success}
                     target="_blank">Open on explorer</a>
                 </div>
               }
-              {this.state.error &&
+              {state.error &&
                 <div className="error">
                   <div>
                     <strong>Error!</strong>
-                    <div>{this.state.error}</div>
+                    <div>{state.error}</div>
                   </div>
                 </div>
               }
@@ -231,6 +234,8 @@ class FillBidTokenModal extends React.Component {
       </React.Fragment>
     );
   }
+
+  return render();
 }
 
 export default FillBidTokenModal;
