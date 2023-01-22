@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Blockchain from './blockchain';
 import {secondsToString} from './time';
 import {sortTransactions} from './sort';
@@ -16,69 +16,52 @@ import writeLog from './log';
 const SYNC_INTERVAL = 30 * 1000;
 let syncTimeoutRef;
 
-class Dashboard extends React.Component {
-  state = this.initialState;
+const Dashboard = props => {
+  const initialState = {
+    tokenList: [],
+    tokenBalance: [],
+    tokenTransactions: [],
+    normalUtxos: [],
+    activeToken: null,
+    pristine: true,
+    tokenInfoShowNftData: false,
+  };
+  const [state, setState] = useState(initialState);
 
-  get initialState() {
-    this.updateInput = this.updateInput.bind(this);
-    this.setActiveToken = this.setActiveToken.bind(this);
-    this.logout = this.logout.bind(this);
-    this.tokenInfoShowNftData = this.tokenInfoShowNftData.bind(this);
-
-    return {
-      tokenList: [],
-      tokenBalance: [],
-      tokenTransactions: [],
-      normalUtxos: [],
-      activeToken: null,
-      pristine: true,
-      tokenInfoShowNftData: false,
-    };
+  const tokenInfoShowNftData = () => {
+    setState(prevState => ({
+      ...prevState,
+      tokenInfoShowNftData: !tokenInfoShowNftData
+    }));
   }
 
-  tokenInfoShowNftData() {
-    this.setState({
-      tokenInfoShowNftData: !this.state.tokenInfoShowNftData,
-    });
-  }
-
-  getTokenData = (tokenid) => {
-    const tokenInfo = this.state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const getTokenData = tokenid => {
+    const tokenInfo = state.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
     return tokenInfo;
   }
 
-  logout() {
+  const logout = () => {
     clearInterval(syncTimeoutRef);
     syncTimeoutRef = null;
     Blockchain.setExplorerUrl();
-    this.setState(this.initialState);
-    this.props.resetApp();
+    setState(initialState);
+    props.resetApp();
   }
 
-  setActiveToken(activeToken) {
-    this.setState({
-      activeToken: this.state.activeToken === activeToken ? null : activeToken,
-    });
+  const setActiveToken = activeToken => {
+    setState(prevState => ({
+      ...prevState,
+      activeToken: !state.activeToken === activeToken ? null : activeToken
+    }));
   }
 
-  updateInput(e) {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
-
-    setTimeout(() => {
-      writeLog('dashboard this.state', this.state);
-    }, 100);
-  }
-
-  syncData = async () => {
+  const syncData = async () => {
     let cctxids = [];
 
-    const {address, chain} = this.props;
+    const {address, chain} = props;
     const tokenBalance = await Blockchain.tokenBalance(address.cc);
     const tokenTransactions = await Blockchain.tokenTransactions(address.cc);
     const normalUtxos = await Blockchain.getNormalUtxos(address.normal);
-
 
     for (var i = 0; i < tokenBalance.balance.length; i++) {
       if (cctxids.indexOf(tokenBalance.balance[i].tokenId) === -1) cctxids.push(tokenBalance.balance[i].tokenId);
@@ -87,37 +70,38 @@ class Dashboard extends React.Component {
       if (cctxids.indexOf(tokenTransactions.txs[i].tokenId) === -1) cctxids.push(tokenTransactions.txs[i].tokenId);
     }
     const tokenList = chains[chain].explorerApiVersion && chains[chain].explorerApiVersion === 2 ? await Blockchain.tokenList(cctxids) : await Blockchain.tokenList();
-
-    this.setState({
+    
+    setState(prevState => ({
+      ...prevState,
       tokenList: tokenList.tokens,
       tokenBalance: tokenBalance.balance,
       tokenTransactions: tokenTransactions.txs,
       normalUtxos,
       pristine: false,
-    });
-
-    setTimeout(() => {
-      writeLog('data synced', this.state);
-    }, 100);
+    }));
   }
 
-  componentWillMount() {
+  useEffect(() => {
+    writeLog('dashboard state', state);
+  });
+
+  useEffect(() => {
     syncTimeoutRef = setInterval(() => {
-      this.syncData();
+      syncData();
     }, SYNC_INTERVAL);
 
-    this.syncData();
-  }
+    syncData();
 
-  componentWillUnmount() {
-    clearInterval(syncTimeoutRef);
-  }
+    return () => {
+      clearInterval(syncTimeoutRef);
+    };
+  }, []);
 
-  getNormalBalance() {
-    if (this.state.normalUtxos.length) {
+  const getNormalBalance = () => {
+    if (state.normalUtxos.length) {
       return {
-        value: this.state.normalUtxos.length === 1 ? Number(this.state.normalUtxos[0].amount || 0) : Number(this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.amount), 0).toFixed(8)),
-        satoshi: this.state.normalUtxos.length === 1 ? this.state.normalUtxos[0].satoshi || 0 : this.state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.satoshi), 0),
+        value: state.normalUtxos.length === 1 ? Number(state.normalUtxos[0].amount || 0) : Number(state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.amount), 0).toFixed(8)),
+        satoshi: state.normalUtxos.length === 1 ? state.normalUtxos[0].satoshi || 0 : state.normalUtxos.reduce((accumulator, item) => Number(accumulator) + Number(item.satoshi), 0),
       };
     } else {
       return {
@@ -127,18 +111,18 @@ class Dashboard extends React.Component {
     }
   }
 
-  renderTokens() {
-    const balances = this.state.tokenBalance;
+  const renderTokens = () => {
+    const balances = state.tokenBalance;
     let items = [];
 
     for (let i = 0; i < balances.length; i++) {
-      const tokenInfo = this.getTokenData(balances[i].tokenId);
+      const tokenInfo = getTokenData(balances[i].tokenId);
 
       items.push(
         <div
           key={`token-tile-${balances[i].tokenId}`}
-          className={`token-tile${balances[i].tokenId === this.state.activeToken ? ' active' : ''}`}
-          onClick={() => this.setActiveToken(balances[i].tokenId)}
+          className={`token-tile${balances[i].tokenId === state.activeToken ? ' active' : ''}`}
+          onClick={() => setActiveToken(balances[i].tokenId)}
           data-testid={`token-tile-${balances[i].tokenId}`}>
           <div className="jdenticon">
             <Jdenticon
@@ -155,52 +139,52 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         <h4>Current holdings</h4>
-        {this.state.tokenBalance.length > 0 &&
-         this.state.normalUtxos.length > 0 &&
+        {state.tokenBalance.length > 0 &&
+         state.normalUtxos.length > 0 &&
           <React.Fragment>
             <SendTokenModal
-              tokenList={this.state.tokenList}
-              tokenBalance={this.state.tokenBalance}
-              normalUtxos={this.state.normalUtxos}
-              syncData={this.syncData}
-              {...this.props} />
+              tokenList={state.tokenList}
+              tokenBalance={state.tokenBalance}
+              normalUtxos={state.normalUtxos}
+              syncData={syncData}
+              {...props} />
             {window.location.href.indexOf('enable-escrow') > -1 &&
               <EscrowSendTokenModal
-                {...this.props}
-                tokenList={this.state.tokenList}
-                tokenBalance={this.state.tokenBalance}
-                normalUtxos={this.state.normalUtxos}
-                syncData={this.syncData} />
+                {...props}
+                tokenList={state.tokenList}
+                tokenBalance={state.tokenBalance}
+                normalUtxos={state.normalUtxos}
+                syncData={syncData} />
             }
           </React.Fragment>
         }
         <div className="token-balance-block">
           {items}
           <CreateTokenModal
-            normalUtxos={this.state.normalUtxos}
-            syncData={this.syncData}
-            {...this.props} />
+            normalUtxos={state.normalUtxos}
+            syncData={syncData}
+            {...props} />
           {window.location.href.indexOf('enable-batch-create') > -1 &&
             <BatchCreateTokenModal
-              {...this.props}
-              normalUtxos={this.state.normalUtxos}
-              syncData={this.syncData} />
+              {...props}
+              normalUtxos={state.normalUtxos}
+              syncData={syncData} />
           }
         </div>
       </React.Fragment>
     );
   }
 
-  renderTransactions() {
-    const {chain} = this.props;
-    let transactions = this.state.tokenTransactions;
+  const renderTransactions = () => {
+    const {chain} = props;
+    let transactions = state.tokenTransactions;
     let items = [];
 
     let transactionsMerge = [];
     for (let i = 0; i < transactions.length; i++) {
       for (let j = 0; j < transactions[i].txs.length; j++) {
-        if (!this.state.activeToken ||
-            (this.state.activeToken && this.state.activeToken === transactions[i].tokenId)) {
+        if (!state.activeToken ||
+            (state.activeToken && state.activeToken === transactions[i].tokenId)) {
           if (transactions[i].txs[j].height === -1 ||
               transactions[i].txs[j].height === 0) {
             transactions[i].txs[j].height = 0;
@@ -210,7 +194,7 @@ class Dashboard extends React.Component {
           transactionsMerge.push({
             ...transactions[i].txs[j],
             tokenid: transactions[i].tokenId,
-            tokenName: this.getTokenData(transactions[i].tokenId).name,
+            tokenName: getTokenData(transactions[i].tokenId).name,
           });
         }
       }
@@ -220,8 +204,8 @@ class Dashboard extends React.Component {
     transactions = sortTransactions(transactions);
 
     for (let i = 0; i < transactions.length; i++) {
-      const tokenInfo = this.getTokenData(transactions[i].tokenid);
-      let directionClass = transactions[i].to === this.props.address.cc && transactions[i].to !== transactions[i].from ? 'arrow-alt-circle-down color-green' : 'arrow-alt-circle-up';
+      const tokenInfo = getTokenData(transactions[i].tokenid);
+      let directionClass = transactions[i].to === props.address.cc && transactions[i].to !== transactions[i].from ? 'arrow-alt-circle-down color-green' : 'arrow-alt-circle-up';
 
       if (transactions[i].to === transactions[i].from) directionClass = 'circle';
 
@@ -278,9 +262,9 @@ class Dashboard extends React.Component {
     );
   }
 
-  renderTokenInfo() {
-    if (this.state.activeToken) {
-      const tokenInfo = this.getTokenData(this.state.activeToken);
+  const renderTokenInfo = () => {
+    if (state.activeToken) {
+      const tokenInfo = getTokenData(state.activeToken);
 
       console.warn('tokenInfo', tokenInfo);
 
@@ -344,9 +328,9 @@ class Dashboard extends React.Component {
             {tokenInfo.data && tokenInfo.data.decoded &&
               <span
                 className="token-info-trigger"
-                onClick={this.tokenInfoShowNftData}>
+                onClick={tokenInfoShowNftData}>
                 Token info
-                <i className={`fa fa-chevron-${this.state.tokenInfoShowNftData ? 'up' : 'down'}`}></i>
+                <i className={`fa fa-chevron-${state.tokenInfoShowNftData ? 'up' : 'down'}`}></i>
               </span>
             }
             {!tokenInfo.data &&
@@ -363,7 +347,7 @@ class Dashboard extends React.Component {
                   <td className="token-info-link">
                     <a
                       target="_blank"
-                      href={`${chains[this.props.chain].explorerUrl}/${tokenInfo.tokenid}/transactions/${this.props.chain}`}>
+                      href={`${chains[props.chain].explorerUrl}/${tokenInfo.tokenid}/transactions/${props.chain}`}>
                       {tokenInfo.name} <i className="fa fa-external-link-alt"></i>
                     </a>
                   </td>
@@ -394,7 +378,7 @@ class Dashboard extends React.Component {
                 </tr>
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 this.state.tokenInfoShowNftData &&
+                 state.tokenInfoShowNftData &&
                   <tr>
                     <td>
                       <strong>Data</strong>
@@ -406,7 +390,7 @@ class Dashboard extends React.Component {
                 }
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 this.state.tokenInfoShowNftData &&
+                 state.tokenInfoShowNftData &&
                   <tr>
                     <td>
                       <strong>Raw Data</strong>
@@ -418,7 +402,7 @@ class Dashboard extends React.Component {
                 }
                 {tokenInfo.data &&
                  tokenInfo.data.decoded &&
-                 !this.state.tokenInfoShowNftData &&
+                 !state.tokenInfoShowNftData &&
                  <tr>
                   <td colSpan="2">
                     ...
@@ -433,19 +417,19 @@ class Dashboard extends React.Component {
     }
   }
 
-  render() {
-    const maxSpendNormalUtxos = getMaxSpendNormalUtxos(this.state.normalUtxos, 20000);
-    const normalBalance = this.getNormalBalance().value;
-    const {chain, address} = this.props;
+  const render = () => {
+    const maxSpendNormalUtxos = getMaxSpendNormalUtxos(state.normalUtxos, 20000);
+    const normalBalance = getNormalBalance().value;
+    const {chain, address} = props;
     
     return(
       <div className="main dashboard">
         <i
           className="fa fa-lock logout-btn"
-          onClick={this.logout}></i>
+          onClick={logout}></i>
         <Logo />
         <div className="content">
-          <h4>Wallet | <a onClick={this.props.setActiveView}>Marketplace</a></h4>
+          <h4>Wallet | <a onClick={(e) => props.setActiveView(e, false)}>Marketplace</a></h4>
 
           <div className="address-block">
             <div>
@@ -466,25 +450,27 @@ class Dashboard extends React.Component {
           </div>
 
           <div className="tokens-block">
-            {this.state.normalUtxos.length > 0  &&
+            {state.normalUtxos.length > 0  &&
               <React.Fragment>
                 <strong>Normal balance:</strong> <span>{normalBalance}</span> <span>{chain}</span>
               </React.Fragment>
             }
-            {this.renderTokens()}
+            {renderTokens()}
             {maxSpendNormalUtxos === 0 &&
-             !this.state.pristine &&
+              !state.pristine &&
               <div>
                 <strong>Please make a deposit (min of 0.00002 {chain}) to your normal address in order to create or send tokens</strong>
               </div>
             }
-            {this.renderTokenInfo()}
-            {this.renderTransactions()}
+            {renderTokenInfo()}
+            {renderTransactions()}
           </div>
         </div>
       </div>
     );
-  }
+  };
+
+  return render();
 }
 
 export default Dashboard;
