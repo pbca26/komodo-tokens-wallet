@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from './Modal';
 import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
@@ -8,34 +8,31 @@ import {toSats} from './math';
 import {getMaxSpendNormalUtxos} from './math';
 import writeLog from './log';
 
-class CancelBidTokenModal extends React.Component {
-  state = this.initialState;
-  
-  get initialState() {
-    return {
-      isClosed: true,
-      success: null,
-      txid: null,
-      error: null,
-    };
-  }
+const CancelBidTokenModal = props => {
+  const initialState = {
+    isClosed: true,
+    success: null,
+    txid: null,
+    error: null,
+  };
+  const [state, setState] = useState(initialState);
 
-  close() {
-    this.setState({
-      ...this.initialState,
+  const close = () => {
+    setState({
+      ...initialState,
       isClosed: true
     });
   }
 
-  open() {
-    this.setState({
-      ...this.initialState,
+  const open = () => {
+    setState({
+      ...initialState,
       isClosed: false
     });
   }
 
-  cancelBuyTokenOrder = async () => {
-    const {chain, address, order} = this.props;
+  const cancelBuyTokenOrder = async () => {
+    const {chain, address, order} = props;
     
     try {
       let inputsData, rawtx;
@@ -49,22 +46,23 @@ class CancelBidTokenModal extends React.Component {
 
       writeLog('cancelBidTokenOrder inputs data', inputsData);
       writeLog('send tx modal inputsData', JSON.stringify(inputsData));
-      writeLog(this.state);
+      writeLog(state);
       
       try {
         rawtx = await TokensLib.V2Assets.buildTokenv2cancelbid(
           order.tokenid,
           order.txid,
-          this.props.wif,
+          props.wif,
           inputsData,
         );
       } catch (e) {
         writeLog(e);
-        this.setState({
+        setState(prevState => ({
+          ...prevState,
           success: null,
           txid: null,
           error: e.message,
-        });
+        }));
       }
   
       writeLog('cancelBidTokenOrder token rawtx', rawtx);
@@ -73,13 +71,15 @@ class CancelBidTokenModal extends React.Component {
         const {txid} = await Blockchain.broadcast(rawtx);
   
         if (!txid || txid.length !== 64) {
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: null,
             txid: null,
             error: 'Unable to broadcast transaction!',
-          });
+          }));
         } else {
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: `${chains[chain].explorerUrl}/${order.tokenid}/transactions/${txid}/${chain}`,
             txid,
             error: null,
@@ -87,47 +87,49 @@ class CancelBidTokenModal extends React.Component {
             token: null,
             amount: '',
             tokenDropdownOpen: false,
-          });
+          }));
           setTimeout(() => {
-            this.props.syncData();
+            props.syncData();
           }, 100);
         }
       } else {
-        this.setState({
+        setState(prevState => ({
+          ...prevState,
           success: null,
           txid: null,
           error: 'Unable to build transaction!',
-        });
+        }));
       }
     } catch (e) {
-      this.setState({
+      setState(prevState => ({
+        ...prevState,
         success: null,
         txid: null,
         error: e.message,
-      });
+      }));
     }
   }
 
-  getTokenData(tokenid) {
-    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const getTokenData = tokenid => {
+    const tokenInfo = props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
     return tokenInfo;
   }
 
-  render() {
-    const tokenInfo = this.getTokenData(this.props.order.tokenid);
-    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
-    const {order} = this.props;
+  const render = () => {
+    const {order} = props;
+    const tokenInfo = getTokenData(order.tokenid);
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(props.normalUtxos);
 
     return (
       <React.Fragment>
         <div
           className={`${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
-          onClick={() => this.open()}>
-          {this.props.children}
+          onClick={() => open()}>
+          {props.children}
         </div>
         <Modal
-          show={this.state.isClosed === false}
-          handleClose={() => this.close()}
+          show={state.isClosed === false}
+          handleClose={() => close()}
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
@@ -159,25 +161,25 @@ class CancelBidTokenModal extends React.Component {
                 className="form-input" / >
               <button
                 type="button"
-                onClick={this.cancelBuyTokenOrder}
+                onClick={cancelBuyTokenOrder}
                 disabled={maxNormalSpendValue === 0}
                 className="form-input">Cancel</button>
-              {this.state.success &&
+              {state.success &&
                 <div className="success">
                   Token buy order cancelled!
                   <div className="txid-label">
-                    <strong>Transaction ID:</strong> {this.state.txid}
+                    <strong>Transaction ID:</strong> {state.txid}
                   </div>
                   <a
-                    href={this.state.success}
+                    href={state.success}
                     target="_blank">Open on explorer</a>
                 </div>
               }
-              {this.state.error &&
+              {state.error &&
                 <div className="error">
                   <div>
                     <strong>Error!</strong>
-                    <div>{this.state.error}</div>
+                    <div>{state.error}</div>
                   </div>
                 </div>
               }
@@ -187,6 +189,8 @@ class CancelBidTokenModal extends React.Component {
       </React.Fragment>
     );
   }
+
+  return render();
 }
 
 export default CancelBidTokenModal;
