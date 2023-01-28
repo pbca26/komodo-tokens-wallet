@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from './Modal';
 import TokensLib from './cclib-import';
 import Blockchain from './blockchain';
@@ -9,30 +9,22 @@ import writeLog from './log';
 import {getMaxSpendNormalUtxos} from './math';
 import devVars from './dev'
 
-class BuyTokenModal extends React.Component {
-  state = this.initialState;
-  
-  get initialState() {
-    this.updateInput = this.updateInput.bind(this);
-    this.dropdownTrigger = this.dropdownTrigger.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-    this.setToken = this.setToken.bind(this);
+const BuyTokenModal  = props => {
+  const initialState = {
+    isClosed: true,
+    token: devVars && devVars.buy.token || '',
+    pubkey: devVars && devVars.buy.pubkey || '',
+    amount: devVars && devVars.buy.amount || '',
+    price: devVars && devVars.buy.price || '',
+    success: null,
+    txid: null,
+    error: null,
+    tokenDropdownOpen: false,
+    dropdownQuickSearch: '',
+  };
+  const [state, setState] = useState(initialState);
 
-    return {
-      isClosed: true,
-      token: devVars && devVars.buy.token || '',
-      pubkey: devVars && devVars.buy.pubkey || '',
-      amount: devVars && devVars.buy.amount || '',
-      price: devVars && devVars.buy.price || '',
-      success: null,
-      txid: null,
-      error: null,
-      tokenDropdownOpen: false,
-      dropdownQuickSearch: '',
-    };
-  }
-
-  updateInput(e) {
+  const updateInput = e => {
     if (e.target.name === 'amount') {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     }
@@ -41,67 +33,71 @@ class BuyTokenModal extends React.Component {
       e.target.value = e.target.value.replace(/[^0-9.]/g, '');
     }
 
-    this.setState({
+    setState(prevState => ({
+      ...prevState,
       [e.target.name]: e.target.value,
       error: null,
       success: null,
       txid: null,
-    });
-
-    setTimeout(() => {
-      writeLog('login this.state', this.state);
-    }, 100);
+    }));
   }
 
-  close() {
-    this.setState({
-      ...this.initialState,
+  useEffect(() => {
+    writeLog('buy token modal state', state);
+  });
+
+  const close = () => {
+    setState({
+      ...initialState,
       isClosed: true
     });
   }
 
-  open() {
-    this.setState({
-      ...this.initialState,
+  const open = () => {
+    setState({
+      ...initialState,
       isClosed: false
     });
 
-    if (this.props.tokenList &&
-        this.props.tokenList.length &&
-        this.props.tokenList.length === 1 &&
-        getTokenData(this.props.tokenList[0].tokenid).height !== -1 &&
-        !this.state.token) {
-      this.setToken({
-        balance: this.props.tokenList[0].supply,
-        tokenId: this.props.tokenList[0].tokenid,
-        name: getTokenData(this.props.tokenList[0].tokenid).name
+    if (props.tokenList &&
+        props.tokenList.length &&
+        props.tokenList.length === 1 &&
+        getTokenData(props.tokenList[0].tokenid).height !== -1 &&
+        !state.token) {
+      setToken({
+        balance: props.tokenList[0].supply,
+        tokenId: props.tokenList[0].tokenid,
+        name: getTokenData(props.tokenList[0].tokenid).name
       });
     }
   }
 
-  setToken(token) {
-    this.setState({
+  const setToken = token => {
+    setState(prevState => ({
+      ...prevState,
       token,
-    });
+    }));
   }
 
-  buyToken = async () => {
-    const {address, chain} = this.props;
+  const buyToken = async () => {
+    const {address, chain} = props;
 
-    if (Number(this.state.amount) > this.state.token.balance ||
-        Number(this.state.amount) < 1) {
-      this.setState({
+    if (Number(state.amount) > state.token.balance ||
+        Number(state.amount) < 1) {
+      setState(prevState => ({
+        ...prevState,
         success: null,
         txid: null,
-        error: this.state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + this.state.token.balance,
-      });
-    } else if (toSats(this.state.price * this.state.amount) > getMaxSpendNormalUtxos(this.props.normalUtxos)) {
+        error: state.token.balance === 1 ? 'Amount must be equal to 1' : 'Amount must be between 1 and ' + state.token.balance,
+      }));
+    } else if (toSats(state.price * state.amount) > getMaxSpendNormalUtxos(props.normalUtxos)) {
       
-      this.setState({
+      setState(prevState => ({
+        ...prevState,
         success: null,
         txid: null,
         error: 'Not enough balance',
-      });
+      }));
     } else {
       try {
         let inputsData, rawtx;
@@ -111,7 +107,7 @@ class BuyTokenModal extends React.Component {
         inputsData = {
           getInfo: await Blockchain.getInfo(),
           normalUtxos: await Blockchain.createCCTx(
-            toSats(this.state.price * this.state.amount) + 10000,
+            toSats(state.price * state.amount) + 10000,
             address.pubkey
           ),
         };
@@ -123,18 +119,19 @@ class BuyTokenModal extends React.Component {
 
         try {
           rawtx = await TokensLib.V2Assets.buildTokenv2bid(
-            this.state.token.tokenId,
-            Number(this.state.amount),
-            Number(this.state.price),
-            this.props.wif,
+            state.token.tokenId,
+            Number(state.amount),
+            Number(state.price),
+            props.wif,
             inputsData,
           );
         } catch (e) {
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: null,
             txid: null,
             error: e.message,
-          });
+          }));
         }
     
         writeLog('buy token rawtx', rawtx);
@@ -143,68 +140,73 @@ class BuyTokenModal extends React.Component {
           const {txid} = await Blockchain.broadcast(rawtx);
     
           if (!txid || txid.length !== 64) {
-            this.setState({
+            setState(prevState => ({
+              ...prevState,
               success: null,
               txid: null,
               error: 'Unable to broadcast transaction!',
-            });
+            }));
           } else {
-            this.setState({
-              success: `${chains[chain].explorerUrl}/${this.state.token.tokenId}/transactions/${txid}/${chain}`,
+            setState(prevState => ({
+              ...prevState,
+              success: `${chains[chain].explorerUrl}/${state.token.tokenId}/transactions/${txid}/${chain}`,
               txid,
               error: null,
               price: '',
               token: null,
               amount: '',
               tokenDropdownOpen: false,
-            });
+            }));
             setTimeout(() => {
-              this.props.syncData();
+              props.syncData();
             }, 100);
           }
         } else {
-          this.setState({
+          setState(prevState => ({
+            ...prevState,
             success: null,
             txid: null,
             error: 'Unable to build transaction!',
-          });
+          }));
         }
       } catch (e) {
-        this.setState({
+        setState(prevState => ({
+          ...prevState,
           success: null,
           txid: null,
           error: e.message,
-        });
+        }));
       }
     }
   }
 
-  dropdownTrigger(e) {
+  const dropdownTrigger = e => {
     e.stopPropagation();
 
-    this.setState({
-      tokenDropdownOpen: !this.state.tokenDropdownOpen,
+    setState(prevState => ({
+      ...prevState,
+      tokenDropdownOpen: !state.tokenDropdownOpen,
       dropdownQuickSearch: '',
-    });
+    }));
   }
 
-  componentWillMount() {
+  useEffect(() => {
     document.addEventListener(
       'click',
-      this.handleClickOutside,
+      handleClickOutside,
       false
     );
-  }
 
-  componentWillUnmount() {
-    document.removeEventListener(
-      'click',
-      this.handleClickOutside,
-      false
-    );
-  }
+    return () => {
+      document.removeEventListener(
+        'click',
+        handleClickOutside,
+        false
+      );
+    };
+  }, []);
 
-  handleClickOutside(e) {
+  const handleClickOutside = e => {
     const srcElement = e ? e.srcElement : null;
     let state = {};
 
@@ -214,23 +216,24 @@ class BuyTokenModal extends React.Component {
         typeof srcElement.className === 'string' &&
         srcElement.className !== 'token-tile send-token-trigger' &&
         srcElement.className.indexOf('form-input-quick-search') === -1) {
-      this.setState({
+      setState(prevState => ({
+        ...prevState,
         tokenDropdownOpen: false,
-      });
+      }));
     }
   }
 
-  getTokenData(tokenid) {
-    const tokenInfo = this.props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
+  const getTokenData = tokenid => {
+    const tokenInfo = props.tokenList.filter(tokenInfo => tokenInfo.tokenid === tokenid)[0];
     return tokenInfo || {};
   }
 
-  render() {
-    const maxNormalSpendValue = getMaxSpendNormalUtxos(this.props.normalUtxos);
-    const {chain} = this.props;
+  const render = () => {
+    const maxNormalSpendValue = getMaxSpendNormalUtxos(props.normalUtxos);
+    const {chain} = props;
 
     const renderDropdownOptions = () => {
-      const tokenListItems = this.props.tokenList;
+      const tokenListItems = props.tokenList;
       let items = [];
 
       if (tokenListItems &&
@@ -241,24 +244,24 @@ class BuyTokenModal extends React.Component {
             name="dropdownQuickSearch"
             placeholder="Search..."
             autoComplete="off"
-            value={this.state.dropdownQuickSearch}
-            onChange={this.updateInput}
+            value={state.dropdownQuickSearch}
+            onChange={updateInput}
             key="buy-token-quick-search"
             className="form-input form-input-quick-search" />
         );
       }
 
       for (let i = 0; i < tokenListItems.length; i++)  {
-        const tokenInfo = this.getTokenData(tokenListItems[i].tokenid);
+        const tokenInfo = getTokenData(tokenListItems[i].tokenid);
 
-        if (!this.state.dropdownQuickSearch ||
-            (this.state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(this.state.dropdownQuickSearch.toLowerCase()) > -1 )) {
+        if (!state.dropdownQuickSearch ||
+            (state.dropdownQuickSearch && tokenInfo.name.toLowerCase().indexOf(state.dropdownQuickSearch.toLowerCase()) > -1)) {
           items.push(
             <a
               key={`buy-token-${tokenListItems[i].tokenid}`}
               className={`dropdown-item${tokenInfo.height === -1 ? ' disabled' : ''}`}
               title={tokenInfo.height === -1 ? `Pending confirmation` : ''}
-              onClick={tokenInfo.height === -1 ? null : () => this.setToken({
+              onClick={tokenInfo.height === -1 ? null : () => setToken({
                 balance: tokenListItems[i].supply,
                 tokenId: tokenListItems[i].tokenid,
                 name: tokenInfo.name
@@ -284,27 +287,27 @@ class BuyTokenModal extends React.Component {
       <React.Fragment>
         <div
           className={`token-tile send-token-trigger buy-token-trigger${maxNormalSpendValue === 0 ? ' disabled' : ''}`}
-          onClick={() => this.open()}>
+          onClick={() => open()}>
           <i className="fa fa-dollar-sign"></i>
           Bid
         </div>
         <Modal
-          show={this.state.isClosed === false}
-          handleClose={() => this.close()}
+          show={state.isClosed === false}
+          handleClose={() => close()}
           isCloseable={true}
           className="Modal-send-token">
           <div className="create-token-form">
             <h4>Place token buy order</h4>
             <p>Fill out the form below</p>
             <div className="input-form">
-              <div className={`dropdown${this.state.tokenDropdownOpen ? ' is-active' : ''}`}>
-                <div className={`dropdown-trigger${this.state.token ? ' highlight' : ''}`}>
+              <div className={`dropdown${state.tokenDropdownOpen ? ' is-active' : ''}`}>
+                <div className={`dropdown-trigger${state.token ? ' highlight' : ''}`}>
                   <button
                     className="button"
-                    onClick={this.dropdownTrigger}>
-                    <span>{this.state.token && this.state.token.name ? this.state.token.name : 'Select token'}</span>
-                    {this.state.token &&
-                      <span className="dropdown-balance">{this.state.token.balance}</span>
+                    onClick={dropdownTrigger}>
+                    <span>{state.token && state.token.name ? state.token.name : 'Select token'}</span>
+                    {state.token &&
+                      <span className="dropdown-balance">{state.token.balance}</span>
                     }
                     <span className="icon is-small">
                       <i className="fas fa-angle-down"></i>
@@ -322,42 +325,42 @@ class BuyTokenModal extends React.Component {
                 type="text"
                 name="amount"
                 placeholder="Amount (qty)"
-                value={this.state.amount}
-                onChange={this.updateInput}
+                value={state.amount}
+                onChange={updateInput}
                 className="form-input" />
               <input
                 type="text"
                 name="price"
                 placeholder={`Price in ${chain}`}
-                value={this.state.price}
-                onChange={this.updateInput}
+                value={state.price}
+                onChange={updateInput}
                 className="form-input" />
               <button
                 type="button"
-                onClick={this.buyToken}
+                onClick={buyToken}
                 disabled={
-                  !this.state.token ||
-                  !this.state.price ||
-                  !this.state.amount ||
+                  !state.token ||
+                  !state.price ||
+                  !state.amount ||
                   maxNormalSpendValue === 0
                 }
                 className="form-input">Buy</button>
-              {this.state.success &&
+              {state.success &&
                 <div className="success">
                   Token buy order placed!
                   <div className="txid-label">
-                    <strong>Transaction ID:</strong> {this.state.txid}
+                    <strong>Transaction ID:</strong> {state.txid}
                   </div>
                   <a
-                    href={this.state.success}
+                    href={state.success}
                     target="_blank">Open on explorer</a>
                 </div>
               }
-              {this.state.error &&
+              {state.error &&
                 <div className="error">
                   <div>
                     <strong>Error!</strong>
-                    <div>{this.state.error}</div>
+                    <div>{state.error}</div>
                   </div>
                 </div>
               }
@@ -367,6 +370,8 @@ class BuyTokenModal extends React.Component {
       </React.Fragment>
     );
   }
+
+  return render();
 }
 
 export default BuyTokenModal;
