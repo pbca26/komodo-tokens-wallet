@@ -13,7 +13,13 @@ module.exports = {
   },
   mode: 'development',
   module: {
-    rules: [{
+    rules: [
+      {
+        test: /\.(ts|tsx)?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
       test: /\.(jsx|js)$/,
       include: path.resolve(__dirname, 'src'),
       exclude: /node_modules/,
@@ -57,6 +63,9 @@ module.exports = {
         name: '[name].[hash:8].[ext]'
       }
     }]
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
   plugins: [
     new CopyWebpackPlugin(['index.html']),
