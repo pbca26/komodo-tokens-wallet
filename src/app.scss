@@ -37,12 +37,13 @@ body {
     .content {
       padding-left: 20px;
       text-align: center;
+
+      > h4 > a {
+        color: #485fc7;
+      }
     }
     strong {
       color: #fff;
-    }
-    .content > h4 > a {
-      color: #485fc7;
     }
   }
   

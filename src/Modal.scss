@@ -1,31 +1,35 @@
 @import './bulma-custom.scss';
 
-.Modal .card {
-  border-radius: $radius-small;
+.Modal {
+  .card {
+    border-radius: $radius-small;
 
-  .modal-close {
-    position: absolute;
-    top: -12px;
-    right: 8px;
-  }
-  .content {
-    padding-top: 0;
+    .modal-close {
+      position: absolute;
+      top: -12px;
+      right: 8px;
+    }
+    .content {
+      padding-top: 0;
+    }
   }
 }
 
-.modal-content .card {
-  background: radial-gradient(farthest-side ellipse at 10% 0, #333867 20%, #17193b);
-  background-attachment: fixed;
-  background-size: cover;
-  background-repeat: no-repeat;
-  box-shadow: 0 25px 20px -100px rgba(0, 0, 0, 10%), 0 0 15px rgba(0, 0, 0, 6%);
-  border: 0px solid transparent;
-  border-radius: 0.25rem;
-  color: rgb(255, 255, 255);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 0.9375rem;
-  font-weight: 400;
-  line-height: 1.25rem;
+.modal-content {
+  .card {
+    background: radial-gradient(farthest-side ellipse at 10% 0, #333867 20%, #17193b);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    box-shadow: 0 25px 20px -100px rgba(0, 0, 0, 10%), 0 0 15px rgba(0, 0, 0, 6%);
+    border: 0px solid transparent;
+    border-radius: 0.25rem;
+    color: rgb(255, 255, 255);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+  }
 }
 
 .Modal-create-token,
