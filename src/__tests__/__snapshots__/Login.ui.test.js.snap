@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login component render check 1`] = `
+<div
+  className="main"
+>
+  <div
+    className="app-logo"
+  >
+    <div
+      className="box"
+    />
+    <div
+      className="circle"
+    />
+    <img
+      src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"
+    />
+  </div>
+  <div
+    className="content login-form"
+  >
+    <h4>
+      Login
+    </h4>
+    <p>
+      Enter your seed phrase or WIF key in the form below
+    </p>
+    <div
+      className="input-form"
+    >
+      <div
+        className="dropdown"
+      >
+        <div
+          className="dropdown-trigger highlight"
+        >
+          <button
+            className="button"
+            onClick={[Function]}
+          >
+            <span>
+              TKLTEST
+            </span>
+            <span
+              className="icon is-small"
+            >
+              <i
+                className="fas fa-angle-down"
+              />
+            </span>
+          </button>
+        </div>
+        <div
+          className="dropdown-menu"
+          id="dropdown-menu"
+          role="menu"
+        >
+          <div
+            className="dropdown-content"
+          >
+            <a
+              className="dropdown-item"
+              onClick={[Function]}
+            >
+              <span
+                className="dropdown-balance"
+              >
+                TOKENSV2
+              </span>
+            </a>
+            <a
+              className="dropdown-item"
+              onClick={[Function]}
+            >
+              <span
+                className="dropdown-balance"
+              >
+                TKLTEST
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <input
+        name="privKeyInput"
+        onChange={[Function]}
+        placeholder="Seed or WIF key"
+        type="password"
+        value="lime lime3"
+      />
+      <button
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Login
+      </button>
+    </div>
+  </div>
+</div>
+`;

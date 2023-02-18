@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CancelBidTokenModal component render and token cancel ask order event check 1`] = `
+Array [
+  <div
+    className=""
+    onClick={[Function]}
+  />,
+  <div
+    className="Modal modal  Modal-send-token"
+  >
+    <div
+      onClick={[Function]}
+    >
+      <div
+        className="modal-background"
+      />
+    </div>
+    <div
+      className="modal-content"
+    >
+      <div
+        className="card"
+      >
+        <button
+          className="modal-close is-large "
+          onClick={[Function]}
+        />
+        <div
+          className="card-content"
+        >
+          <div
+            className="content"
+          >
+            <div
+              className="create-token-form"
+            >
+              <h4>
+                Cancel Buy token order
+              </h4>
+              <div
+                className="input-form"
+              >
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Token: NFTJS"
+                />
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Order size: 1"
+                />
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Price: 0.00001"
+                />
+                <input
+                  className="form-input"
+                  disabled={true}
+                  name="token"
+                  type="text"
+                  value="Total: 0.00001"
+                />
+                <button
+                  className="form-input"
+                  disabled={false}
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;
