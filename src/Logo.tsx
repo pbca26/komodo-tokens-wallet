@@ -4,7 +4,7 @@ const Logo = () => (
   <div className="app-logo">
     <div className="box"></div>
     <div className="circle"></div>
-    <img src="https://explorer.komodoplatform.com/public/img/coins/kmd.png"></img>
+    <img src="https://raw.githubusercontent.com/pbca26/komodo-tokens-wallet/main/kmd.png"></img>
   </div>
 );
 
