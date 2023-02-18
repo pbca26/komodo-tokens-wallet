@@ -37,12 +37,13 @@ body {
     .content {
       padding-left: 20px;
       text-align: center;
+
+      > h4 > a {
+        color: #485fc7;
+      }
     }
     strong {
       color: #fff;
-    }
-    .content > h4 > a {
-      color: #485fc7;
     }
   }
   
@@ -219,4 +220,9 @@ strong {
 .escrow-stop-btn {
   background-color: #00b9d6ad;
   border-color: #00b9d6ad;
+}
+
+.load-demo-btn {
+  background: #333867;
+  border-color: #333867;
 }

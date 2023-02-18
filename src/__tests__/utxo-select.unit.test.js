@@ -15,22 +15,22 @@ it('should return utxoSelectNormal result (explorer API)', async() => {
 
   expect(res).toEqual({
     inputs:[
-       {
-          'address': 'RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc',
-          'txid': '6425a6153d1400db16b770e4f5043584db2c27be8ddac330b88d3aebae2b6060',
-          'vout': 2,
-          'scriptPubKey': '76a914af1cc72c9b5ef945424b03286dc255da59b6166888ac',
-          'amount': 0.0001,
-          'height': 127227,
-          'confirmations': 61328,
-          'value': 10000
-       }
+      {
+        'address': 'RRF6ocq94kLpaH6wPdZjTqQa9mAmT1GToc',
+        'txid': '6425a6153d1400db16b770e4f5043584db2c27be8ddac330b88d3aebae2b6060',
+        'vout': 2,
+        'scriptPubKey': '76a914af1cc72c9b5ef945424b03286dc255da59b6166888ac',
+        'amount': 0.0001,
+        'height': 127227,
+        'confirmations': 61328,
+        'value': 10000
+      }
     ],
     outputs:[
-       {
-          'address': undefined,
-          'value': 10000
-       }
+      {
+        'address': undefined,
+        'value': 10000
+      }
     ],
     'fee': 0
   });
